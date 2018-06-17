@@ -1,0 +1,2 @@
+Avoid dublicate product on post.
+Learn populate().
