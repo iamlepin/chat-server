@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const User = require('../models/users');
 
 router.get('/', (req, res, next) => {
@@ -19,37 +20,79 @@ router.get('/', (req, res, next) => {
     });
 });
 
-
-router.post('/signup', (req, res, next) => {
-  User.findOne({email: req.body.email})
+router.post('/login', (req, res, next) => {
+  User.findOne({ email: req.body.email })
     .exec()
     .then(user => {
-      if(user){
+      if (!user) {
+        res.status(401).json({
+          message: 'Auth failed.'
+        });
+      } else {
+        bcrypt.compare(req.body.password, user.password)
+          .then(result => {
+            if (result) {
+              console.log('111111111111')
+              const token = jwt.sign({
+                email: user.email,
+                _id: user.id,
+              },
+                process.env.SECRET_PHRASE,
+                {
+                  expiresIn: '1H',
+                }
+              );
+              console.log('222222222222')
+              res.status(201).json({
+                message: "Auth succed.",
+                token: token,
+              });
+            } else {
+              res.status(401).json({
+                message: 'Auth failed. Passwords doesn\'t match'
+              });
+            };
+          })
+          .catch(err => {
+            res.status(500).json(err);
+          })
+      }
+    })
+    .catch(err => {
+      res.status(500).json(err)
+    });
+});
+
+router.post('/signup', (req, res, next) => {
+  User.findOne({ email: req.body.email })
+    .exec()
+    .then(user => {
+      if (user) {
         res.status(409).json({
           message: "Email exists."
         });
       } else {
         bcrypt.hash(req.body.password, 10)
-        .then(hash => {
-          const newUser = new User({
-            _id: new mongoose.Types.ObjectId(),
-            email: req.body.email,
-            password: hash,
+          .then(hash => {
+            const newUser = new User({
+              _id: new mongoose.Types.ObjectId(),
+              email: req.body.email,
+              password: hash,
+            })
+            return newUser.save();
           })
-          return newUser.save();
-        })
-        .then(doc => {
-          res.status(201).json({
-            message: 'User created successfuly',
-            createdUser: {
-              _id: doc._id,
-              email: doc.email,
-            },
+          .then(doc => {
+            res.status(201).json({
+              message: 'User created successfuly',
+              createdUser: {
+                _id: doc._id,
+                email: doc.email,
+              },
+            });
+          })
+          .catch(err => {
+            res.status(500).json(err);
           });
-        })
-        .catch(err => {
-          res.status(500).json(err);
-        });
       };
     });
 });
