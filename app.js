@@ -1,18 +1,19 @@
 const express = require('express');
 const app = express();
-const morgan = require('morgan');
-const bodyParser = require('body-parser');
+// const morgan = require('morgan');// dont need after all, because we use mongoose
+// const bodyParser = require('body-parser'); // express now has built-in parser
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/local');
+const checkAuth = require('./api/middlewares/auth');
 
 const productRoutes = require('./api/routes/products');
 const orderRoutes = require('./api/routes/orders');
 const userRoutes = require('./api/routes/users');
 
 
-app.use(morgan('dev'));
-app.use(bodyParser.urlencoded({extended: false}));
-app.use(bodyParser.json());
+// app.use(morgan('dev')); // dont need after all, because we use mongoose
+app.use(express.urlencoded({extended: false}));
+app.use(express.json());
 
 // CORS headers
 app.use((req, res, next) => {
@@ -26,7 +27,7 @@ app.use((req, res, next) => {
 })
 
 // handling routes requests
-app.use('/products', productRoutes);
+app.use('/products', checkAuth, productRoutes);
 app.use('/orders', orderRoutes);
 app.use('/users', userRoutes);
 

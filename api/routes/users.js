@@ -26,13 +26,12 @@ router.post('/login', (req, res, next) => {
     .then(user => {
       if (!user) {
         res.status(401).json({
-          message: 'Auth failed.'
+          message: 'Auth failed. code:#qwerty'
         });
       } else {
         bcrypt.compare(req.body.password, user.password)
           .then(result => {
             if (result) {
-              console.log('111111111111')
               const token = jwt.sign({
                 email: user.email,
                 _id: user.id,
@@ -42,7 +41,6 @@ router.post('/login', (req, res, next) => {
                   expiresIn: '1H',
                 }
               );
-              console.log('222222222222')
               res.status(201).json({
                 message: "Auth succed.",
                 token: token,
