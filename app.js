@@ -1,9 +1,10 @@
 const express = require('express');
 const app = express();
+const config = require('./config')
 // const morgan = require('morgan');// dont need after all, because we use mongoose
 // const bodyParser = require('body-parser'); // express now has built-in parser
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/local');
+mongoose.connect(config.mongo.URL, { useNewUrlParser: true });
 const checkAuth = require('./api/middlewares/auth');
 
 const productRoutes = require('./api/routes/products');
