@@ -1,23 +1,23 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const mongoose = require('mongoose');
-const Product = require('../models/products');
+const mongoose = require("mongoose");
+const Product = require("../models/products");
 
-router.get('/', (req, res, next) => {
+router.get("/", (req, res, next) => {
   Product.find()
-    .select('_id title price')
+    .select("_id title price")
     .exec()
     .then(docs => {
       if (docs) {
         res.status(200).json({
-          message: 'Products loaded',
+          message: "Products loaded",
           products: docs
         });
       } else {
         res.status(404).json({
-          message: 'No products in this collection.'
+          message: "No products in this collection."
         });
-      };
+      }
     })
     .catch(err => {
       console.log(err);
@@ -27,7 +27,7 @@ router.get('/', (req, res, next) => {
     });
 });
 
-router.post('/', (req, res, next) => {
+router.post("/", (req, res, next) => {
   const product = new Product({
     _id: new mongoose.Types.ObjectId(),
     title: req.body.title,
@@ -38,7 +38,7 @@ router.post('/', (req, res, next) => {
     .then(doc => {
       console.log(doc);
       res.status(201).json({
-        message: 'Product created.',
+        message: "Product created.",
         createdProduct: doc
       });
     })
@@ -46,57 +46,23 @@ router.post('/', (req, res, next) => {
       console.log(err);
       res.status(500).json({
         error: err
-      })
+      });
     });
 });
 
-router.get('/:productId', (req, res, next) => {
+router.get("/:productId", (req, res, next) => {
   Product.findById(req.params.productId)
-    .select('_id title price')
+    .select("_id title price")
     .exec()
     .then(doc => {
       if (doc) {
         res.status(200).json({
-          message: 'Product loaded.',
+          message: "Product loaded.",
           product: doc
-        })
-      } else {
-        res.status(404).json({
-          message: 'Unable to load product. No data for this id.'
         });
-      }
-    })
-    .catch(err => {
-      console.log(err);
-      res.status(500).json({
-        error: err
-      })
-    });
-});
-
-router.patch('/:productId', (req, res, next) => {
-  console.log('patch', req.body)
-  Product.findByIdAndUpdate(
-    req.params.productId,
-    {
-      $set: {
-        title: req.body.title,
-        price: req.body.price,
-      }
-    }
-  )
-    .select('_id title price')
-    .exec()
-    .then(doc => {
-      if (doc) {
-        res.status(200).json({
-          message: 'Product updated.',
-          updatedProduct: doc,
-          newProduct: req.body,
-        })
       } else {
         res.status(404).json({
-          message: 'Unable to patch product. No data for this id.'
+          message: "Unable to load product. No data for this id."
         });
       }
     })
@@ -108,21 +74,53 @@ router.patch('/:productId', (req, res, next) => {
     });
 });
 
-router.delete('/:productId', (req, res, next) => {
-  Product.findByIdAndRemove(req.params.productId)
-    .select('_id title price')
+router.patch("/:productId", (req, res, next) => {
+  console.log("patch", req.body);
+  Product.findByIdAndUpdate(req.params.productId, {
+    $set: {
+      title: req.body.title,
+      price: req.body.price
+    }
+  })
+    .select("_id title price")
     .exec()
     .then(doc => {
       if (doc) {
         res.status(200).json({
-          message: 'Product deleted',
-          deletedProduct: doc
-        })
+          message: "Product updated.",
+          updatedProduct: doc,
+          newProduct: req.body
+        });
       } else {
         res.status(404).json({
-          message: 'Unable to delete product. No data for this id.'
+          message: "Unable to patch product. No data for this id."
         });
-      };
+      }
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json({
+        error: err
+      });
+    });
+});
+
+router.delete("/:productId", (req, res, next) => {
+  console.log("req: ", req);
+  Product.findByIdAndRemove(req.params.productId)
+    .select("_id title price")
+    .exec()
+    .then(doc => {
+      if (doc) {
+        res.status(200).json({
+          message: "Product deleted",
+          deletedProduct: doc
+        });
+      } else {
+        res.status(404).json({
+          message: "Unable to delete product. No data for this id."
+        });
+      }
     })
     .catch(err => {
       console.log(err);
