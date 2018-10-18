@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const path = require('path');
 const config = require('./config')
 // const morgan = require('morgan');// dont need after all, because we use mongoose
 // const bodyParser = require('body-parser'); // express now has built-in parser
@@ -22,10 +23,17 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
   if(req.method === 'OPTIONS') {
     res.header('Access-Control-Allow-Methods', 'PUT, PATCH, POST, DELETE, GET');
-    return res.status(200).json({});
+    return res.status(200).json();
   }
   next();
 })
+
+//serve static files
+app.use(express.static(path.join(__dirname, 'client/build')));
+
+app.get('/', function(req, res) {
+  res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+});
 
 // handling routes requests
 app.use('/products', productRoutes); //  checkAuth,

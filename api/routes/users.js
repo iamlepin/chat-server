@@ -62,6 +62,7 @@ router.post('/login', (req, res, next) => {
 });
 
 router.post('/signup', (req, res, next) => {
+  console.log('TCL: req.body', req.body);
   User.findOne({ email: req.body.email })
     .exec()
     .then(user => {
@@ -74,16 +75,19 @@ router.post('/signup', (req, res, next) => {
           .then(hash => {
             const newUser = new User({
               _id: new mongoose.Types.ObjectId(),
+              name: req.body.name,
               email: req.body.email,
               password: hash,
             })
             return newUser.save();
           })
           .then(doc => {
+            console.log('TCL: doc._id', doc._id);
             res.status(201).json({
               message: 'User created successfuly',
               createdUser: {
                 _id: doc._id,
+                name: doc.name,
                 email: doc.email,
               },
             });
@@ -92,7 +96,10 @@ router.post('/signup', (req, res, next) => {
             res.status(500).json(err);
           });
       };
-    });
+    })
+    .catch(err => {
+      res.status(500).json(err);
+    })
 });
 
 router.get('/:userId', (req, res, next) => {
