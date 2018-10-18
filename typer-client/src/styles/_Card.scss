@@ -1,0 +1,14 @@
+@import 'variables';
+
+.card-title--list {
+  text-shadow: 0 0 10px  #b700ff, 0 5px 10px  #b700ff, -5px 0 10px  #b700ff;
+  margin-bottom: 0;
+}
+
+.movie-card:hover {
+    box-shadow: $shadow1;
+}
+
+.pointer:hover {
+  cursor: pointer;
+}
