@@ -1,6 +1,7 @@
 const mongo = {
-  URL: 'mongodb+srv://NodeServerUser:Randomizer84*$@nodeservercluster-edoax.gcp.mongodb.net/test?retryWrites=true',
-}
+  URL:
+    "mongodb+srv://NodeServerAdmin:9jFcbSW56QzzgnMU@nodeservercluster-edoax.gcp.mongodb.net/test?retryWrites=true"
+};
 
 const server = {
   PROTOCOL: 'http',

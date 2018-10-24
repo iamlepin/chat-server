@@ -15,8 +15,16 @@ const post = (url, body) => {
     mode: MODE,
     body,
   })
-    .then(response => response.json())
-    .catch(err => console.log(err))
+    .then(response => {
+      if (response.ok) {
+        return response.json();
+      }
+      throw new Error('Failed to load data.')
+    })
+    .catch(err => {
+      console.log(err);
+      return err
+    })
 }
 
 const addUser = (body) => {
