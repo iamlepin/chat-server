@@ -1,21 +1,20 @@
 import React from "react";
 import { Row, Form, Icon, Input, Button, message } from "antd";
 import { EMAIL, USER_NAME, PASSWORD } from '../../constants/regexp'
-import api from "../../api";
+import { trimValue } from '../../utils'
+import { loginUser } from '../../api'
+import nodeApi from "../../api";
 import "./SignUp.css";
 
 const FormItem = Form.Item;
-
-const trimValue = (value) => value && value.trim();
 
 class SignUp extends React.Component {
   handleSubmit = e => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
-      console.log('TCL: values', values);
-      console.log('TCL: err', err);
       if (err) {
-        console.error("Error while registering user: " + err);
+        console.error('Error while validating data!')
+        message.error('Please fill all fields.')
       } else {
         console.log('TCL: handleSubmit');
         const { userName: name, email, password } = values;
@@ -25,11 +24,11 @@ class SignUp extends React.Component {
           password
         };
         console.log("Received body of form: ", values);
-        api.addUser(body)
+        nodeApi.addUser(body)
           .then(data => data && message.success(data.message))
           .catch(err => {
             console.log(err);
-            message.error(err.message);
+            message.error(err);
           });
       }
     });
@@ -41,6 +40,7 @@ class SignUp extends React.Component {
     if (!isEqual) {
       callback("Passwords doesn't match!");
     };
+    callback()
   };
 
   render() {
@@ -56,10 +56,10 @@ class SignUp extends React.Component {
                   max: 16,
                   pattern: USER_NAME,
                   transform: trimValue,
-                  message:
-                    "User name must be between 4 and 16 characters and contains letters, numbers and symbols like - _ ."
+                  message: "User name must be between 4 and 16 characters and contains letters, numbers and symbols like - _ ."
                 }
-              ]
+              ],
+              validateTrigger: "onBlur",
             })(<Input prefix={<Icon type="user" style={{ color: "rgba(0,0,0,.25)" }} />} placeholder="Username" />)}
           </FormItem>
           <FormItem>
@@ -72,7 +72,7 @@ class SignUp extends React.Component {
                   message: "Please input valid email address."
                 }
               ],
-              validateTrigger: "onBlur"
+              validateTrigger: "onBlur",
             })(<Input prefix={<Icon type="mail" style={{ color: "rgba(0,0,0,.25)" }} />} type="email" placeholder="Mail" />)}
           </FormItem>
           <FormItem>
@@ -83,8 +83,7 @@ class SignUp extends React.Component {
                   min: 6,
                   max: 16,
                   pattern: PASSWORD,
-                  message:
-                    "Password must contain at least 1 uppercase letter, 1 lowercase letter and 1 number."
+                  message: "Password must contain at least 1 uppercase letter, 1 lowercase letter and 1 number."
                 }
               ],
               validateTrigger: "onBlur"
@@ -94,7 +93,7 @@ class SignUp extends React.Component {
             {getFieldDecorator("confirmPassword", {
               rules: [
                 { required: true, message: "Please repeat your Password!" },
-                // { validator: this.validatePasswordsMatch },
+                { validator: this.validatePasswordsMatch },
               ],
               validateTrigger: "onBlur"
             })(<Input prefix={<Icon type="lock" style={{ color: "rgba(0,0,0,.25)" }} />} type="password" placeholder="Confirm Password" />)}
