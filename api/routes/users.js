@@ -26,13 +26,13 @@ router.get('/check/:name', (req, res, next) => {
     .then(user => {
       if (user) {
         res.status(200).json({
-          message: 'Name unavailable for registration.',
-          isUsed: true,
+          message: 'Username exists.',
+          isExist: true,
         })
       } else {
         res.status(200).json({
-          message: 'Name available for registration.',
-          isUsed: false,
+          message: 'Username doesn\'t exist',
+          isExist: false,
         })
       }
     })

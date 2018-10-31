@@ -2,7 +2,6 @@ import React from "react";
 import { Row, Form, Icon, Input, Button, message } from "antd";
 import { EMAIL, USER_NAME, PASSWORD } from '../../constants/regexp'
 import { trimValue } from '../../utils'
-import { loginUser } from '../../api'
 import nodeApi from "../../api";
 import "./SignUp.css";
 
@@ -48,8 +47,23 @@ class SignUp extends React.Component {
     return getFieldError(fieldName) || !isFieldTouched(fieldName) ? 'error' : 'success'
   }
 
+  validateUserName = (rule, value, callback) => {
+    if (!trimValue(value)) { return }
+    nodeApi.getUserName(value)
+      .then(({ isExist }) => {
+        if (isExist) {
+          console.log('exist')
+          callback('Name already exists.')
+        } else {
+          console.log('not exist')
+          callback()
+        }
+      })
+      .catch(err => console.log(err))
+  }
+
   render() {
-    const { getFieldDecorator, getFieldError, isFieldTouched } = this.props.form;
+    const { getFieldDecorator, getFieldValue, getFieldError, isFieldTouched } = this.props.form;
     const passwordError = isFieldTouched('password') ? getFieldError('password') : true
 
     return <Row style={{ display: "flex", justifyContent: "center" }}>
@@ -57,14 +71,22 @@ class SignUp extends React.Component {
           <FormItem hasFeedback validateStatus={this.getFieldFeedback('userName')} >
             {getFieldDecorator("userName", {
               rules: [
-                { required: true, message: "Please input your username!" },
+                {
+                  required: true,
+                  message: "Please input your username!",
+                  transform: trimValue,
+                },
                 {
                   min: 4,
                   max: 16,
                   pattern: USER_NAME,
                   transform: trimValue,
                   message: "User name must be between 4 and 16 characters and contains letters, numbers and symbols like - _ ."
-                }
+                },
+                {
+                  validator: this.validateUserName,
+                  transform: trimValue,
+                },
               ],
             })(<Input prefix={<Icon type="user" style={{ color: "rgba(0,0,0,.25)" }} />} placeholder="Username" />)}
           </FormItem>

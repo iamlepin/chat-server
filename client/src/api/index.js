@@ -57,9 +57,15 @@ const loginUser = (body) => {
   return post(link, body)
 }
 
+const getUserName = (userName) => {
+  const link = `/users/check/${userName}`
+  return get(link)
+}
+
 const nodeApi = {
   addUser,
-  loginUser
+  loginUser,
+  getUserName,
 }
 
 export default nodeApi
