@@ -20,13 +20,34 @@ router.get('/', (req, res, next) => {
     });
 });
 
+router.get('/check/:name', (req, res, next) => {
+  User.findOne({ name: req.params.name })
+    .exec()
+    .then(user => {
+      if (user) {
+        res.status(200).json({
+          message: 'Name unavailable for registration.',
+          isUsed: true,
+        })
+      } else {
+        res.status(200).json({
+          message: 'Name available for registration.',
+          isUsed: false,
+        })
+      }
+    })
+    .catch(err => {
+      res.status(500).json(err);
+    });
+})
+
 router.post('/login', (req, res, next) => {
-  User.findOne({ email: req.body.email })
+  User.findOne({ name: req.body.name })
     .exec()
     .then(user => {
       if (!user) {
         res.status(401).json({
-          message: 'Auth failed. code:#qwerty'
+          message: `Auth failed. User ${req.body.name} isn't registered.`
         });
       } else {
         bcrypt.compare(req.body.password, user.password)
@@ -42,7 +63,7 @@ router.post('/login', (req, res, next) => {
                 }
               );
               res.status(201).json({
-                message: "Auth succed.",
+                message: `User ${user.name} is logged in.`,
                 token: token,
               });
             } else {

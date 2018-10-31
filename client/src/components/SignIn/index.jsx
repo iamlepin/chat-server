@@ -1,7 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Row, Form, Icon, Input, Button, Checkbox } from "antd";
+import { Row, Form, Icon, Input, Button, Checkbox, message } from "antd";
+import nodeApi from '../../api'
 import { trimValue } from "../../utils";
+import { USER_NAME } from "../../constants/regexp";
 import "./SignIn.css";
 
 const FormItem = Form.Item;
@@ -14,6 +16,16 @@ class SignIn extends React.Component {
         console.error();
       } else {
         console.log("Received values of form: ", values);
+        const { userName: name, password, remember } = values
+        const body = {
+          name,
+          password,
+          remember,
+        }
+        nodeApi.loginUser(body)
+          .then(({message}) => {
+            message.success(message)
+          })
       }
     });
   };
@@ -29,9 +41,16 @@ class SignIn extends React.Component {
                 {
                   required: true,
                   message: "Please input your username!",
+                },
+                {
+                  min: 4,
+                  max: 16,
+                  pattern: USER_NAME,
                   transform: trimValue,
+                  message: "User name must be between 4 and 16 characters and contains letters, numbers and symbols like - _ ."
                 }
-              ]
+              ],
+              validateTrigger: 'onBlur',
             })(
               <Input
                 prefix={

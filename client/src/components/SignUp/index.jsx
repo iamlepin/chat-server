@@ -14,7 +14,7 @@ class SignUp extends React.Component {
     this.props.form.validateFields((err, values) => {
       if (err) {
         console.error('Error while validating data!')
-        message.error('Please fill all fields.')
+        message.error('Please fill all fields.') // fix
       } else {
         console.log('TCL: handleSubmit');
         const { userName: name, email, password } = values;
@@ -43,11 +43,18 @@ class SignUp extends React.Component {
     callback()
   };
 
+  getFieldFeedback = (fieldName) => {
+    const { getFieldError, isFieldTouched } = this.props.form;
+    return getFieldError(fieldName) || !isFieldTouched(fieldName) ? 'error' : 'success'
+  }
+
   render() {
-    const { getFieldDecorator } = this.props.form;
+    const { getFieldDecorator, getFieldError, isFieldTouched } = this.props.form;
+    const passwordError = isFieldTouched('password') ? getFieldError('password') : true
+
     return <Row style={{ display: "flex", justifyContent: "center" }}>
         <Form onSubmit={this.handleSubmit} className="register-form">
-          <FormItem>
+          <FormItem hasFeedback validateStatus={this.getFieldFeedback('userName')} >
             {getFieldDecorator("userName", {
               rules: [
                 { required: true, message: "Please input your username!" },
@@ -59,10 +66,9 @@ class SignUp extends React.Component {
                   message: "User name must be between 4 and 16 characters and contains letters, numbers and symbols like - _ ."
                 }
               ],
-              validateTrigger: "onBlur",
             })(<Input prefix={<Icon type="user" style={{ color: "rgba(0,0,0,.25)" }} />} placeholder="Username" />)}
           </FormItem>
-          <FormItem>
+          <FormItem hasFeedback validateStatus={this.getFieldFeedback('email')} >
             {getFieldDecorator("email", {
               rules: [
                 { required: true, message: "Please input your email!" },
@@ -72,13 +78,12 @@ class SignUp extends React.Component {
                   message: "Please input valid email address."
                 }
               ],
-              validateTrigger: "onBlur",
             })(<Input prefix={<Icon type="mail" style={{ color: "rgba(0,0,0,.25)" }} />} type="email" placeholder="Mail" />)}
           </FormItem>
-          <FormItem>
+          <FormItem hasFeedback validateStatus={this.getFieldFeedback('password')} >
             {getFieldDecorator("password", {
               rules: [
-                { required: true, message: "Please input your Password!" },
+                { required: true, message: "Please input your password!" },
                 {
                   min: 6,
                   max: 16,
@@ -86,17 +91,15 @@ class SignUp extends React.Component {
                   message: "Password must contain at least 1 uppercase letter, 1 lowercase letter and 1 number."
                 }
               ],
-              validateTrigger: "onBlur"
             })(<Input prefix={<Icon type="lock" style={{ color: "rgba(0,0,0,.25)" }} />} type="password" placeholder="Password" />)}
           </FormItem>
-          <FormItem>
+          <FormItem hasFeedback validateStatus={this.getFieldFeedback('confirmPassword')} >
             {getFieldDecorator("confirmPassword", {
               rules: [
-                { required: true, message: "Please repeat your Password!" },
+                { required: true, message: "Please repeat your password!" },
                 { validator: this.validatePasswordsMatch },
               ],
-              validateTrigger: "onBlur"
-            })(<Input prefix={<Icon type="lock" style={{ color: "rgba(0,0,0,.25)" }} />} type="password" placeholder="Confirm Password" />)}
+            })(<Input prefix={<Icon type="lock" style={{ color: "rgba(0,0,0,.25)" }} />} disabled={passwordError} type="password" placeholder="Confirm Password" />)}
           </FormItem>
           <FormItem>
             <Button type="primary" htmlType="submit" className="register-form-button">
