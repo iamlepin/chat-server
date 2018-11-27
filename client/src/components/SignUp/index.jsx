@@ -1,127 +1,152 @@
-import React from "react";
-import { Row, Form, Icon, Input, Button, message } from "antd";
+import React from "react"
+import { Row, Form, Icon, Input, Button, message } from "antd"
 import { EMAIL, USER_NAME, PASSWORD } from '../../constants/regexp'
 import { trimValue } from '../../utils'
-import nodeApi from "../../api";
-import "./SignUp.css";
+import nodeApi from "../../api"
+import "./SignUp.css"
 
-const FormItem = Form.Item;
+const FormItem = Form.Item
 
 class SignUp extends React.Component {
   handleSubmit = e => {
-    e.preventDefault();
+    e.preventDefault()
     this.props.form.validateFields((err, values) => {
       if (err) {
         console.error('Error while validating data!')
-        message.error('Please fill all fields.') // fix
+        message.error('Please fill all fields correctly.')
       } else {
-        console.log('TCL: handleSubmit');
-        const { userName: name, email, password } = values;
+        console.log('TCL: handleSubmit')
+        const { userName: name, email, password } = values
         const body = {
           name,
           email,
           password
-        };
-        console.log("Received body of form: ", values);
+        }
+        console.log("Received body of form: ", values)
         nodeApi.addUser(body)
           .then(data => data && message.success(data.message))
           .catch(err => {
-            console.log(err);
-            message.error(err);
-          });
+            console.log(err)
+            message.error(err)
+          })
       }
-    });
-  };
-
-  validatePasswordsMatch = (rule, value, callback) => {
-    const { getFieldValue } = this.props.form
-    const isEqual = value && value === getFieldValue('password')
-    if (!isEqual) {
-      callback("Passwords doesn't match!");
-    };
-    callback()
-  };
-
-  getFieldFeedback = (fieldName) => {
-    const { getFieldError, isFieldTouched } = this.props.form;
-    return getFieldError(fieldName) || !isFieldTouched(fieldName) ? 'error' : 'success'
+    })
   }
 
-  validateUserName = (rule, value, callback) => {
-    if (!trimValue(value)) { return }
-    nodeApi.getUserName(value)
-      .then(({ isExist }) => {
-        if (isExist) {
-          console.log('exist')
-          callback('Name already exists.')
+  checkUserNameExistence = (rule, value, callback) => {
+    if (!trimValue(value)) { return callback('Please enter your username!')}
+    nodeApi.checkUserName(value)
+      .then(({ error }) => {
+        if (error) {
+          console.log('Username exists.')
+          message.error('Username already registered.')
+          callback('Username already registered.')
         } else {
-          console.log('not exist')
+          console.log('Username is available for registration.')
           callback()
         }
       })
       .catch(err => console.log(err))
   }
 
-  render() {
-    const { getFieldDecorator, getFieldValue, getFieldError, isFieldTouched } = this.props.form;
-    const passwordError = isFieldTouched('password') ? getFieldError('password') : true
+  checkUserMailExistence = (rule, value, callback) => {
+    if (!trimValue(value)) { return callback('Please enter your email!')} // fix
+    nodeApi.checkUserEmail(value)
+      .then(({ error }) => {
+        if (error) {
+          console.log('Email exists.')
+          message.error('Email already registered.')
+          callback('Email already registered.')
+        } else {
+          console.log('Email is available for registration.')
+          callback()
+        }
+      })
+      .catch(err => console.log(err))
+  }
 
-    return <Row style={{ display: "flex", justifyContent: "center" }}>
+  validatePasswordMatch = (rule, value, callback) => {
+    const { getFieldValue, validateFields } = this.props.form
+    const confirm = trimValue(getFieldValue('confirm'))
+    const isConfirmEmpty = !confirm
+    if (isConfirmEmpty) { return callback()}
+    validateFields([ 'confirm' ], { force: true })
+    callback()
+  }
+
+  validateConfirmMatch = (rule, value, callback) => {
+    const { getFieldValue } = this.props.form
+    const password = trimValue(getFieldValue('password'))
+    const confirm = trimValue(getFieldValue('confirm'))
+    const isPassEmpty = !password
+    if (isPassEmpty) { return callback()}
+    const isNotEqual = password !== confirm
+    if (isNotEqual) {
+      callback('Confirm doesn\'t match password!')
+    }
+    callback()
+  }
+
+  render() {
+    const { getFieldDecorator } = this.props.form
+
+    return <Row style={{ display: 'flex', justifyContent: 'center' }}>
         <Form onSubmit={this.handleSubmit} className="register-form">
-          <FormItem hasFeedback validateStatus={this.getFieldFeedback('userName')} >
-            {getFieldDecorator("userName", {
+          <FormItem hasFeedback >
+            {getFieldDecorator('userName', {
               rules: [
                 {
                   required: true,
-                  message: "Please input your username!",
-                  transform: trimValue,
-                },
-                {
                   min: 4,
                   max: 16,
                   pattern: USER_NAME,
                   transform: trimValue,
-                  message: "User name must be between 4 and 16 characters and contains letters, numbers and symbols like - _ ."
+                  message: 'User name must be between 4 and 16 characters and contains letters, numbers and symbols like - _ .'
                 },
                 {
-                  validator: this.validateUserName,
                   transform: trimValue,
+                  validator: this.checkUserNameExistence,
                 },
               ],
-            })(<Input prefix={<Icon type="user" style={{ color: "rgba(0,0,0,.25)" }} />} placeholder="Username" />)}
+            })(<Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Username" />)}
           </FormItem>
-          <FormItem hasFeedback validateStatus={this.getFieldFeedback('email')} >
-            {getFieldDecorator("email", {
+          <FormItem hasFeedback>
+            {getFieldDecorator('email', {
               rules: [
-                { required: true, message: "Please input your email!" },
                 {
+                  required: true,
                   pattern: EMAIL,
                   transform: trimValue,
-                  message: "Please input valid email address."
-                }
+                  message: 'Email must be valid email address.'
+                },
+                {
+                  transform: trimValue,
+                  validator: this.checkUserMailExistence,
+                },
               ],
             })(<Input prefix={<Icon type="mail" style={{ color: "rgba(0,0,0,.25)" }} />} type="email" placeholder="Mail" />)}
           </FormItem>
-          <FormItem hasFeedback validateStatus={this.getFieldFeedback('password')} >
-            {getFieldDecorator("password", {
+          <FormItem hasFeedback>
+            {getFieldDecorator('password', {
               rules: [
-                { required: true, message: "Please input your password!" },
+                { required: true, message: 'Please input your password!' },
                 {
                   min: 6,
                   max: 16,
                   pattern: PASSWORD,
-                  message: "Password must contain at least 1 uppercase letter, 1 lowercase letter and 1 number."
-                }
+                  message: 'Password must be between 6 and 16 characters and must contain at least one lowercase letter, one uppercase letter and one numeric digit.'
+                },
+                { validator: this.validatePasswordMatch },
               ],
             })(<Input prefix={<Icon type="lock" style={{ color: "rgba(0,0,0,.25)" }} />} type="password" placeholder="Password" />)}
           </FormItem>
-          <FormItem hasFeedback validateStatus={this.getFieldFeedback('confirmPassword')} >
-            {getFieldDecorator("confirmPassword", {
+          <FormItem hasFeedback>
+            {getFieldDecorator('confirm', {
               rules: [
-                { required: true, message: "Please repeat your password!" },
-                { validator: this.validatePasswordsMatch },
+                { required: true, message: 'Please repeat your password!' },
+                { validator: this.validateConfirmMatch },
               ],
-            })(<Input prefix={<Icon type="lock" style={{ color: "rgba(0,0,0,.25)" }} />} disabled={passwordError} type="password" placeholder="Confirm Password" />)}
+            })(<Input prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />} type="password" placeholder="Confirm Password" />)}
           </FormItem>
           <FormItem>
             <Button type="primary" htmlType="submit" className="register-form-button">
@@ -129,8 +154,8 @@ class SignUp extends React.Component {
             </Button>
           </FormItem>
         </Form>
-      </Row>;
-  };
+      </Row>
+  }
 }
 
-export default Form.create()(SignUp);
+export default Form.create()(SignUp)

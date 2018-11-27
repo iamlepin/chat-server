@@ -57,15 +57,21 @@ const loginUser = (body) => {
   return post(link, body)
 }
 
-const getUserName = (userName) => {
-  const link = `/users/check/${userName}`
+const checkUserName = (userName) => {
+  const link = `/users/check/name/${userName}`
+  return get(link)
+}
+
+const checkUserEmail = (email) => {
+  const link = `/users/check/email/${email}`
   return get(link)
 }
 
 const nodeApi = {
   addUser,
   loginUser,
-  getUserName,
+  checkUserName,
+  checkUserEmail,
 }
 
 export default nodeApi
