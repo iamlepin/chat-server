@@ -27,7 +27,7 @@ class SignUp extends React.Component {
           .then(data => data && message.success(data.message))
           .catch(err => {
             console.log(err)
-            message.error(err)
+            message.error(err.message)
           })
       }
     })

@@ -103,13 +103,25 @@ router.post('/login', (req, res) => {
 
 router.post('/signup', (req, res) => {
   console.log('TCL: req.body', req.body);
-  User.findOne({ email: req.body.email })
+  const name = User.findOne({ name: req.body.name })
+    .select('name')
     .exec()
-    .then(user => {
-      if (user) {
-        res.status(409).json({
+
+  const email = User.findOne({ email: req.body.email })
+    .select('email')
+    .exec()
+
+  Promise.all([ name, email ])
+    .then(result => {
+      const isFound = result.some((item) => item !== null)
+      if (isFound) {
+        const data = {}
+        if (result[0]) { data.name = result[0].name}
+        if (result[1]) { data.email = result[1].email}
+        res.status(200).json({
           error: true,
-          message: "Email exists."
+          message: 'That registration data already taken.',
+          data,
         });
       } else {
         bcrypt.hash(req.body.password, 10)
