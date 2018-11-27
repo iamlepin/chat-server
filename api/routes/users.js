@@ -5,13 +5,13 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/users');
 
-router.get('/', (req, res, next) => {
+router.get('/', (req, res) => {
   User.find()
     .select('-__v')
     .exec()
     .then(docs => {
       res.status(200).json({
-        message: 'Users loaded successfuly',
+        message: 'Users loaded successfully',
         users: docs,
       });
     })
@@ -20,19 +20,18 @@ router.get('/', (req, res, next) => {
     });
 });
 
-router.get('/check/:name', (req, res, next) => {
+router.get('/check/name/:name', (req, res) => {
   User.findOne({ name: req.params.name })
     .exec()
     .then(user => {
       if (user) {
         res.status(200).json({
+          error: true,
           message: 'Username exists.',
-          isExist: true,
         })
       } else {
         res.status(200).json({
           message: 'Username doesn\'t exist',
-          isExist: false,
         })
       }
     })
@@ -41,7 +40,27 @@ router.get('/check/:name', (req, res, next) => {
     });
 })
 
-router.post('/login', (req, res, next) => {
+router.get('/check/email/:email', (req, res) => {
+  User.findOne({ email: req.params.email })
+    .exec()
+    .then(user => {
+      if (user) {
+        res.status(200).json({
+          error: true,
+          message: 'Email already registered.',
+        })
+      } else {
+        res.status(200).json({
+          message: 'Email available for registration.',
+        })
+      }
+    })
+    .catch(err => {
+      res.status(500).json(err);
+    });
+})
+
+router.post('/login', (req, res) => {
   User.findOne({ name: req.body.name })
     .exec()
     .then(user => {
@@ -82,13 +101,14 @@ router.post('/login', (req, res, next) => {
     });
 });
 
-router.post('/signup', (req, res, next) => {
+router.post('/signup', (req, res) => {
   console.log('TCL: req.body', req.body);
   User.findOne({ email: req.body.email })
     .exec()
     .then(user => {
       if (user) {
         res.status(409).json({
+          error: true,
           message: "Email exists."
         });
       } else {
@@ -102,14 +122,14 @@ router.post('/signup', (req, res, next) => {
             })
             return newUser.save();
           })
-          .then(doc => {
-            console.log('TCL: doc._id', doc._id);
+          .then(user => {
+            console.log('TCL: doc._id', user._id);
             res.status(201).json({
-              message: 'User created successfuly',
+              message: 'User created successfully',
               createdUser: {
-                _id: doc._id,
-                name: doc.name,
-                email: doc.email,
+                _id: user._id,
+                name: user.name,
+                email: user.email,
               },
             });
           })
@@ -123,7 +143,7 @@ router.post('/signup', (req, res, next) => {
     })
 });
 
-router.get('/:userId', (req, res, next) => {
+router.get('/:userId', (req, res) => {
   User.findById(req.params.userId)
     .select('_id email')
     .exec()
@@ -147,15 +167,15 @@ router.get('/:userId', (req, res, next) => {
     });
 });
 
-router.delete('/:userId', (req, res, next) => {
+router.delete('/:userId', (req, res) => {
   User.findByIdAndRemove(req.params.userId)
     .select('_id email')
     .exec()
-    .then(doc => {
-      if (doc) {
+    .then(user => {
+      if (user) {
         res.status(200).json({
           message: 'User data deleted.',
-          deletedUser: doc
+          deletedUser: user
         })
       } else {
         res.status(404).json({
