@@ -3,22 +3,11 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const User = require('../models/users');
+const User = require('../../models/users');
+const handlers = require('./handlers')
+console.log('handlers: ', handlers);
 
-router.get('/', (req, res) => {
-  User.find()
-    .select('-__v')
-    .exec()
-    .then(docs => {
-      res.status(200).json({
-        message: 'Users loaded successfully',
-        users: docs,
-      });
-    })
-    .catch(err => {
-      res.status(500).json(err);
-    });
-});
+router.get('/', handlers.getUsers);
 
 router.get('/check/name/:name', (req, res) => {
   User.findOne({ name: req.params.name })
