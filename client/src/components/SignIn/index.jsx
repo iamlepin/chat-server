@@ -33,7 +33,7 @@ class SignIn extends React.Component {
   render() {
     const { getFieldDecorator } = this.props.form;
     return (
-      <Row style={{ display: "flex", justifyContent: "center" }}>
+      <Row type="flex" justify="center">
         <Form onSubmit={this.handleSubmit} className="login-form">
           <FormItem>
             {getFieldDecorator("userName", {

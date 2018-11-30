@@ -90,7 +90,7 @@ class SignUp extends React.Component {
   render() {
     const { getFieldDecorator } = this.props.form
 
-    return <Row style={{ display: 'flex', justifyContent: 'center' }}>
+    return <Row type="flex" justify="center">
         <Form onSubmit={this.handleSubmit} className="register-form">
           <FormItem hasFeedback >
             {getFieldDecorator('userName', {
