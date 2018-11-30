@@ -3,7 +3,7 @@ const User = require('../../models/users')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
-const getUsers = (req, res) => {
+const getAll = (req, res) => {
   User.find()
     .select('-__v')
     .exec()
@@ -18,7 +18,7 @@ const getUsers = (req, res) => {
     })
 }
 
-const getUser = (req, res) => {
+const getOne = (req, res) => {
   User.findById(req.params.userId)
     .select('_id email')
     .exec()
@@ -42,7 +42,7 @@ const getUser = (req, res) => {
     })
 }
 
-const getUserName = (req, res) => {
+const getName = (req, res) => {
   User.findOne({ name: req.params.name })
     .exec()
     .then(user => {
@@ -62,7 +62,7 @@ const getUserName = (req, res) => {
     })
 }
 
-const getUserEmail = (req, res) => {
+const getEmail = (req, res) => {
   User.findOne({ email: req.params.email })
     .exec()
     .then(user => {
@@ -82,7 +82,7 @@ const getUserEmail = (req, res) => {
     })
 }
 
-const registerUser = (req, res) => {
+const signUp = (req, res) => {
   console.log('TCL: req.body', req.body)
   const name = User.findOne({ name: req.body.name })
     .select('name')
@@ -136,7 +136,7 @@ const registerUser = (req, res) => {
     })
 }
 
-const loginUser = (req, res) => {
+const signIn = (req, res) => {
   User.findOne({ name: req.body.name })
     .exec()
     .then(user => {
@@ -177,7 +177,7 @@ const loginUser = (req, res) => {
     })
 }
 
-const deleteUser = (req, res) => {
+const remove = (req, res) => {
   User.findByIdAndRemove(req.params.userId)
     .select('_id email')
     .exec()
@@ -202,11 +202,11 @@ const deleteUser = (req, res) => {
 }
 
 module.exports = {
-  getUsers,
-  getUser,
-  getUserName,
-  getUserEmail,
-  registerUser,
-  loginUser,
-  deleteUser,
+  getAll,
+  getOne,
+  getName,
+  getEmail,
+  signUp,
+  signIn,
+  remove,
 }

@@ -39,7 +39,6 @@ app.get('/', function(req, res) {
 app.use('/products', productRoutes); //  checkAuth,
 app.use('/orders', orderRoutes);
 app.use('/users', userRoutes);
-debugger;
 app.use((req, res, next) => {
   const error = new Error('Not found');
   error.status = 404;
