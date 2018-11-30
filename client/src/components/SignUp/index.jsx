@@ -1,6 +1,7 @@
 import React from "react"
 import { Row, Form, Icon, Input, Button, message } from "antd"
 import { EMAIL, USER_NAME, PASSWORD } from '../../constants/regexp'
+import { REDIRECT, HOME } from '../../constants/routes'
 import { trimValue } from '../../utils'
 import nodeApi from "../../api"
 import "./SignUp.css"
@@ -8,9 +9,11 @@ import "./SignUp.css"
 const FormItem = Form.Item
 
 class SignUp extends React.Component {
-  handleSubmit = e => {
+  handleSubmit = (e) => {
+    const { form, history } = this.props
     e.preventDefault()
-    this.props.form.validateFields((err, values) => {
+
+    form.validateFields((err, values) => {
       if (err) {
         console.error('Error while validating data!')
         message.error('Please fill all fields correctly.')
@@ -24,7 +27,17 @@ class SignUp extends React.Component {
         }
         console.log("Received body of form: ", values)
         nodeApi.addUser(body)
-          .then(data => data && message.success(data.message))
+          .then(data => {
+            data && message.success(data.message)
+            history.push(
+              REDIRECT,
+              {
+                message: 'Thank you for registering!',
+                delay: 4,
+                link: HOME,
+              }
+            )
+          })
           .catch(err => {
             console.log(err)
             message.error(err.message)

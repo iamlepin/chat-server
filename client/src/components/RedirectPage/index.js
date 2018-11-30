@@ -1,10 +1,9 @@
 import React from 'react'
-import { Row } from 'antd'
+import StateFullRedirect from './StateFullRedirect'
 
-const RedirectPage = () => (
-    <Row type="flex" justify="center">
-
-    </Row>
-)
+const RedirectPage = ({ location, ...rest }) => {
+  const newProps = { ...rest, ...location.state }
+  return <StateFullRedirect {...newProps} />
+}
 
 export default RedirectPage
