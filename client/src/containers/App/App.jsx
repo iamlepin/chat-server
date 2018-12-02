@@ -26,7 +26,7 @@ const App = (props) => (
         <Route exact path={HOME} component={Home} />
         <Route path={SIGN_IN} component={SignIn} />
         <Route path={SIGN_UP} component={SignUp} />
-        <Route path={REDIRECT} render={(props) => <RedirectPage message="fajsd falsd f;alsdjf asljdkf asldkjf ;alskd" {...props}/>} />
+        <Route path={REDIRECT} render={(props) => <RedirectPage {...props}/>} />
         <Route render={() => <h2>404 not found!!! sorry</h2>} />
       </Switch>
     </Content>
