@@ -22,8 +22,12 @@
         "indent": ["warn", 2],
         "arrow-parens": 0,
         "react/sort-comp": 0,
-        "import/prefer-default-export": 0
+        "import/prefer-default-export": 0,
+        "react/forbid-prop-types": ""
     },
     "parser": "babel-eslint",
-    "extends": "airbnb"
+    "extends": [
+        "eslint:recommended", 
+        "plugin:react/recommended"
+    ]
 }
