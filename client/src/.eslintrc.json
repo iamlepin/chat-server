@@ -12,6 +12,7 @@
         "sourceType": "module"
     },
     "rules": {
+        "no-console": "warn",
         "no-const-assign": "warn",
         "no-this-before-super": "warn",
         "no-undef": "warn",
@@ -27,7 +28,7 @@
     },
     "parser": "babel-eslint",
     "extends": [
-        "eslint:recommended", 
+        "eslint:recommended",
         "plugin:react/recommended"
     ]
 }

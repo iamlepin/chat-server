@@ -1,11 +1,12 @@
 /* eslint-disable no-console */
-import React from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types'
 import { Row, Form, Icon, Input, Button, message } from 'antd';
 import { EMAIL, USER_NAME, PASSWORD } from '../../constants/regexp';
 import { REDIRECT, HOME } from '../../constants/routes';
 import { trimValue } from '../../utils';
 import nodeApi from '../../api';
+import LoginWithFB from '../LoginWithFB'
 import './SignUp.css';
 
 const FormItem = Form.Item;
@@ -14,6 +15,10 @@ class SignUp extends React.Component {
   static propTypes = {
     history: PropTypes.object.isRequired,
     form: PropTypes.object.isRequired,
+  }
+
+  componentDidMount = () => {
+
   }
 
   handleSubmit = (e) => {
@@ -111,71 +116,76 @@ class SignUp extends React.Component {
     const { getFieldDecorator } = this.props.form;
 
     return (
-      <Row type="flex" justify="center">
-        <Form onSubmit={this.handleSubmit} className="register-form">
-          <FormItem hasFeedback >
-            {getFieldDecorator('userName', {
-              rules: [
-                {
-                  required: true,
-                  min: 4,
-                  max: 16,
-                  pattern: USER_NAME,
-                  transform: trimValue,
-                  message: 'User name must be between 4 and 16 characters and contains letters, numbers and symbols like - _ .'
-                },
-                {
-                  transform: trimValue,
-                  validator: this.checkUserNameExistence,
-                },
-              ],
-            })(<Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Username" />)}
-          </FormItem>
-          <FormItem hasFeedback>
-            {getFieldDecorator('email', {
-              rules: [
-                {
-                  required: true,
-                  pattern: EMAIL,
-                  transform: trimValue,
-                  message: 'Email must be valid email address.'
-                },
-                {
-                  transform: trimValue,
-                  validator: this.checkUserMailExistence,
-                },
-              ],
-            })(<Input prefix={<Icon type="mail" style={{ color: "rgba(0,0,0,.25)" }} />} type="email" placeholder="Mail" />)}
-          </FormItem>
-          <FormItem hasFeedback>
-            {getFieldDecorator('password', {
-              rules: [
-                { required: true, message: 'Please input your password!' },
-                {
-                  min: 6,
-                  max: 16,
-                  pattern: PASSWORD,
-                  message: 'Password must be between 6 and 16 characters and must contain at least one lowercase letter, one uppercase letter and one numeric digit.'
-                },
-                { validator: this.validatePasswordMatch },
-              ],
-            })(<Input prefix={<Icon type="lock" style={{ color: "rgba(0,0,0,.25)" }} />} type="password" placeholder="Password" />)}
-          </FormItem>
-          <FormItem hasFeedback>
-            {getFieldDecorator('confirm', {
-              rules: [
-                { required: true, message: 'Please repeat your password!' },
-                { validator: this.validateConfirmMatch },
-              ],
-            })(<Input prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />} type="password" placeholder="Confirm Password" />)}
-          </FormItem>
-          <FormItem>
-            <Button type="primary" htmlType="submit" className="register-form-button">
-              Sign Up
-            </Button>
-          </FormItem>
-        </Form>
-      </Row>
+      <Fragment>
+        <Row type="flex" justify="center">
+          <Form onSubmit={this.handleSubmit} className="register-form">
+            <FormItem hasFeedback >
+              {getFieldDecorator('userName', {
+                rules: [
+                  {
+                    required: true,
+                    min: 4,
+                    max: 16,
+                    pattern: USER_NAME,
+                    transform: trimValue,
+                    message: 'User name must be between 4 and 16 characters and contains letters, numbers and symbols like - _ .'
+                  },
+                  {
+                    transform: trimValue,
+                    validator: this.checkUserNameExistence,
+                  },
+                ],
+              })(<Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Username" />)}
+            </FormItem>
+            <FormItem hasFeedback>
+              {getFieldDecorator('email', {
+                rules: [
+                  {
+                    required: true,
+                    pattern: EMAIL,
+                    transform: trimValue,
+                    message: 'Email must be valid email address.'
+                  },
+                  {
+                    transform: trimValue,
+                    validator: this.checkUserMailExistence,
+                  },
+                ],
+              })(<Input prefix={<Icon type="mail" style={{ color: "rgba(0,0,0,.25)" }} />} type="email" placeholder="Mail" />)}
+            </FormItem>
+            <FormItem hasFeedback>
+              {getFieldDecorator('password', {
+                rules: [
+                  { required: true, message: 'Please input your password!' },
+                  {
+                    min: 6,
+                    max: 16,
+                    pattern: PASSWORD,
+                    message: 'Password must be between 6 and 16 characters and must contain at least one lowercase letter, one uppercase letter and one numeric digit.'
+                  },
+                  { validator: this.validatePasswordMatch },
+                ],
+              })(<Input prefix={<Icon type="lock" style={{ color: "rgba(0,0,0,.25)" }} />} type="password" placeholder="Password" />)}
+            </FormItem>
+            <FormItem hasFeedback>
+              {getFieldDecorator('confirm', {
+                rules: [
+                  { required: true, message: 'Please repeat your password!' },
+                  { validator: this.validateConfirmMatch },
+                ],
+              })(<Input prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />} type="password" placeholder="Confirm Password" />)}
+            </FormItem>
+            <FormItem>
+              <Button type="primary" htmlType="submit" className="register-form-button">
+                Sign Up
+              </Button>
+            </FormItem>
+          </Form>
+        </Row>
+        <Row>
+          <LoginWithFB />
+        </Row>
+      </Fragment>
     );
   }
 }

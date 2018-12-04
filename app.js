@@ -6,6 +6,7 @@ const config = require('./config')
 // const bodyParser = require('body-parser'); // express now has built-in parser
 const mongoose = require('mongoose');
 mongoose.connect(config.mongo.URL, { useNewUrlParser: true });
+mongoose.set('useCreateIndex', true);
 const checkAuth = require('./api/middlewares/auth');
 
 const productRoutes = require('./api/routes/products');
