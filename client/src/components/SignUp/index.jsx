@@ -6,7 +6,6 @@ import { EMAIL, USER_NAME, PASSWORD } from '../../constants/regexp';
 import { REDIRECT, HOME } from '../../constants/routes';
 import { trimValue } from '../../utils';
 import nodeApi from '../../api';
-import LoginWithFB from '../LoginWithFB'
 import './SignUp.css';
 
 const FormItem = Form.Item;
@@ -181,9 +180,6 @@ class SignUp extends React.Component {
               </Button>
             </FormItem>
           </Form>
-        </Row>
-        <Row>
-          <LoginWithFB />
         </Row>
       </Fragment>
     );

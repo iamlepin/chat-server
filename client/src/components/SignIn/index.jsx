@@ -1,9 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Row, Form, Icon, Input, Button, Checkbox, message } from "antd";
+import { Row, Form, Icon, Input, Button, Checkbox, message, Divider } from "antd";
 import nodeApi from '../../api'
 import { trimValue } from "../../utils";
 import { USER_NAME } from "../../constants/regexp";
+import LoginWithFB from '../LoginWithFB'
 import "./SignIn.css";
 
 const FormItem = Form.Item;
@@ -35,6 +36,7 @@ class SignIn extends React.Component {
     return (
       <Row type="flex" justify="center">
         <Form onSubmit={this.handleSubmit} className="login-form">
+          <Divider orientation="left">Login with your account</Divider>
           <FormItem>
             {getFieldDecorator("userName", {
               rules: [
@@ -90,6 +92,10 @@ class SignIn extends React.Component {
             >
               Log in
             </Button>
+            <Divider orientation="left">Login with FaceBook</Divider>
+            <Row>
+              <LoginWithFB />
+            </Row>
             Or <Link to="/signup">register now!</Link>
           </FormItem>
         </Form>
