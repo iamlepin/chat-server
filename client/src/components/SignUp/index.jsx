@@ -1,14 +1,14 @@
 /* eslint-disable no-console */
-import React, { Fragment } from 'react';
+import React, { Fragment } from 'react'
 import PropTypes from 'prop-types'
-import { Row, Form, Icon, Input, Button, message } from 'antd';
-import { EMAIL, USER_NAME, PASSWORD } from '../../constants/regexp';
-import { REDIRECT, HOME } from '../../constants/routes';
-import { trimValue } from '../../utils';
-import nodeApi from '../../api';
-import './SignUp.css';
+import { Row, Form, Icon, Input, Button, message } from 'antd'
+import { EMAIL, USER_NAME, PASSWORD } from '../../constants/regexp'
+import { REDIRECT, HOME } from '../../constants/routes'
+import { trimValue } from '../../utils'
+import nodeApi from '../../api'
+import './SignUp.css'
 
-const FormItem = Form.Item;
+const FormItem = Form.Item
 
 class SignUp extends React.Component {
   static propTypes = {
@@ -16,30 +16,26 @@ class SignUp extends React.Component {
     form: PropTypes.object.isRequired,
   }
 
-  componentDidMount = () => {
-
-  }
-
   handleSubmit = (e) => {
-    const { form, history } = this.props;
-    e.preventDefault();
+    const { form, history } = this.props
+    e.preventDefault()
 
     form.validateFields((err, values) => {
       if (err) {
-        console.error('Error while validating data!');
-        message.error('Please fill all fields correctly.');
+        console.error('Error while validating data!')
+        message.error('Please fill all fields correctly.')
       } else {
-        console.log('TCL: handleSubmit');
-        const { userName: name, email, password } = values;
+        console.log('TCL: handleSubmit')
+        const { userName: name, email, password } = values
         const body = {
           name,
           email,
           password,
-        };
-        console.log('Received body of form: ', values);
+        }
+        console.log('Received body of form: ', values)
         nodeApi.addUser(body)
           .then(data => {
-            data && message.success(data.message);
+            data && message.success(data.message)
             history.push(
               REDIRECT,
               {
@@ -47,72 +43,72 @@ class SignUp extends React.Component {
                 delay: 4,
                 link: HOME,
               },
-            );
+            )
           })
           .catch(err => {
-            console.log(err);
-            message.error(err.message);
-          });
+            console.log(err)
+            message.error(err.message)
+          })
       }
-    });
+    })
   }
 
   checkUserNameExistence = (rule, value, callback) => {
-    if (!trimValue(value)) { return callback('Please enter your username!'); }
+    if (!trimValue(value)) { return callback('Please enter your username!') }
     nodeApi.checkUserName(value)
       .then(({ error }) => {
         if (error) {
-          console.log('Username exists.');
-          message.error('Username already registered.');
-          callback('Username already registered.');
+          console.log('Username exists.')
+          message.error('Username already registered.')
+          callback('Username already registered.')
         } else {
-          console.log('Username is available for registration.');
-          callback();
+          console.log('Username is available for registration.')
+          callback()
         }
       })
-      .catch(err => console.log(err));
+      .catch(err => console.log(err))
   }
 
   checkUserMailExistence = (rule, value, callback) => {
-    if (!trimValue(value)) { return callback('Please enter your email!'); } // fix
+    if (!trimValue(value)) { return callback('Please enter your email!') } // fix
     nodeApi.checkUserEmail(value)
       .then(({ error }) => {
         if (error) {
-          console.log('Email exists.');
-          message.error('Email already registered.');
-          callback('Email already registered.');
+          console.log('Email exists.')
+          message.error('Email already registered.')
+          callback('Email already registered.')
         } else {
-          console.log('Email is available for registration.');
-          callback();
+          console.log('Email is available for registration.')
+          callback()
         }
       })
-      .catch(err => console.log(err));
+      .catch(err => console.log(err))
   }
 
   validatePasswordMatch = (rule, value, callback) => {
-    const { getFieldValue, validateFields } = this.props.form;
-    const confirm = trimValue(getFieldValue('confirm'));
-    const isConfirmEmpty = !confirm;
-    if (isConfirmEmpty) { return callback() ;}
-    validateFields(['confirm'], { force: true });
-    callback();
+    const { getFieldValue, validateFields } = this.props.form
+    const confirm = trimValue(getFieldValue('confirm'))
+    const isConfirmEmpty = !confirm
+    if (isConfirmEmpty) { return callback() }
+    validateFields(['confirm'], { force: true })
+    callback()
   }
 
   validateConfirmMatch = (rule, value, callback) => {
-    const { getFieldValue } = this.props.form;
-    const password = trimValue(getFieldValue('password'));
-    const confirm = trimValue(getFieldValue('confirm'));
-    const isPassEmpty = !password;
-    if (isPassEmpty) { return callback(); }
-    const isNotEqual = password !== confirm;
+    const { getFieldValue } = this.props.form
+    const password = trimValue(getFieldValue('password'))
+    const confirm = trimValue(getFieldValue('confirm'))
+    const isPassEmpty = !password
+    if (isPassEmpty) { return callback() }
+    const isNotEqual = password !== confirm
     if (isNotEqual) {
-      callback('Confirm doesn\'t match password!');
+      callback('Confirm doesn\'t match password!')
     }
-    callback();
+    callback()
   }
 
   render() {
-    const { getFieldDecorator } = this.props.form;
+    const { getFieldDecorator } = this.props.form
 
     return (
       <Fragment>
@@ -182,8 +178,8 @@ class SignUp extends React.Component {
           </Form>
         </Row>
       </Fragment>
-    );
+    )
   }
 }
 
-export default Form.create()(SignUp);
+export default Form.create()(SignUp)

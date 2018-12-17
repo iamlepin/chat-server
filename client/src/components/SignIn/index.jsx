@@ -1,22 +1,22 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { Row, Form, Icon, Input, Button, Checkbox, message, Divider } from "antd";
+import React from 'react'
+import { Link } from 'react-router-dom'
+import { Row, Form, Icon, Input, Button, Checkbox, message, Divider } from 'antd'
 import nodeApi from '../../api'
-import { trimValue } from "../../utils";
-import { USER_NAME } from "../../constants/regexp";
-import LoginWithFB from '../LoginWithFB'
-import "./SignIn.css";
+import { trimValue } from '../../utils'
+import { USER_NAME } from '../../constants/regexp'
+// import LoginWithFB from '../LoginWithFB'
+import './SignIn.css'
 
-const FormItem = Form.Item;
+const FormItem = Form.Item
 
 class SignIn extends React.Component {
   handleSubmit = e => {
-    e.preventDefault();
+    e.preventDefault()
     this.props.form.validateFields((err, values) => {
       if (err) {
-        console.error();
+        console.error()
       } else {
-        console.log("Received values of form: ", values);
+        console.log('Received values of form: ', values)
         const { userName: name, password, remember } = values
         const body = {
           name,
@@ -24,63 +24,59 @@ class SignIn extends React.Component {
           remember,
         }
         nodeApi.loginUser(body)
-          .then(({message}) => {
+          .then(({ message }) => {
             message.success(message)
           })
       }
-    });
-  };
+    })
+  }
 
   render() {
-    const { getFieldDecorator } = this.props.form;
+    const { getFieldDecorator } = this.props.form
     return (
       <Row type="flex" justify="center">
         <Form onSubmit={this.handleSubmit} className="login-form">
           <Divider orientation="left">Login with your account</Divider>
           <FormItem>
-            {getFieldDecorator("userName", {
+            {getFieldDecorator('userName', {
               rules: [
                 {
                   required: true,
-                  message: "Please input your username!",
+                  message: 'Please input your username!',
                 },
                 {
                   min: 4,
                   max: 16,
                   pattern: USER_NAME,
                   transform: trimValue,
-                  message: "User name must be between 4 and 16 characters and contains letters, numbers and symbols like - _ ."
-                }
+                  message: 'User name must be between 4 and 16 characters and contains letters, numbers and symbols like - _ .',
+                },
               ],
               validateTrigger: 'onBlur',
-            })(
-              <Input
-                prefix={
-                  <Icon type="user" style={{ color: "rgba(0,0,0,.25)" }} />
-                }
-                placeholder="Username"
-              />
-            )}
+            })(<Input
+              prefix={
+                <Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />
+              }
+              placeholder="Username"
+            />)}
           </FormItem>
           <FormItem>
-            {getFieldDecorator("password", {
+            {getFieldDecorator('password', {
               rules: [
-                { required: true, message: "Please input your Password!" }
-              ]
-            })(
-              <Input
-                prefix={
-                  <Icon type="lock" style={{ color: "rgba(0,0,0,.25)" }} />
-                }
-                type="password"
-                placeholder="Password"
-              />
-            )}
+                { required: true, message: 'Please input your Password!' },
+              ],
+            })(<Input
+              prefix={
+                <Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />
+              }
+              type="password"
+              placeholder="Password"
+            />)}
           </FormItem>
           <FormItem>
-            {getFieldDecorator("remember", {
-              valuePropName: "checked",
-              initialValue: true
+            {getFieldDecorator('remember', {
+              valuePropName: 'checked',
+              initialValue: true,
             })(<Checkbox>Remember me</Checkbox>)}
             <a className="login-form-forgot" href="">
               Forgot password
@@ -93,15 +89,15 @@ class SignIn extends React.Component {
               Log in
             </Button>
             <Divider orientation="left">Login with FaceBook</Divider>
-            <Row>
+            {/* <Row>
               <LoginWithFB />
-            </Row>
+            </Row> */}
             Or <Link to="/signup">register now!</Link>
           </FormItem>
         </Form>
       </Row>
-    );
+    )
   }
 }
 
-export default Form.create()(SignIn);
+export default Form.create()(SignIn)

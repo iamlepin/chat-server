@@ -24,11 +24,18 @@
         "arrow-parens": 0,
         "react/sort-comp": 0,
         "import/prefer-default-export": 0,
-        "react/forbid-prop-types": ""
+        "react/forbid-prop-types": "",
+        "react/jsx-filename-extension": 0,
+        "no-shadow": 0,
+        "no-extra-semi": 0,
+        "func-names": 0,
+        "semi": 0,
+        "no-spaced-func": [ 0, "never" ]
     },
     "parser": "babel-eslint",
     "extends": [
         "eslint:recommended",
-        "plugin:react/recommended"
+        "plugin:react/recommended",
+        "airbnb"
     ]
 }
