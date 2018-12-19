@@ -142,6 +142,7 @@ const signIn = (req, res) => {
     .then(user => {
       if (!user) {
         res.status(401).json({
+          error: true,
           message: `Auth failed. User ${req.body.name} isn't registered.`
         })
       } else {
@@ -149,20 +150,19 @@ const signIn = (req, res) => {
           .then(result => {
             if (result) {
               const token = jwt.sign({
-                email: user.email,
-                _id: user.id,
-              },
+                  email: user.email,
+                  _id: user.id,
+                },
                 process.env.SECRET_PHRASE,
-                {
-                  expiresIn: '1H',
-                }
+                { expiresIn: '1H' }
               )
               res.status(201).json({
                 message: `User ${user.name} is logged in.`,
-                token: token,
+                token,
               })
             } else {
               res.status(401).json({
+                error: true,
                 message: 'Auth failed. Passwords doesn\'t match'
               })
             }

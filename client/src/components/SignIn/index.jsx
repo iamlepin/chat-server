@@ -1,10 +1,12 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import { Link } from 'react-router-dom'
+import { connect } from 'react-redux'
+import { compose } from 'redux'
 import { Row, Form, Icon, Input, Button, Checkbox, message, Divider } from 'antd'
 import nodeApi from '../../api'
 import { trimValue } from '../../utils'
 import { USER_NAME } from '../../constants/regexp'
-// import LoginWithFB from '../LoginWithFB'
+import FaceBookButton from '../FaceBookButton'
 import './SignIn.css'
 
 const FormItem = Form.Item
@@ -24,8 +26,8 @@ class SignIn extends React.Component {
           remember,
         }
         nodeApi.loginUser(body)
-          .then(({ message }) => {
-            message.success(message)
+          .then((response) => {
+            message.success(response.message)
           })
       }
     })
@@ -33,6 +35,7 @@ class SignIn extends React.Component {
 
   render() {
     const { getFieldDecorator } = this.props.form
+    const { userInfo } = this.props
     return (
       <Row type="flex" justify="center">
         <Form onSubmit={this.handleSubmit} className="login-form">
@@ -88,10 +91,14 @@ class SignIn extends React.Component {
             >
               Log in
             </Button>
-            <Divider orientation="left">Login with FaceBook</Divider>
-            {/* <Row>
-              <LoginWithFB />
-            </Row> */}
+            {!userInfo.id && (
+              <Fragment>
+                <Divider orientation="left">Login with FaceBook</Divider>
+                <Row>
+                  <FaceBookButton />
+                </Row>
+              </Fragment>
+            )}
             Or <Link to="/signup">register now!</Link>
           </FormItem>
         </Form>
@@ -100,4 +107,11 @@ class SignIn extends React.Component {
   }
 }
 
-export default Form.create()(SignIn)
+const MSTP = (state) => ({
+  userInfo: state.userInfo,
+})
+
+export default compose(
+  connect(MSTP, null),
+  Form.create(),
+)(SignIn)

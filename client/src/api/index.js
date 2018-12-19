@@ -53,7 +53,7 @@ const addUser = (body) => {
 }
 
 const loginUser = (body) => {
-  const link = '/users/login'
+  const link = '/users/logiвn'
   return post(link, body)
 }
 

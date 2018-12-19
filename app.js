@@ -5,7 +5,7 @@ const config = require('./config')
 // const morgan = require('morgan');// dont need after all, because we use mongoose
 // const bodyParser = require('body-parser'); // express now has built-in parser
 const mongoose = require('mongoose');
-mongoose.connect(config.mongo.URL, { useNewUrlParser: true });
+mongoose.connect(config.mongo.URL, { useNewUrlParser: true }).catch((err) => console.log(err))
 mongoose.set('useCreateIndex', true);
 const checkAuth = require('./api/middlewares/auth');
 
@@ -41,7 +41,7 @@ app.use('/products', productRoutes); //  checkAuth,
 app.use('/orders', orderRoutes);
 app.use('/users', userRoutes);
 app.use((req, res, next) => {
-  const error = new Error('Not found');
+  const error = new Error('Resourse not found.');
   error.status = 404;
   next(error);
 });
@@ -49,9 +49,8 @@ app.use((req, res, next) => {
 app.use((error, req, res, next) => {
   res.status(error.status || 500);
   res.json({
-    error: {
-      message: error.message
-    }
+    error: true,
+    message: error.message,
   });
 });
 
