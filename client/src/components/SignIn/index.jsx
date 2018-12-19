@@ -1,4 +1,5 @@
 import React, { Fragment } from 'react'
+import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { compose } from 'redux'
@@ -7,11 +8,18 @@ import nodeApi from '../../api'
 import { trimValue } from '../../utils'
 import { USER_NAME } from '../../constants/regexp'
 import FaceBookButton from '../FaceBookButton'
+import { setUserInfo } from '../../actions/userInfo'
 import './SignIn.css'
 
 const FormItem = Form.Item
 
 class SignIn extends React.Component {
+  static propTypes = {
+    userInfo: PropTypes.object.isRequired,
+    setUserInfo: PropTypes.func.isRequired,
+    form: PropTypes.object.isRequired,
+  }
+
   handleSubmit = e => {
     e.preventDefault()
     this.props.form.validateFields((err, values) => {
@@ -27,11 +35,12 @@ class SignIn extends React.Component {
         }
 
         nodeApi.loginUser(body)
-          .then(({ error, message }) => {
+          .then(({ error, message, data }) => {
             if (error) {
               message.error(message)
             } else {
               message.success(message)
+              this.props.setUserInfo(data)
             }
           })
       }
@@ -112,11 +121,15 @@ class SignIn extends React.Component {
   }
 }
 
-const MSTP = (state) => ({
+const mstp = (state) => ({
   userInfo: state.userInfo,
 })
 
+const mdtp = {
+  setUserInfo,
+}
+
 export default compose(
-  connect(MSTP, null),
+  connect(mstp, mdtp),
   Form.create(),
 )(SignIn)
