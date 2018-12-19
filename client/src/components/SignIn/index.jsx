@@ -25,9 +25,14 @@ class SignIn extends React.Component {
           password,
           remember,
         }
+
         nodeApi.loginUser(body)
-          .then((response) => {
-            message.success(response.message)
+          .then(({ error, message }) => {
+            if (error) {
+              message.error(message)
+            } else {
+              message.success(message)
+            }
           })
       }
     })

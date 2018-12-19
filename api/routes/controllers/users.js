@@ -158,7 +158,11 @@ const signIn = (req, res) => {
               )
               res.status(201).json({
                 message: `User ${user.name} is logged in.`,
-                token,
+                data: {
+                  token,
+                  id: user.id,
+                  name: user.name,
+                }
               })
             } else {
               res.status(401).json({
