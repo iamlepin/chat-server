@@ -3,15 +3,21 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux';
 import { Layout, Menu, Button } from 'antd'
+import { clearUserInfo } from '../../actions/userInfo'
 
-import { NavLink } from 'react-router-dom';
-import logo from '../../images/movie-logo.png';
+const Header = ({ userInfo, clearUserInfo }) => {
 
-const handleLogout = () => {
-  window.FB.logout((res) => console.log(res))
-}
-
-const Header = ({ navLinks, userInfo }) => {
+  const handleLogout = (type) => () => {
+		console.log("​handleLogout -> type", type)
+    switch (type) {
+      case 'face-book':
+        window.FB.logout((res) => console.log(res))
+        break;
+      default:
+        clearUserInfo()
+        break;
+    }
+  }
 
   return (
     <Layout.Header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -30,10 +36,10 @@ const Header = ({ navLinks, userInfo }) => {
       </Menu>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         {<span style={{ color: 'white', marginRight: '16px' }}>{userInfo.name}</span>}
-        {userInfo.id && <Button type="primary" onClick={handleLogout}>Logout</Button>}
         {!userInfo.id && <Link to='/signin'>
           <Button type="primary">Sign In</Button>
         </Link>}
+        {userInfo.id && <Button type="primary" onClick={handleLogout(userInfo.type)}>Logout</Button>}
       </div>
     </Layout.Header>
   )
@@ -49,5 +55,9 @@ const mapStateToProps = state => ({
   userInfo: state.userInfo,
 });
 
+const mapDispatchToProps = {
+  clearUserInfo,
+}
 
-export default connect(mapStateToProps, null)(Header);
+
+export default connect(mapStateToProps, mapDispatchToProps)(Header);

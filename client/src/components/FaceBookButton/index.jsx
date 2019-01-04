@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux';
 
 class FaceBookButton extends Component {
-  fbBtn = null
+  // fbBtn = null
 
   componentDidMount = () => {
     window.FB && window.FB.XFBML.parse()
@@ -15,7 +15,7 @@ class FaceBookButton extends Component {
   render () {
     return (
       <div
-        ref={(x) => { this.fbBtn = x }}
+        // ref={(x) => { this.fbBtn = x }}
         className="fb-login-button"
         data-width="300"
         data-max-rows="1"

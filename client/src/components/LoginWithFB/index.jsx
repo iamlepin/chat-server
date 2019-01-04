@@ -5,34 +5,39 @@ import { connect } from 'react-redux'
 import { setUserInfo, clearUserInfo } from '../../actions/userInfo'
 import { loadFacebookSDK } from './utils'
 
-const withFaceBookApi = (WrappedComponent) => {
+const withFaceBookApi = (WrappedComponent) => class extends Component {
+  static propTypes = {
+    setUserInfo: PropTypes.func.isRequired,
+    clearUserInfo: PropTypes.func.isRequired,
+  }
 
-  return class extends Component {
-    static propTypes = {
-      setUserInfo: PropTypes.func.isRequired,
-      clearUserInfo: PropTypes.func.isRequired,
+  componentDidMount = () => {
+    // if (this.props.userInfo) { return }
+    loadFacebookSDK(this.updateUserInfo)
+  }
+
+  updateUserInfo = (resp) => {
+    const { status, authResponse: { expiresIn, accessToken } } = resp
+    console.log('​extends -> updateUserInfo -> resp', resp)
+
+    if (status === 'connected') {
+      window.FB.api('/me?fields=name,picture', (response) => {
+        console.log('Good to see you, ', response);
+        const userData = {
+          ...response,
+          accessToken,
+          expiresIn,
+          type: 'face-book',
+        }
+        this.props.setUserInfo(userData)
+      })
+    } else {
+      this.props.clearUserInfo()
     }
+  }
 
-    componentDidMount = () => {
-      loadFacebookSDK(this.updateUserInfo)
-    }
-
-    updateUserInfo = ({ status }) => {
-      console.log("​LoginWithFB -> updateUserInfo -> updateUserInfo")
-
-      if (status === 'connected') {
-        window.FB.api('/me', (response) => {
-          console.log('Good to see you, ', response.name);
-          this.props.setUserInfo(response)
-        })
-      } else {
-        this.props.clearUserInfo()
-      }
-    }
-
-    render() {
-      return <WrappedComponent {...this.props} />
-    }
+  render() {
+    return <WrappedComponent {...this.props} />
   }
 }
 

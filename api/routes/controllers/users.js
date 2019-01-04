@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const User = require('../../models/users')
 const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
+const { signToken } = require('../../utils/helpers')
 
 const getAll = (req, res) => {
   User.find()
@@ -149,19 +149,17 @@ const signIn = (req, res) => {
         bcrypt.compare(req.body.password, user.password)
           .then(result => {
             if (result) {
-              const token = jwt.sign({
-                  email: user.email,
-                  _id: user.id,
-                },
-                process.env.SECRET_PHRASE,
-                { expiresIn: '1H' }
-              )
+              const accessToken = signToken({
+                id: user.id,
+                name: user.name,
+              })
               res.status(201).json({
                 message: `User ${user.name} is logged in.`,
                 data: {
-                  token,
                   id: user.id,
                   name: user.name,
+                  accessToken,
+                  expiresIn: 'mock', // TODO: reserch expires in
                 }
               })
             } else {
@@ -178,6 +176,36 @@ const signIn = (req, res) => {
     })
     .catch(err => {
       res.status(500).json(err)
+    })
+}
+
+const signInFb = (req, res) => {
+  User.findOne({ id_user_fb: req.body.id })
+    .exec()
+    .then(user => {
+      if(user) {
+        const accessToken = signToken({
+          id: user.id,
+          name: user.name,
+        })
+        res.status(200).json({
+          message: `User ${user.name} is logged in.`,
+          data: {
+            id: user.id,
+            name: user.name,
+            accessToken,
+            expiresIn: 'mock', // TODO: reserch expires in
+          },
+        })
+      } else {
+        // TODO: create user
+      }
+    })
+    .catch(err => {
+      console.log(err)
+      res.status(500).json({
+        error: err
+      })
     })
 }
 
@@ -212,5 +240,6 @@ module.exports = {
   getEmail,
   signUp,
   signIn,
+  signInFb,
   remove,
 }
