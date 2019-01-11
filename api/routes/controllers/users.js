@@ -146,32 +146,34 @@ const signIn = (req, res) => {
           message: `Auth failed. User ${req.body.name} isn't registered.`
         })
       } else {
-        bcrypt.compare(req.body.password, user.password)
-          .then(result => {
-            if (result) {
-              const accessToken = signToken({
-                id: user.id,
-                name: user.name,
-              })
-              res.status(201).json({
-                message: `User ${user.name} is logged in.`,
-                data: {
-                  id: user.id,
-                  name: user.name,
-                  accessToken,
-                  expiresIn: 'mock', // TODO: reserch expires in
-                }
-              })
-            } else {
-              res.status(401).json({
-                error: true,
-                message: 'Auth failed. Passwords doesn\'t match'
-              })
-            }
-          })
-          .catch(err => {
-            res.status(500).json(err)
-          })
+        const isPassCompareSucces = bcrypt.compare(req.body.password, user.password)
+        return { user, isPassCompareSucces }
+      }
+    })
+    .then(({ user, isPassCompareSucces }) => {
+      if (isPassCompareSucces) {
+        const userData = {
+          userId: user.id,
+          userName: user.name,
+          userRole: null,
+        }
+        const accessToken = signToken(userData, { expiresIn: 60 * 30 })
+        const refreshToken = signToken(userData, { expiresIn: '30 days' })
+
+        res.status(201).json({
+          message: `User ${user.name} is logged in.`,
+          data: {
+            ...userData,
+            accessToken,
+            expiresIn: Math.floor(Date.now() / 1000) + (60 * 30),
+            refreshToken,
+          }
+        })
+      } else {
+        res.status(401).json({
+          error: true,
+          message: 'Auth failed. Passwords doesn\'t match'
+        })
       }
     })
     .catch(err => {

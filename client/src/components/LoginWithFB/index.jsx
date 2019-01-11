@@ -22,12 +22,17 @@ const withFaceBookApi = (WrappedComponent) => class extends Component {
 
     if (status === 'connected') {
       window.FB.api('/me?fields=name,picture', (response) => {
+
+         // post { id, name } If id exists in db response with account id, token
         console.log('Good to see you, ', response);
         const userData = {
-          ...response,
-          accessToken,
-          expiresIn,
-          type: 'face-book',
+          // add account id and token
+          thirdPartyAuth: {
+            type: 'face-book',
+            ...response,
+            accessToken,
+            expiresIn,
+          },
         }
         this.props.setUserInfo(userData)
       })
