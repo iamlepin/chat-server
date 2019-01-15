@@ -160,15 +160,21 @@ const signIn = (req, res) => {
         const accessToken = signToken(userData, { expiresIn: 60 * 30 })
         const refreshToken = signToken(userData, { expiresIn: '30 days' })
 
-        res.status(201).json({
-          message: `User ${user.name} is logged in.`,
-          data: {
-            ...userData,
-            accessToken,
-            expiresIn: Math.floor(Date.now() / 1000) + (60 * 30),
-            refreshToken,
-          }
-        })
+        User.updateOne({ _id: user.id }, { refreshToken })
+          .then(updatedUser => {
+            if (updatedUser) {
+
+              res.status(201).json({
+                message: `User ${user.name} is logged in.`,
+                data: {
+                  ...userData,
+                  accessToken,
+                  expiresIn: Math.floor(Date.now() / 1000) + (60 * 30),
+                  refreshToken,
+                }
+              })
+            }
+          })
       } else {
         res.status(401).json({
           error: true,
