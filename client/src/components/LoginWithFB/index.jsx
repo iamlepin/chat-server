@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { compose } from 'redux'
 import { connect } from 'react-redux'
 import { setUserInfo, clearUserInfo } from '../../actions/userInfo'
+import nodeApi from '../../api'
 import { loadFacebookSDK } from './utils'
 
 const withFaceBookApi = (WrappedComponent) => class extends Component {
@@ -21,20 +22,23 @@ const withFaceBookApi = (WrappedComponent) => class extends Component {
     console.log('​extends -> updateUserInfo -> resp', resp)
 
     if (status === 'connected') {
-      window.FB.api('/me?fields=name,picture', (response) => {
-
-         // post { id, name } If id exists in db response with account id, token
-        console.log('Good to see you, ', response);
-        const userData = {
-          // add account id and token
-          thirdPartyAuth: {
-            type: 'face-book',
-            ...response,
-            accessToken,
-            expiresIn,
-          },
-        }
-        this.props.setUserInfo(userData)
+			console.log("​extends -> updateUserInfo -> status", status)
+      window.FB.api('/me?fields=name,picture', ({ id, name }) => {
+        nodeApi.loginFbUser({
+          id,
+          name,
+        })
+        console.log('Good to see you, ', name);
+        // const userData = {
+        //   // add account id and token
+        //   thirdPartyAuth: {
+        //     type: 'face-book',
+        //     ...response,
+        //     accessToken,
+        //     expiresIn,
+        //   },
+        // }
+        // this.props.setUserInfo(userData)
       })
     } else {
       this.props.clearUserInfo()

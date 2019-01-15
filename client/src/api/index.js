@@ -57,6 +57,11 @@ const loginUser = (body) => {
   return post(link, body)
 }
 
+const loginFbUser = (body) => {
+  const link = '/users/login-fb'
+  return post(link, body)
+}
+
 const checkUserName = (userName) => {
   const link = `/users/check/name/${userName}`
   return get(link)
@@ -70,6 +75,7 @@ const checkUserEmail = (email) => {
 const nodeApi = {
   addUser,
   loginUser,
+  loginFbUser,
   checkUserName,
   checkUserEmail,
 }

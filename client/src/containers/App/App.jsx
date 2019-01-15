@@ -36,4 +36,4 @@ const App = (props) => (
   </Layout>
 )
 
-export default App // withFaceBookApi(App)
+export default withFaceBookApi(App)

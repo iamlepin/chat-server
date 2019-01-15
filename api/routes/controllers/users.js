@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
-const User = require('../../models/users')
+const User = require('../../models/user')
+const UserFb = require('../../models/userFb')
 const bcrypt = require('bcrypt')
 const { signToken } = require('../../utils/helpers')
 
@@ -188,25 +189,46 @@ const signIn = (req, res) => {
 }
 
 const signInFb = (req, res) => {
-  User.findOne({ id_user_fb: req.body.id })
+  UserFb.findOne({ id_fb: req.body.id })
     .exec()
     .then(user => {
       if(user) {
-        const accessToken = signToken({
-          id: user.id,
-          name: user.name,
-        })
-        res.status(200).json({
-          message: `User ${user.name} is logged in.`,
-          data: {
-            id: user.id,
-            name: user.name,
-            accessToken,
-            expiresIn: 'mock', // TODO: reserch expires in
-          },
-        })
+        const userData = {
+          userId: user.id,
+          userName: user.name,
+          userRole: null,
+        }
+        const accessToken = signToken(userData, { expiresIn: 60 * 30 })
+        const refreshToken = signToken(userData, { expiresIn: '30 days' })
+
+        UserFb.updateOne({ _id: user.id }, { refreshToken })
+          .then(updatedUser => {
+            if (updatedUser) {
+
+              res.status(201).json({
+                message: `User ${user.name} is logged in.`,
+                data: {
+                  ...userData,
+                  accessToken,
+                  expiresIn: Math.floor(Date.now() / 1000) + (60 * 30),
+                  refreshToken,
+                }
+              })
+            }
+          })
       } else {
-        // TODO: create user
+        new UserFb({
+          _id: new mongoose.Types.ObjectId(),
+          id_fb: req.body.id,
+          name: req.body.name,
+          email: req.body.email,
+        })
+          .save()
+          .then(user => {
+            res.status(200).json({
+              message: `Facebook user ${user.name} is registered.`
+            })
+          })
       }
     })
     .catch(err => {
