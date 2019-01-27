@@ -5,6 +5,8 @@ import { connect } from 'react-redux'
 import { setUserInfo, clearUserInfo } from '../../actions/userInfo'
 import nodeApi from '../../api'
 import { loadFacebookSDK } from './utils'
+import { FACE_BOOK } from '../../constants/common';
+import { storage } from '../../utils';
 
 const withFaceBookApi = (WrappedComponent) => class extends Component {
   static propTypes = {
@@ -18,31 +20,40 @@ const withFaceBookApi = (WrappedComponent) => class extends Component {
   }
 
   updateUserInfo = (resp) => {
-    const { status, authResponse: { expiresIn, accessToken } } = resp
+    const { status, authResponse } = resp
     console.log('​extends -> updateUserInfo -> resp', resp)
 
     if (status === 'connected') {
-			console.log("​extends -> updateUserInfo -> status", status)
-      window.FB.api('/me?fields=name,picture', ({ id, name }) => {
-        nodeApi.loginFbUser({
-          id,
-          name,
-        })
-        console.log('Good to see you, ', name);
-        // const userData = {
-        //   // add account id and token
-        //   thirdPartyAuth: {
-        //     type: 'face-book',
-        //     ...response,
-        //     accessToken,
-        //     expiresIn,
-        //   },
-        // }
-        // this.props.setUserInfo(userData)
+      window.FB.api('/me?fields=name,picture', (response) => {
+        // TODO: check expire token
+        const userInfo = storage.get('userInfo')
+        const expiresIn = userInfo ? userInfo.expiresIn : null
+        if (!userInfo || Date.now() > expiresIn) {
+          this.loginFbUserToApp(response)
+        }
       })
-    } else {
-      this.props.clearUserInfo()
     }
+  }
+
+  loginFbUserToApp = ({ id, name }) => {
+    nodeApi.loginFbUser({
+      id,
+      name,
+    })
+      .then(response => {
+        if (response && response.data) {
+          storage.set('userInfo', response.data)
+          const payload = {
+            ...response.data,
+            profileType: FACE_BOOK,
+          }
+          this.props.setUserInfo(payload)
+        }
+        throw new Error('No response from loginFbApi.')
+      })
+      .catch(err => {
+        console.info(err)
+      })
   }
 
   render() {

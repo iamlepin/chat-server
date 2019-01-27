@@ -12,7 +12,7 @@
         "sourceType": "module"
     },
     "rules": {
-        "no-console": "warn",
+        "no-console": ["error", { "allow": ["warn", "error", "info"] }],
         "no-const-assign": "warn",
         "no-this-before-super": "warn",
         "no-undef": "warn",

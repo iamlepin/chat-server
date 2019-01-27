@@ -170,7 +170,7 @@ const signIn = (req, res) => {
                 data: {
                   ...userData,
                   accessToken,
-                  expiresIn: Math.floor(Date.now() / 1000) + (60 * 30),
+                  expiresIn: Date.now() + (60 * 30 * 1000),
                   refreshToken,
                 }
               })
@@ -210,7 +210,7 @@ const signInFb = (req, res) => {
                 data: {
                   ...userData,
                   accessToken,
-                  expiresIn: Math.floor(Date.now() / 1000) + (60 * 30),
+                  expiresIn: Date.now() + (60 * 30 * 1000),
                   refreshToken,
                 }
               })

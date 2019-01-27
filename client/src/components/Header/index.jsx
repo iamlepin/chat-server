@@ -4,17 +4,24 @@ import { Link } from 'react-router-dom'
 import { connect } from 'react-redux';
 import { Layout, Menu, Button } from 'antd'
 import { clearUserInfo } from '../../actions/userInfo'
+import { FACE_BOOK } from '../../constants/common';
+import { storage } from '../../utils';
 
-const Header = ({ userInfo, clearUserInfo }) => {
+// const isUserLoggedIn = storage.get('userInfo')
+
+const Header = ({ userInfo, logOutUser }) => {
+  const { userId, userName, profileType } = userInfo
 
   const handleLogout = (type) => () => {
-		console.log("​handleLogout -> type", type)
     switch (type) {
-      case 'face-book':
-        window.FB.logout((res) => console.log(res))
+      case FACE_BOOK:
+        window.FB.logout((response) => {
+          console.info(response)
+          logOutUser()
+        })
         break;
       default:
-        clearUserInfo()
+        logOutUser()
         break;
     }
   }
@@ -35,19 +42,19 @@ const Header = ({ userInfo, clearUserInfo }) => {
         </Menu.Item>
       </Menu>
       <div style={{ display: 'flex', alignItems: 'center' }}>
-        {<span style={{ color: 'white', marginRight: '16px' }}>{userInfo.name}</span>}
-        {!userInfo.id && <Link to='/signin'>
+        {<span style={{ color: 'white', marginRight: '16px' }}>{userName}</span>}
+        {!userId && <Link to='/signin'>
           <Button type="primary">Sign In</Button>
         </Link>}
-        {userInfo.id && <Button type="primary" onClick={handleLogout(userInfo.type)}>Logout</Button>}
+        {userId && <Button type="primary" onClick={handleLogout(profileType)}>Logout</Button>}
       </div>
     </Layout.Header>
   )
 }
 
 Header.propTypes = {
-  navLinks: PropTypes.instanceOf(Array).isRequired,
   userInfo: PropTypes.object.isRequired,
+  logOutUser: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -55,9 +62,12 @@ const mapStateToProps = state => ({
   userInfo: state.userInfo,
 });
 
-const mapDispatchToProps = {
-  clearUserInfo,
-}
+const mapDispatchToProps = (dispatch) => ({
+  logOutUser: () => {
+    storage.remove('userInfo')
+    dispatch(clearUserInfo())
+  },
+})
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header);

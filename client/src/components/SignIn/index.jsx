@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import { compose } from 'redux'
 import { Row, Form, Icon, Input, Button, Checkbox, message, Divider } from 'antd'
 import nodeApi from '../../api'
-import { trimValue } from '../../utils'
+import { trimValue, storage } from '../../utils'
 import { USER_NAME } from '../../constants/regexp'
 import FaceBookButton from '../FaceBookButton'
 import { setUserInfo } from '../../actions/userInfo'
@@ -41,6 +41,7 @@ class SignIn extends React.Component {
             } else {
               message.success(message)
               this.props.setUserInfo(data)
+              storage.set('userInfo', data)
             }
           })
       }

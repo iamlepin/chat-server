@@ -19,8 +19,7 @@ const initState = {
   accessToken: null,
   refreshToken: null,
   expiresIn: null,
-  userAuthType: null,
-  fbAuth: null,
+  profileType: null,
 }
 
 const userInfo = (state = initState, { type, payload }) => {
