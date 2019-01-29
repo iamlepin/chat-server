@@ -26,7 +26,6 @@ class SignIn extends React.Component {
       if (err) {
         console.error()
       } else {
-        console.log('Received values of form: ', values)
         const { userName: name, password, remember } = values
         const body = {
           name,

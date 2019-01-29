@@ -1,17 +1,5 @@
 import { SET_USER_INFO, CLEAR_USER_INFO } from '../constants/actions'
 
-// const initState = { // TODO: delete if doesn't needed
-//   userID: String,
-//   accessToken: String,
-//   refreshToken: String,
-//   expiresIn: Number,
-//   userAuthType: String,
-//   fbAuth: {
-//     accessToken: String,
-//     longToken: String,
-//   },
-// }
-
 const initState = {
   userId: null,
   userName: null,

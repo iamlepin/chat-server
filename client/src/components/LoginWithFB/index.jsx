@@ -30,6 +30,8 @@ const withFaceBookApi = (WrappedComponent) => class extends Component {
         const expiresIn = userInfo ? userInfo.expiresIn : null
         if (!userInfo || Date.now() > expiresIn) {
           this.loginFbUserToApp(response)
+        } else {
+          this.props.setUserInfo(userInfo)
         }
       })
     }
