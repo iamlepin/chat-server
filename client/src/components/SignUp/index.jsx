@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import { Row, Form, Icon, Input, Button, message } from 'antd'
 import { EMAIL, USER_NAME, PASSWORD } from '../../constants/regexp'
 import { REDIRECT, HOME } from '../../constants/routes'
-import { trimValue } from '../../utils'
+import { trimValue } from '../../utils/common'
 import nodeApi from '../../api'
 import './SignUp.css'
 

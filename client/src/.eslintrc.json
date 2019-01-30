@@ -32,7 +32,15 @@
         "semi": 0,
         "no-spaced-func": [ 0, "never" ],
         "space-before-function-paren": 0,
-        "no-unused-expressions": [1, { "allowShortCircuit": true, "allowTernary": true }]
+        "no-unused-expressions": [1, { "allowShortCircuit": true, "allowTernary": true }],
+        "no-case-declarations": 0,
+        "comma-dangle": ["error", {
+            "arrays": "always",
+            "objects": "always-multiline",
+            "imports": "always-multiline",
+            "exports": "always-multiline",
+            "functions": "never"
+        }]
     },
     "parser": "babel-eslint",
     "extends": [

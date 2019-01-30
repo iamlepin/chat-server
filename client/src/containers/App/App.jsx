@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import { Layout } from 'antd'
 import { Switch, Route } from 'react-router-dom'
 import Header from '../../components/Header'
@@ -8,7 +9,9 @@ import SignIn from '../../components/SignIn'
 import SignUp from '../../components/SignUp'
 import RedirectPage from '../../components/RedirectPage'
 import { HOME, SIGN_IN, SIGN_UP, REDIRECT } from '../../constants/routes'
-import withFaceBookApi from '../../components/LoginWithFB'
+import { storage } from '../../utils/common'
+import { loadFacebookSDK, updateUserInfo } from '../../utils/faceBook'
+import { setUserInfo } from '../../actions/userInfo'
 // import Movies from './Movies'
 // import WatchList from './WatchList'
 import './App.css'
@@ -17,23 +20,53 @@ const { Content, Footer } = Layout
 
 const breadcrumbPathLinks = ['home', 'login']
 
-const App = (props) => (
-  <Layout className="layout">
-    <Header {...props} />
-    <Content style={{ padding: '0 50px' }}>
-      <Breadcrumbs links={breadcrumbPathLinks} />
-      <Switch>
-        <Route exact path={HOME} component={Home} />
-        <Route path={SIGN_IN} component={SignIn} />
-        <Route path={SIGN_UP} component={SignUp} />
-        <Route path={REDIRECT} render={(props) => <RedirectPage {...props} />} />
-        <Route render={() => <h2>404 not found!!! sorry</h2>} />
-      </Switch>
-    </Content>
-    <Footer style={{ textAlign: 'center' }}>
-      Ant Design ©2018 Created by Ant UED
-    </Footer>
-  </Layout>
-)
+const restoreUserLoginState = (params) => {
+  const userInfo = storage.get('userInfo')
+  if (userInfo) {
+    switch (userInfo.profileType) {
+      case 'app-account':
+        updateUserInfo({ ...params, userInfo })
+        break
+      case 'face-book':
+        loadFacebookSDK({ ...params, userInfo })
+        break
+      default:
+        break
+    }
+  }
+}
 
-export default withFaceBookApi(App)
+class App extends Component {
+  componentDidMount = () => {
+    const { setUserInfo, logoutUser } = this.props
+    restoreUserLoginState({ setUserInfo, logoutUser })
+  }
+
+  render () {
+    return (
+      <Layout className="layout">
+        <Header {...this.props} />
+        <Content style={{ padding: '0 50px' }}>
+          <Breadcrumbs links={breadcrumbPathLinks} />
+          <Switch>
+            <Route exact path={HOME} component={Home} />
+            <Route path={SIGN_IN} component={SignIn} />
+            <Route path={SIGN_UP} component={SignUp} />
+            <Route path={REDIRECT} render={(props) => <RedirectPage {...props} />} />
+            <Route render={() => <h2>404 not found!!! sorry</h2>} />
+          </Switch>
+        </Content>
+        <Footer style={{ textAlign: 'center' }}>
+          Ant Design ©2018 Created by Ant UED
+        </Footer>
+      </Layout>
+    )
+  }
+}
+
+export default connect(
+  null,
+  {
+    setUserInfo,
+  }
+)(App)

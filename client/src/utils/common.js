@@ -23,5 +23,4 @@ export const storage = {
       console.info(error)
     }
   },
-
 }

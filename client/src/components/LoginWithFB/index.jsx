@@ -6,7 +6,7 @@ import { setUserInfo, clearUserInfo } from '../../actions/userInfo'
 import nodeApi from '../../api'
 import { loadFacebookSDK } from './utils'
 import { FACE_BOOK } from '../../constants/common';
-import { storage } from '../../utils';
+import { storage } from '../../utils/common';
 
 const withFaceBookApi = (WrappedComponent) => class extends Component {
   static propTypes = {

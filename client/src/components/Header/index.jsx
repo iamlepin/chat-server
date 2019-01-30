@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { Layout, Menu, Button } from 'antd'
 import { clearUserInfo } from '../../actions/userInfo'
 import { FACE_BOOK } from '../../constants/common';
-import { storage } from '../../utils';
+import { storage } from '../../utils/common';
 
 // const isUserLoggedIn = storage.get('userInfo')
 
