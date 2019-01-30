@@ -21,14 +21,14 @@ const { Content, Footer } = Layout
 const breadcrumbPathLinks = ['home', 'login']
 
 const restoreUserLoginState = (params) => {
-  const userInfo = storage.get('userInfo')
-  if (userInfo) {
-    switch (userInfo.profileType) {
+  const storedUserInfo = storage.get('userInfo')
+  if (storedUserInfo) {
+    switch (storedUserInfo.profileType) {
       case 'app-account':
-        updateUserInfo({ ...params, userInfo })
+        updateUserInfo({ ...params, userInfo: storedUserInfo })
         break
       case 'face-book':
-        loadFacebookSDK({ ...params, userInfo })
+        loadFacebookSDK({ ...params, userInfo: storedUserInfo })
         break
       default:
         break

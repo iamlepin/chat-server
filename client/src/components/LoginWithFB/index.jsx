@@ -16,7 +16,7 @@ const withFaceBookApi = (WrappedComponent) => class extends Component {
 
   componentDidMount = () => {
     // if (this.props.userInfo) { return }
-    loadFacebookSDK(this.updateUserInfo)
+    // loadFacebookSDK(this.updateUserInfo)
   }
 
   updateUserInfo = (resp) => {

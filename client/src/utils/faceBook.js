@@ -9,15 +9,16 @@ const loginFbUserToApp = (setUserInfo) => ({ id, name }) => {
     name,
   })
     .then(response => {
+			console.log('TCL: loginFbUserToApp -> response', setUserInfo)
       if (response && response.data) {
-        const payload = {
+        const userInfo = {
           ...response.data,
           profileType: FACE_BOOK,
         }
-        storage.set('userInfo', payload)
-        setUserInfo(payload)
+        storage.set('userInfo', userInfo)
+        setUserInfo(userInfo)
       } else {
-        throw new Error('No response from loginFbApi.')
+        throw new Error('No response from nodeApi.loginFbUser.')
       }
     })
     .catch(err => {
@@ -25,7 +26,7 @@ const loginFbUserToApp = (setUserInfo) => ({ id, name }) => {
     })
 }
 
-export const updateUserInfo = async (userInfo, setUserInfo) => {
+export const updateUserInfo = async ({ userInfo, setUserInfo }) => {
   const { expiresIn, refreshToken } = userInfo
   const isExpired = checkAccesTokenExpiration(expiresIn)
   if (isExpired) {
@@ -46,7 +47,7 @@ const handleStatusChange = ({ userInfo, setUserInfo, logoutUser }) => (resp) => 
     return
   }
   if (userInfo && status === 'connected') {
-    updateUserInfo(userInfo)
+    updateUserInfo({ userInfo, setUserInfo })
     return
   }
   logoutUser()

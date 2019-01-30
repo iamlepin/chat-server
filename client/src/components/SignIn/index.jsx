@@ -4,11 +4,12 @@ import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { compose } from 'redux'
 import { Row, Form, Icon, Input, Button, Checkbox, message, Divider } from 'antd'
+import { loadFacebookSDK } from '../../utils/faceBook'
 import nodeApi from '../../api'
 import { trimValue, storage } from '../../utils/common'
 import { USER_NAME } from '../../constants/regexp'
 import FaceBookButton from '../FaceBookButton'
-import { setUserInfo } from '../../actions/userInfo'
+import { setUserInfo, clearUserInfo } from '../../actions/userInfo'
 import './SignIn.css'
 
 const FormItem = Form.Item
@@ -18,6 +19,12 @@ class SignIn extends React.Component {
     userInfo: PropTypes.object.isRequired,
     setUserInfo: PropTypes.func.isRequired,
     form: PropTypes.object.isRequired,
+    logoutUser: PropTypes.func.isRequired,
+  }
+
+  componentDidMount = () => {
+    const { logoutUser, setUserInfo } = this.props
+    loadFacebookSDK({ setUserInfo, logoutUser })
   }
 
   handleSubmit = e => {
@@ -37,10 +44,12 @@ class SignIn extends React.Component {
           .then(({ error, message, data }) => {
             if (error) {
               message.error(message)
-            } else {
+            }
+            if (data) {
+              const userInfo = { ...data, profileType: 'app-account' }
               message.success(message)
-              this.props.setUserInfo(data)
-              storage.set('userInfo', data)
+              this.props.setUserInfo(userInfo)
+              storage.set('userInfo', userInfo)
             }
           })
       }
@@ -125,11 +134,15 @@ const mstp = (state) => ({
   userInfo: state.userInfo,
 })
 
-const mdtp = {
-  setUserInfo,
-}
+const mdtp = (dispatch) => ({
+  setUserInfo: (userInfo) => dispatch(setUserInfo(userInfo)),
+  logoutUser: () => {
+    storage.remove('userInfo')
+    dispatch(clearUserInfo())
+  },
+})
 
 export default compose(
   connect(mstp, mdtp),
-  Form.create(),
+  Form.create()
 )(SignIn)
