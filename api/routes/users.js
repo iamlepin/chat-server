@@ -10,5 +10,6 @@ router.post('/signup', users.signUp)
 router.post('/login', users.signIn)
 router.post('/login-fb', users.signInFb)
 router.delete('/:userId', users.remove)
+router.post('/token/refresh', users.refreshToken)
 
 module.exports = router

@@ -1,8 +1,10 @@
+import { serialize } from '../utils/common'
+
 const MODE = 'cors'
 const HEADERS = new Headers({
   'Content-Type': 'application/json',
 })
-const SERVER_URL = `http://localhost:3001`
+const SERVER_URL = 'http://localhost:3001'
 
 const sendRequest = (url, method, body) => {
   const options = {
@@ -10,41 +12,27 @@ const sendRequest = (url, method, body) => {
     headers: HEADERS,
     mode: MODE,
   }
-  if (body) { options.body = body }
-  return fetch(`${SERVER_URL}${url}`, options)
-}
-
-const get = (url) => {
-  return sendRequest(url)
+  const serializedBody = serialize(body)
+  if (serializedBody) {
+    options.body = serializedBody
+  }
+  const promise = fetch(`${SERVER_URL}${url}`, options)
     .then(response => {
       if (response.status < 500) {
-        console.log('response: ', response);
         return response.json()
       }
       throw response.json()
     })
-    .catch(err => {
-      console.log(err)
-      throw err
+    .catch(async err => {
+      const error = await err
+      console.error(error.message)
     })
+  return promise
 }
 
-const post = (url, body) => {
-  body = JSON.stringify(body)
+const get = (url) => sendRequest(url)
+const post = (url, body) => sendRequest(url, 'POST', body)
 
-  return sendRequest(url, 'POST', body)
-    .then(response => {
-      if (response.status < 500) {
-        console.log('response: ', response);
-        return response.json()
-      }
-      throw response.json()
-    })
-    .catch(err => {
-      console.log(err)
-      throw err
-    })
-}
 
 // api methods
 const addUser = (body) => {
@@ -72,12 +60,18 @@ const checkUserEmail = (email) => {
   return get(link)
 }
 
+const refreshAccessToken = (body) => {
+  const link = '/users/token/refresh'
+  return post(link, body)
+}
+
 const nodeApi = {
   addUser,
   loginUser,
   loginFbUser,
   checkUserName,
   checkUserEmail,
+  refreshAccessToken,
 }
 
 export default nodeApi

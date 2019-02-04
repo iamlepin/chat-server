@@ -14,7 +14,7 @@ import { loadFacebookSDK, updateUserInfo } from '../../utils/faceBook'
 import { setUserInfo } from '../../actions/userInfo'
 // import Movies from './Movies'
 // import WatchList from './WatchList'
-import './App.css'
+// import './App.scss'
 
 const { Content, Footer } = Layout
 

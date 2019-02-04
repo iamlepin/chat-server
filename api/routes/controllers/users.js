@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const User = require('../../models/user')
 const UserFb = require('../../models/userFb')
 const bcrypt = require('bcrypt')
-const { signToken } = require('../../utils/helpers')
+const { sendErrorMessage, getPairTokens } = require('../../utils/helpers')
 
 const getAll = (req, res) => {
   User.find()
@@ -14,9 +14,7 @@ const getAll = (req, res) => {
         users: docs,
       })
     })
-    .catch(err => {
-      res.status(500).json(err)
-    })
+    .catch(sendErrorMessage(res))
 }
 
 const getOne = (req, res) => {
@@ -35,12 +33,7 @@ const getOne = (req, res) => {
         })
       }
     })
-    .catch(err => {
-      console.log(err)
-      res.status(500).json({
-        error: err
-      })
-    })
+    .catch(sendErrorMessage(res))
 }
 
 const getName = (req, res) => {
@@ -58,9 +51,7 @@ const getName = (req, res) => {
         })
       }
     })
-    .catch(err => {
-      res.status(500).json(err)
-    })
+    .catch(sendErrorMessage(res))
 }
 
 const getEmail = (req, res) => {
@@ -78,9 +69,7 @@ const getEmail = (req, res) => {
         })
       }
     })
-    .catch(err => {
-      res.status(500).json(err)
-    })
+    .catch(sendErrorMessage(res))
 }
 
 const signUp = (req, res) => {
@@ -127,14 +116,10 @@ const signUp = (req, res) => {
               },
             })
           })
-          .catch(err => {
-            res.status(500).json(err)
-          })
+          .catch(sendErrorMessage(res))
       }
     })
-    .catch(err => {
-      res.status(500).json(err)
-    })
+    .catch(sendErrorMessage(res))
 }
 
 const signIn = (req, res) => {
@@ -158,8 +143,7 @@ const signIn = (req, res) => {
           userName: user.name,
           userRole: null,
         }
-        const accessToken = signToken(userData, { expiresIn: 60 * 30 })
-        const refreshToken = signToken(userData, { expiresIn: '30 days' })
+        const pairTokens = getPairTokens(userData)
 
         User.updateOne({ _id: user.id }, { refreshToken })
           .then(updatedUser => {
@@ -169,9 +153,7 @@ const signIn = (req, res) => {
                 message: `User ${user.name} is logged in.`,
                 data: {
                   ...userData,
-                  accessToken,
-                  expiresIn: Date.now() + (60 * 30 * 1000),
-                  refreshToken,
+                  ...pairTokens,
                 }
               })
             }
@@ -183,9 +165,7 @@ const signIn = (req, res) => {
         })
       }
     })
-    .catch(err => {
-      res.status(500).json(err)
-    })
+    .catch(sendErrorMessage(res))
 }
 
 const signInFb = (req, res) => {
@@ -198,8 +178,7 @@ const signInFb = (req, res) => {
           userName: user.name,
           userRole: null,
         }
-        const accessToken = signToken(userData, { expiresIn: 60 * 30 })
-        const refreshToken = signToken(userData, { expiresIn: '30 days' })
+        const pairTokens = getPairTokens(userData)
 
         UserFb.updateOne({ _id: user.id }, { refreshToken })
           .then(updatedUser => {
@@ -209,9 +188,7 @@ const signInFb = (req, res) => {
                 message: `User ${user.name} is logged in.`,
                 data: {
                   ...userData,
-                  accessToken,
-                  expiresIn: Date.now() + (60 * 30 * 1000),
-                  refreshToken,
+                  ...pairTokens,
                 }
               })
             }
@@ -231,12 +208,7 @@ const signInFb = (req, res) => {
           })
       }
     })
-    .catch(err => {
-      console.log(err)
-      res.status(500).json({
-        error: err
-      })
-    })
+    .catch(sendErrorMessage(res))
 }
 
 const remove = (req, res) => {
@@ -255,12 +227,39 @@ const remove = (req, res) => {
         })
       }
     })
-    .catch(err => {
-      console.log(err)
-      res.status(500).json({
-        error: err
+    .catch(sendErrorMessage(res))
+}
+
+const refreshToken = (req, res) => {
+  UserFb.findById(req.body.userId)
+    .exec()
+    .then((user) => {
+      if (!user) {
+        throw new Error(`User with id ${req.body.userId} not found.` )
+      }
+      const isRefreshTokenVerified = user.refreshToken && user.refreshToken === req.body.refreshToken
+      if (isRefreshTokenVerified) {
+        const { userId, userName, userRole } = user
+        const pairTokens = getPairTokens({
+          userId,
+          userName,
+          userRole,
+        })
+        UserFb.updateOne({ _id: userId }, { refreshToken: pairTokens.refreshToken })
+          .then(updatedUser => {
+            if (updatedUser) {
+              res.status(200).json({
+                data: pairTokens,
+                message: 'Tokens refreshed successfull.'
+              })
+            }
+          })
+      }
+      res.status(401).json({
+        error: 'Refresh token verification failed.'
       })
     })
+    .catch(sendErrorMessage(res))
 }
 
 module.exports = {
@@ -272,4 +271,5 @@ module.exports = {
   signIn,
   signInFb,
   remove,
+  refreshToken,
 }

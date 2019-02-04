@@ -1,5 +1,14 @@
 export const trimValue = (value) => value && value.trim()
 
+export const serialize = (data) => {
+  try {
+    return JSON.stringify(data)
+  } catch (error) {
+    console.error('body can\'t be stringified', error)
+    return null
+  }
+}
+
 export const storage = {
   get: (key) => {
     try {

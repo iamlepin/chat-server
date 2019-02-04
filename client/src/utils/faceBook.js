@@ -1,3 +1,4 @@
+import { message } from 'antd'
 import { storage } from '../utils/common'
 import { checkAccesTokenExpiration, refreshAccessToken } from '../utils/user'
 import nodeApi from '../api'
@@ -9,7 +10,7 @@ const loginFbUserToApp = (setUserInfo) => ({ id, name }) => {
     name,
   })
     .then(response => {
-			console.log('TCL: loginFbUserToApp -> response', setUserInfo)
+      console.log('TCL: loginFbUserToApp -> response', setUserInfo)
       if (response && response.data) {
         const userInfo = {
           ...response.data,
@@ -27,16 +28,20 @@ const loginFbUserToApp = (setUserInfo) => ({ id, name }) => {
 }
 
 export const updateUserInfo = async ({ userInfo, setUserInfo }) => {
-  const { expiresIn, refreshToken } = userInfo
+  const { expiresIn, refreshToken, userId } = userInfo
   const isExpired = checkAccesTokenExpiration(expiresIn)
+  let response
+  let newUserInfo = { ...userInfo }
+
   if (isExpired) {
-    const response = await refreshAccessToken(refreshToken)
-    const newUserInfo = { ...userInfo, ...response }
-    storage.set('userInfo', newUserInfo)
-    setUserInfo(newUserInfo)
-    return
+    response = await refreshAccessToken({ userId, refreshToken })
   }
-  setUserInfo(userInfo)
+  if (response && response.error) { message.error(response.error) }
+  if (response && response.data) {
+    newUserInfo = { ...newUserInfo, ...response.data }
+  }
+  storage.set('userInfo', newUserInfo)
+  setUserInfo(newUserInfo)
 }
 
 const handleStatusChange = ({ userInfo, setUserInfo, logoutUser }) => (resp) => {
