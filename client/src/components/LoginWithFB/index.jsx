@@ -4,9 +4,8 @@ import { compose } from 'redux'
 import { connect } from 'react-redux'
 import { setUserInfo, clearUserInfo } from '../../actions/userInfo'
 import nodeApi from '../../api'
-import { loadFacebookSDK } from './utils'
-import { FACE_BOOK } from '../../constants/common';
-import { storage } from '../../utils/common';
+import { FACE_BOOK, USER_INFO } from '../../constants/common'
+import { storage } from '../../utils/common'
 
 const withFaceBookApi = (WrappedComponent) => class extends Component {
   static propTypes = {
@@ -20,13 +19,12 @@ const withFaceBookApi = (WrappedComponent) => class extends Component {
   }
 
   updateUserInfo = (resp) => {
-    const { status, authResponse } = resp
+    const { status } = resp
     console.log('​extends -> updateUserInfo -> resp', resp)
 
     if (status === 'connected') {
       window.FB.api('/me?fields=name,picture', (response) => {
-        // TODO: check expire token
-        const userInfo = storage.get('userInfo')
+        const userInfo = storage.get(USER_INFO)
         const expiresIn = userInfo ? userInfo.expiresIn : null
         if (!userInfo || Date.now() > expiresIn) {
           this.loginFbUserToApp(response)
@@ -44,7 +42,7 @@ const withFaceBookApi = (WrappedComponent) => class extends Component {
     })
       .then(response => {
         if (response && response.data) {
-          storage.set('userInfo', response.data)
+          storage.set(USER_INFO, response.data)
           const payload = {
             ...response.data,
             profileType: FACE_BOOK,

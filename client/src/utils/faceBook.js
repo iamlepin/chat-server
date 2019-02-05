@@ -2,7 +2,7 @@ import { message } from 'antd'
 import { storage } from '../utils/common'
 import { checkAccesTokenExpiration, refreshAccessToken } from '../utils/user'
 import nodeApi from '../api'
-import { FACE_BOOK } from '../constants/common'
+import { FACE_BOOK, USER_INFO } from '../constants/common'
 
 const loginFbUserToApp = (setUserInfo) => ({ id, name }) => {
   nodeApi.loginFbUser({
@@ -10,13 +10,12 @@ const loginFbUserToApp = (setUserInfo) => ({ id, name }) => {
     name,
   })
     .then(response => {
-      console.log('TCL: loginFbUserToApp -> response', setUserInfo)
       if (response && response.data) {
         const userInfo = {
           ...response.data,
           profileType: FACE_BOOK,
         }
-        storage.set('userInfo', userInfo)
+        storage.set(USER_INFO, userInfo)
         setUserInfo(userInfo)
       } else {
         throw new Error('No response from nodeApi.loginFbUser.')
@@ -40,7 +39,7 @@ export const updateUserInfo = async ({ userInfo, setUserInfo }) => {
   if (response && response.data) {
     newUserInfo = { ...newUserInfo, ...response.data }
   }
-  storage.set('userInfo', newUserInfo)
+  storage.set(USER_INFO, newUserInfo)
   setUserInfo(newUserInfo)
 }
 

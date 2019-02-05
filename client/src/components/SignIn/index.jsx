@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { compose } from 'redux'
-import { Row, Form, Icon, Input, Button, Checkbox, message, Divider } from 'antd'
+import { Row, Form, Icon, Input, Button, Checkbox, Divider } from 'antd'
 import { loadFacebookSDK } from '../../utils/faceBook'
 import nodeApi from '../../api'
 import { trimValue, storage } from '../../utils/common'
@@ -11,6 +11,7 @@ import { USER_NAME } from '../../constants/regexp'
 import FaceBookButton from '../FaceBookButton'
 import { setUserInfo, clearUserInfo } from '../../actions/userInfo'
 import './SignIn.css'
+import { USER_INFO, APP_ACCOUNT } from '../../constants/common'
 
 const FormItem = Form.Item
 
@@ -46,10 +47,10 @@ class SignIn extends React.Component {
               message.error(message)
             }
             if (data) {
-              const userInfo = { ...data, profileType: 'app-account' }
+              const userInfo = { ...data, profileType: APP_ACCOUNT }
               message.success(message)
               this.props.setUserInfo(userInfo)
-              storage.set('userInfo', userInfo)
+              storage.set(USER_INFO, userInfo)
             }
           })
       }
@@ -137,7 +138,7 @@ const mstp = (state) => ({
 const mdtp = (dispatch) => ({
   setUserInfo: (userInfo) => dispatch(setUserInfo(userInfo)),
   logoutUser: () => {
-    storage.remove('userInfo')
+    storage.remove(USER_INFO)
     dispatch(clearUserInfo())
   },
 })

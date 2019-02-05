@@ -12,6 +12,7 @@ import { HOME, SIGN_IN, SIGN_UP, REDIRECT } from '../../constants/routes'
 import { storage } from '../../utils/common'
 import { loadFacebookSDK, updateUserInfo } from '../../utils/faceBook'
 import { setUserInfo } from '../../actions/userInfo'
+import { USER_INFO, FACE_BOOK, APP_ACCOUNT } from '../../constants/common'
 // import Movies from './Movies'
 // import WatchList from './WatchList'
 // import './App.scss'
@@ -21,13 +22,13 @@ const { Content, Footer } = Layout
 const breadcrumbPathLinks = ['home', 'login']
 
 const restoreUserLoginState = (params) => {
-  const storedUserInfo = storage.get('userInfo')
+  const storedUserInfo = storage.get(USER_INFO)
   if (storedUserInfo) {
     switch (storedUserInfo.profileType) {
-      case 'app-account':
+      case APP_ACCOUNT:
         updateUserInfo({ ...params, userInfo: storedUserInfo })
         break
-      case 'face-book':
+      case FACE_BOOK:
         loadFacebookSDK({ ...params, userInfo: storedUserInfo })
         break
       default:

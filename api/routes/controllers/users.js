@@ -180,7 +180,7 @@ const signInFb = (req, res) => {
         }
         const pairTokens = getPairTokens(userData)
 
-        UserFb.updateOne({ _id: user.id }, { refreshToken })
+        UserFb.updateOne({ _id: user.id }, { refreshToken: pairTokens.refreshToken })
           .then(updatedUser => {
             if (updatedUser) {
 

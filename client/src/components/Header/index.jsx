@@ -4,10 +4,8 @@ import { Link } from 'react-router-dom'
 import { connect } from 'react-redux';
 import { Layout, Menu, Button } from 'antd'
 import { clearUserInfo } from '../../actions/userInfo'
-import { FACE_BOOK } from '../../constants/common';
-import { storage } from '../../utils/common';
-
-// const isUserLoggedIn = storage.get('userInfo')
+import { FACE_BOOK, USER_INFO } from '../../constants/common'
+import { storage } from '../../utils/common'
 
 const Header = ({ userInfo, logOutUser }) => {
   const { userId, userName, profileType } = userInfo
@@ -64,7 +62,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch) => ({
   logOutUser: () => {
-    storage.remove('userInfo')
+    storage.remove(USER_INFO)
     dispatch(clearUserInfo())
   },
 })
