@@ -1,8 +1,7 @@
-import { message } from 'antd'
 import { storage } from '../utils/common'
-import { checkAccesTokenExpiration, refreshAccessToken } from '../utils/user'
 import nodeApi from '../api'
 import { FACE_BOOK, USER_INFO } from '../constants/common'
+import { updateUserInfo } from './user'
 
 const loginFbUserToApp = (setUserInfo) => ({ id, name }) => {
   nodeApi.loginFbUser({
@@ -24,23 +23,6 @@ const loginFbUserToApp = (setUserInfo) => ({ id, name }) => {
     .catch(err => {
       console.info(err)
     })
-}
-
-export const updateUserInfo = async ({ userInfo, setUserInfo }) => {
-  const { expiresIn, refreshToken, userId } = userInfo
-  const isExpired = checkAccesTokenExpiration(expiresIn)
-  let response
-  let newUserInfo = { ...userInfo }
-
-  if (isExpired) {
-    response = await refreshAccessToken({ userId, refreshToken })
-  }
-  if (response && response.error) { message.error(response.error) }
-  if (response && response.data) {
-    newUserInfo = { ...newUserInfo, ...response.data }
-  }
-  storage.set(USER_INFO, newUserInfo)
-  setUserInfo(newUserInfo)
 }
 
 const handleStatusChange = ({ userInfo, setUserInfo, logoutUser }) => (resp) => {

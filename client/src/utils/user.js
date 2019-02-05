@@ -1,4 +1,7 @@
+import { message } from 'antd'
 import nodeApi from '../api/index'
+import { storage } from './common'
+import { USER_INFO } from '../constants/common'
 
 export const checkAccesTokenExpiration = (expiresIn) => {
   const isExpired = Date.now() > expiresIn
@@ -20,4 +23,23 @@ export const refreshAccessToken = async (body) => {
     return { data }
   }
   return null
+}
+
+export const updateUserInfo = async ({ userInfo, setUserInfo }) => {
+  const { expiresIn, refreshToken, userId } = userInfo
+  const isExpired = checkAccesTokenExpiration(expiresIn)
+  let response
+  let newUserInfo = { ...userInfo }
+
+  if (isExpired) {
+    response = await refreshAccessToken({ userId, refreshToken })
+  }
+  if (response && response.error) {
+    return message.error(response.error)
+  }
+  if (response && response.data) {
+    newUserInfo = { ...newUserInfo, ...response.data }
+  }
+  storage.set(USER_INFO, newUserInfo)
+  setUserInfo(newUserInfo)
 }

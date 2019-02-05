@@ -105,7 +105,7 @@ class SignIn extends React.Component {
               valuePropName: 'checked',
               initialValue: true,
             })(<Checkbox>Remember me</Checkbox>)}
-            <a className="login-form-forgot" href="">
+            <a className="login-form-forgot" href=""> {/* eslint-disable-line */}
               Forgot password
             </a>
             <Button

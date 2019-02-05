@@ -35,11 +35,15 @@
         "no-unused-expressions": [1, { "allowShortCircuit": true, "allowTernary": true }],
         "no-case-declarations": 0,
         "comma-dangle": ["error", {
-            "arrays": "always",
+            "arrays": "always-multiline",
             "objects": "always-multiline",
             "imports": "always-multiline",
             "exports": "always-multiline",
             "functions": "never"
+        }],
+        "jsx-a11y/anchor-is-valid": [ "error", {
+            "components": [ "Link" ],
+            "specialLink": [ "to" ]
         }]
     },
     "parser": "babel-eslint",

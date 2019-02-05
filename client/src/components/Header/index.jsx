@@ -33,17 +33,19 @@ const Header = ({ userInfo, logOutUser }) => {
         style={{ lineHeight: '32px' }}
       >
         <Menu.Item style={{ borderRadius: '4px', marginRight: '5px' }} key="1">
-          <Link to='/'> Home </Link>
+          <Link to="/"> Home </Link>
         </Menu.Item>
         <Menu.Item style={{ borderRadius: '4px', marginRight: '5px' }} key="2">
-          <Link to='/contacts'> Contacts </Link>
+          <Link to="/contacts"> Contacts </Link>
         </Menu.Item>
       </Menu>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         {<span style={{ color: 'white', marginRight: '16px' }}>{userName}</span>}
-        {!userId && <Link to='/signin'>
-          <Button type="primary">Sign In</Button>
-        </Link>}
+        {!userId &&
+          <Link to="/signin">
+            <Button type="primary">Sign In</Button>
+          </Link>
+        }
         {userId && <Button type="primary" onClick={handleLogout(profileType)}>Logout</Button>}
       </div>
     </Layout.Header>
