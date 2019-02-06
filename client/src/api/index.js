@@ -1,3 +1,4 @@
+import { message } from 'antd'
 import { serialize } from '../utils/common'
 
 const MODE = 'cors'
@@ -26,6 +27,7 @@ const sendRequest = (url, method, body) => {
     .catch(async err => {
       const error = await err
       console.error(error.message)
+      message.error('Sorry. Something went wrong. Try again later.')
     })
   return promise
 }

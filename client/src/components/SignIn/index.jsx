@@ -3,10 +3,10 @@ import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { compose } from 'redux'
-import { Row, Form, Icon, Input, Button, Checkbox, Divider } from 'antd'
+import { Row, Form, Icon, Input, Button, Checkbox, message, Divider } from 'antd'
 import { loadFacebookSDK } from '../../utils/faceBook'
 import nodeApi from '../../api'
-import { trimValue, storage } from '../../utils/common'
+import { trimValue, storage, of } from '../../utils/common'
 import { USER_NAME } from '../../constants/regexp'
 import FaceBookButton from '../FaceBookButton'
 import { setUserInfo, clearUserInfo } from '../../actions/userInfo'
@@ -28,9 +28,9 @@ class SignIn extends React.Component {
     loadFacebookSDK({ setUserInfo, logoutUser })
   }
 
-  handleSubmit = e => {
-    e.preventDefault()
-    this.props.form.validateFields((err, values) => {
+  handleSubmit = (event) => {
+    event.preventDefault()
+    this.props.form.validateFields(async(err, values) => {
       if (err) {
         console.error()
       } else {
@@ -41,18 +41,17 @@ class SignIn extends React.Component {
           remember,
         }
 
-        nodeApi.loginUser(body)
-          .then(({ error, message, data }) => {
-            if (error) {
-              message.error(message)
-            }
-            if (data) {
-              const userInfo = { ...data, profileType: APP_ACCOUNT }
-              message.success(message)
-              this.props.setUserInfo(userInfo)
-              storage.set(USER_INFO, userInfo)
-            }
-          })
+        const { error, message: msg, data } = await of(nodeApi.loginUser(body))
+
+        if (error) {
+          message.error(error)
+        }
+        if (data) {
+          const userInfo = { ...data, profileType: APP_ACCOUNT }
+          message.success(msg)
+          this.props.setUserInfo(userInfo)
+          storage.set(USER_INFO, userInfo)
+        }
       }
     })
   }

@@ -82,144 +82,83 @@ const signUp = (req, res) => {
     .select('email')
     .exec()
 
-  Promise.all([name, email])
+  Promise.all([ name, email ])
     .then(result => {
-      const isFound = result.some((item) => item !== null)
+      const isFound = result && result.some((item) => item !== null)
       if (isFound) {
         const data = {}
         if (result[0]) { data.name = result[0].name }
         if (result[1]) { data.email = result[1].email }
         res.status(200).json({
-          error: true,
-          message: 'That registration data already taken.',
+          error: 'That registration data already taken.',
           data,
         })
-      } else {
-        bcrypt.hash(req.body.password, 10)
-          .then(hash => {
-            const newUser = new User({
-              _id: new mongoose.Types.ObjectId(),
-              name: req.body.name,
-              email: req.body.email,
-              password: hash,
-            })
-            return newUser.save()
-          })
-          .then(user => {
-            console.log('TCL: doc._id', user._id)
-            res.status(201).json({
-              message: 'User created successfully',
-              createdUser: {
-                _id: user._id,
-                name: user.name,
-                email: user.email,
-              },
-            })
-          })
-          .catch(sendErrorMessage(res))
       }
+      return bcrypt.hash(req.body.password, 10)
+    })
+    .then(hash => {
+      const newUser = new User({
+        _id: new mongoose.Types.ObjectId(),
+        name: req.body.name,
+        email: req.body.email,
+        password: hash,
+      })
+      return newUser.save()
+    })
+    .then(user => {
+      console.log('TCL: doc._id', user._id)
+      res.status(201).json({
+        message: 'User created successfully',
+        createdUser: {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+        },
+      })
     })
     .catch(sendErrorMessage(res))
 }
 
 const signIn = (req, res) => {
-  User.findOne({ name: req.body.name })
-    .exec()
-    .then(user => {
+  let foundUser, userData, pairTokens
+  User.findOne({ name: req.body.name }).exec()
+    .then(async (user) => {
       if (!user) {
         res.status(401).json({
           error: true,
           message: `Auth failed. User ${req.body.name} isn't registered.`
         })
-      } else {
-        const isPassCompareSucces = bcrypt.compare(req.body.password, user.password)
-        return { user, isPassCompareSucces }
       }
+      foundUser = user
+      return bcrypt.compare(req.body.password, user.password)
     })
-    .then(({ user, isPassCompareSucces }) => {
+    .then((isPassCompareSucces) => {
       if (isPassCompareSucces) {
-        const userData = {
-          userId: user.id,
-          userName: user.name,
+        userData = {
+          userId: foundUser.id,
+          userName: foundUser.name,
           userRole: null,
         }
-        const pairTokens = getPairTokens(userData)
+        pairTokens = getPairTokens(userData)
 
-        User.updateOne({ _id: user.id }, { refreshToken })
-          .then(updatedUser => {
-            if (updatedUser) {
-
-              res.status(201).json({
-                message: `User ${user.name} is logged in.`,
-                data: {
-                  ...userData,
-                  ...pairTokens,
-                }
-              })
-            }
-          })
-      } else {
-        res.status(401).json({
-          error: true,
-          message: 'Auth failed. Passwords doesn\'t match'
-        })
+        return User.updateOne({ _id: foundUser.id }, { refreshToken: pairTokens.refreshToken })
       }
+      res.status(401).json({
+        error: 'Auth failed. Passwords doesn\'t match'
+      })
+    })
+    .then(updatedUser => {
+      if (!updatedUser) { throw new Error('Error updating user.')}
+      res.status(201).json({
+        message: `User ${foundUser.name} is logged in.`,
+        data: {
+          ...userData,
+          ...pairTokens,
+        }
+      })
     })
     .catch(sendErrorMessage(res))
 }
-
-// const signInFb = (req, res) => {
-//   UserFb.findOne({ id_fb: req.body.id })
-//     .exec()
-//     .then(user => {
-//       if(user) {
-//         const userData = {
-//           userId: user.id,
-//           userName: user.name,
-//           userRole: null,
-//         }
-//         const pairTokens = getPairTokens(userData)
-
-//         UserFb.updateOne({ _id: user.id }, { refreshToken: pairTokens.refreshToken })
-//           .then(updatedUser => {
-//             if (updatedUser) {
-//               res.status(201).json({
-//                 message: `User ${user.name} is logged in.`,
-//                 data: {
-//                   ...userData,
-//                   ...pairTokens,
-//                 }
-//               })
-//             }
-//           })
-//       } else {
-//         new UserFb({
-//           _id: new mongoose.Types.ObjectId(),
-//           id_fb: req.body.id,
-//           name: req.body.name,
-//           refreshToken: pairTokens.refreshToken,
-//         })
-//           .save()
-//           .then(user => {
-//             const userData = {
-//               userId: user.id,
-//               userName: user.name,
-//               userRole: null,
-//             }
-//             const pairTokens = getPairTokens(userData)
-
-//             res.status(201).json({
-//               data: {
-//                 ...userData,
-//                 ...pairTokens,
-//               },
-//               message: `Facebook user ${user.name} is registered.`
-//             })
-//           })
-//       }
-//     })
-//     .catch(sendErrorMessage(res))
-// }
 
 const signInFb = (req, res) => {
   UserFb.findOne({ id_fb: req.body.id })
