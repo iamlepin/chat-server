@@ -33,3 +33,14 @@ export const storage = {
     }
   },
 }
+
+export const of = async (promise) => {
+  const response = await promise.then(res => {
+    const result = {}
+    if (res && res.data) { result.data = res.data }
+    if (res && res.message) { result.message = res.message }
+    if (res && res.error) { result.error = res.error }
+    return result
+  })
+  return response
+}

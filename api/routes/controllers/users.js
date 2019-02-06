@@ -168,45 +168,92 @@ const signIn = (req, res) => {
     .catch(sendErrorMessage(res))
 }
 
+// const signInFb = (req, res) => {
+//   UserFb.findOne({ id_fb: req.body.id })
+//     .exec()
+//     .then(user => {
+//       if(user) {
+//         const userData = {
+//           userId: user.id,
+//           userName: user.name,
+//           userRole: null,
+//         }
+//         const pairTokens = getPairTokens(userData)
+
+//         UserFb.updateOne({ _id: user.id }, { refreshToken: pairTokens.refreshToken })
+//           .then(updatedUser => {
+//             if (updatedUser) {
+//               res.status(201).json({
+//                 message: `User ${user.name} is logged in.`,
+//                 data: {
+//                   ...userData,
+//                   ...pairTokens,
+//                 }
+//               })
+//             }
+//           })
+//       } else {
+//         new UserFb({
+//           _id: new mongoose.Types.ObjectId(),
+//           id_fb: req.body.id,
+//           name: req.body.name,
+//           refreshToken: pairTokens.refreshToken,
+//         })
+//           .save()
+//           .then(user => {
+//             const userData = {
+//               userId: user.id,
+//               userName: user.name,
+//               userRole: null,
+//             }
+//             const pairTokens = getPairTokens(userData)
+
+//             res.status(201).json({
+//               data: {
+//                 ...userData,
+//                 ...pairTokens,
+//               },
+//               message: `Facebook user ${user.name} is registered.`
+//             })
+//           })
+//       }
+//     })
+//     .catch(sendErrorMessage(res))
+// }
+
 const signInFb = (req, res) => {
   UserFb.findOne({ id_fb: req.body.id })
     .exec()
     .then(user => {
       if(user) {
-        const userData = {
-          userId: user.id,
-          userName: user.name,
-          userRole: null,
-        }
-        const pairTokens = getPairTokens(userData)
-
-        UserFb.updateOne({ _id: user.id }, { refreshToken: pairTokens.refreshToken })
-          .then(updatedUser => {
-            if (updatedUser) {
-
-              res.status(201).json({
-                message: `User ${user.name} is logged in.`,
-                data: {
-                  ...userData,
-                  ...pairTokens,
-                }
-              })
+        return user
+      }
+      return new UserFb({
+        _id: new mongoose.Types.ObjectId(),
+        id_fb: req.body.id,
+        name: req.body.name,
+      }).save()
+    })
+    .then(user => {
+			console.log('TCL: signInFb -> user', user)
+      if (!user) { throw new Error('Error getting user from database.')}
+      const userData = {
+        userId: user.id,
+        userName: user.name,
+        userRole: null,
+      }
+      const pairTokens = getPairTokens(userData)
+      UserFb.updateOne({ _id: user.id }, { refreshToken: pairTokens.refreshToken })
+        .then(updatedUser => {
+          if (!updatedUser) { throw new Error('Error updating user.')}
+          res.status(200).json({
+            message: `User ${user.name} is logged in.`,
+            data: {
+              ...userData,
+              ...pairTokens,
             }
           })
-      } else {
-        new UserFb({
-          _id: new mongoose.Types.ObjectId(),
-          id_fb: req.body.id,
-          name: req.body.name,
-          email: req.body.email,
         })
-          .save()
-          .then(user => {
-            res.status(200).json({
-              message: `Facebook user ${user.name} is registered.`
-            })
-          })
-      }
     })
     .catch(sendErrorMessage(res))
 }
@@ -230,22 +277,24 @@ const remove = (req, res) => {
     .catch(sendErrorMessage(res))
 }
 
-const refreshToken = (req, res) => {
+const refreshUserToken = (req, res) => {
   UserFb.findById(req.body.userId)
     .exec()
     .then((user) => {
       if (!user) {
-        throw new Error(`User with id ${req.body.userId} not found.` )
+        res.status(404).json({
+          error: `User with id ${req.body.userId} not found.`
+        })
       }
       const isRefreshTokenVerified = user.refreshToken && user.refreshToken === req.body.refreshToken
       if (isRefreshTokenVerified) {
-        const { userId, userName, userRole } = user
-        const pairTokens = getPairTokens({
-          userId,
-          userName,
-          userRole,
-        })
-        UserFb.updateOne({ _id: userId }, { refreshToken: pairTokens.refreshToken })
+          const userData = {
+          userId: user.id,
+          userName: user.name,
+          userRole: null,
+        }
+        const pairTokens = getPairTokens(userData)
+        UserFb.updateOne({ _id: user.id }, { refreshToken: pairTokens.refreshToken })
           .then(updatedUser => {
             if (updatedUser) {
               res.status(200).json({
@@ -254,10 +303,11 @@ const refreshToken = (req, res) => {
               })
             }
           })
+      } else {
+        res.status(401).json({
+          error: 'Refresh token verification failed.'
+        })
       }
-      res.status(401).json({
-        error: 'Refresh token verification failed.'
-      })
     })
     .catch(sendErrorMessage(res))
 }
@@ -271,5 +321,5 @@ module.exports = {
   signIn,
   signInFb,
   remove,
-  refreshToken,
+  refreshUserToken,
 }

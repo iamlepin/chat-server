@@ -16,7 +16,7 @@ const signToken = (payload = {}, options = {}) => jwt.sign(
 const getPairTokens = (userData = {}) => {
   const accessToken = signToken(userData, { expiresIn: 60 * 30 })
   const refreshToken = signToken(userData, { expiresIn: '30 days' })
-  const expiresIn = Date.now() + (60 * 30 * 1000)
+  const expiresIn = Date.now() + (60 * 3 * 1000) //(60 * 30 * 1000)
   const tokenPair = {
     accessToken,
     refreshToken,

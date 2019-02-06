@@ -1,7 +1,7 @@
 import { message } from 'antd'
 import nodeApi from '../api/index'
-import { storage } from './common'
 import { USER_INFO } from '../constants/common'
+import { storage, of } from './common'
 
 export const checkAccesTokenExpiration = (expiresIn) => {
   const isExpired = Date.now() > expiresIn
@@ -13,7 +13,7 @@ export const checkAccesTokenExpiration = (expiresIn) => {
 export const refreshAccessToken = async (body) => {
   console.log('refreshing token :', body.refreshToken) // TODO: Lepin > remove log when it doesn't needed
   // alert('refreshing token', body.refreshToken)
-  const { data, error } = await nodeApi.refreshAccessToken(body)
+  const { data, error } = await of(nodeApi.refreshAccessToken(body))
   if (error) {
     console.log(error) // TODO: Lepin > remove log when it doesn't needed
     return { error }
