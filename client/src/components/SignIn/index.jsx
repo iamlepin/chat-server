@@ -130,9 +130,7 @@ class SignIn extends React.Component {
   }
 }
 
-const mstp = (state) => ({
-  userInfo: state.userInfo,
-})
+const mstp = (state) => ({ userInfo: state.userInfo })
 
 const mdtp = (dispatch) => ({
   setUserInfo: (userInfo) => dispatch(setUserInfo(userInfo)),

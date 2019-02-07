@@ -3,10 +3,13 @@ import nodeApi from '../api'
 import { FACE_BOOK, USER_INFO } from '../constants/common'
 import { updateUserInfo } from './user'
 
-const loginFbUserToApp = (setUserInfo) => ({ id, name }) => {
+const loginFbUserToApp = (setUserInfo) => (response) => {
+  const { id, name, picture } = response
+  const userPic = picture.data.url
   nodeApi.loginFbUser({
     id,
     name,
+    userPic,
   })
     .then(response => {
       if (response && response.data) {

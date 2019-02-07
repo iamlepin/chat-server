@@ -8,6 +8,7 @@ const userFbSchema = mongoose.Schema({
   name: {type: String, required: true},
   email: {type: String, match: emailRegex},
   refreshToken: {type: String},
+  userPic: {type: String},
 });
 
 module.exports = mongoose.model('FbUser', userFbSchema);

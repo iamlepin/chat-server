@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux';
@@ -6,9 +6,10 @@ import { Layout, Menu, Button } from 'antd'
 import { clearUserInfo } from '../../actions/userInfo'
 import { FACE_BOOK, USER_INFO } from '../../constants/common'
 import { storage } from '../../utils/common'
+import './Header.scss'
 
 const Header = ({ userInfo, logOutUser }) => {
-  const { userId, userName, profileType } = userInfo
+  const { userId, userName, profileType, userPic } = userInfo
 
   const handleLogout = (type) => () => {
     switch (type) {
@@ -39,14 +40,20 @@ const Header = ({ userInfo, logOutUser }) => {
           <Link to="/contacts"> Contacts </Link>
         </Menu.Item>
       </Menu>
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        {<span style={{ color: 'white', marginRight: '16px' }}>{userName}</span>}
+      <div className="user-info">
         {!userId &&
           <Link to="/signin">
             <Button type="primary">Sign In</Button>
           </Link>
         }
-        {userId && <Button type="primary" onClick={handleLogout(profileType)}>Logout</Button>}
+        {userId && (
+          <Fragment>
+            <span style={{ color: 'white', marginRight: '16px' }}>{userName}</span>
+            <img className="user-info_image" src={userPic} alt="user avatar" />
+            <Button type="primary" onClick={handleLogout(profileType)}>Logout</Button>
+          </Fragment>
+        )
+        }
       </div>
     </Layout.Header>
   )

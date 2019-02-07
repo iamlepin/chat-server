@@ -45,7 +45,8 @@
         "jsx-a11y/anchor-is-valid": [ "error", {
             "components": [ "Link" ],
             "specialLink": [ "to" ]
-        }]
+        }],
+        "object-curly-newline": ["error", { "multiline": true }]
     },
     "parser": "babel-eslint",
     "extends": [

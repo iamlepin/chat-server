@@ -171,6 +171,7 @@ const signInFb = (req, res) => {
         _id: new mongoose.Types.ObjectId(),
         id_fb: req.body.id,
         name: req.body.name,
+        userPic: req.body.userPic
       }).save()
     })
     .then(user => {
@@ -189,6 +190,7 @@ const signInFb = (req, res) => {
             message: `User ${user.name} is logged in.`,
             data: {
               ...userData,
+              userPic: user.userPic,
               ...pairTokens,
             }
           })
