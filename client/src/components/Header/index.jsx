@@ -37,7 +37,7 @@ const Header = ({ userInfo, logOutUser }) => {
           <Link to="/"> Home </Link>
         </Menu.Item>
         <Menu.Item style={{ borderRadius: '4px', marginRight: '5px' }} key="2">
-          <Link to="/movie-page"> Contacts </Link>
+          <Link to="/chat"> Chat </Link>
         </Menu.Item>
       </Menu>
       <div className="user-info">

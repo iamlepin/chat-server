@@ -7,8 +7,9 @@ import Breadcrumbs from '../../components/Breadcrumbs/Breadcrumbs'
 import Home from '../../components/Home'
 import SignIn from '../../components/SignIn'
 import SignUp from '../../components/SignUp'
+import Chat from '../../components/Chat'
 import RedirectPage from '../../components/RedirectPage'
-import { HOME, SIGN_IN, SIGN_UP, REDIRECT } from '../../constants/routes'
+import { HOME, SIGN_IN, SIGN_UP, REDIRECT, CHAT } from '../../constants/routes'
 import { storage } from '../../utils/common'
 import { updateUserInfo } from '../../utils/user'
 import { loadFacebookSDK } from '../../utils/faceBook'
@@ -52,6 +53,7 @@ class App extends Component {
             <Route exact path={HOME} component={Home} />
             <Route path={SIGN_IN} component={SignIn} />
             <Route path={SIGN_UP} component={SignUp} />
+            <Route path={CHAT} component={Chat} />
             <Route path={REDIRECT} render={(props) => <RedirectPage {...props} />} />
             <Route render={() => <h2>404 not found!!! sorry</h2>} />
           </Switch>
