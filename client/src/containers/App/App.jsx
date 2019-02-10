@@ -14,8 +14,6 @@ import { updateUserInfo } from '../../utils/user'
 import { loadFacebookSDK } from '../../utils/faceBook'
 import { setUserInfo } from '../../actions/userInfo'
 import { USER_INFO, FACE_BOOK, APP_ACCOUNT } from '../../constants/common'
-// import Movies from './Movies'
-// import WatchList from './WatchList'
 // import './App.scss'
 
 const { Content, Footer } = Layout
@@ -68,7 +66,5 @@ class App extends Component {
 
 export default connect(
   null,
-  {
-    setUserInfo,
-  }
+  { setUserInfo }
 )(App)

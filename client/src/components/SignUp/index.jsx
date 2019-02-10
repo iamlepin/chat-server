@@ -42,7 +42,7 @@ class SignUp extends React.Component {
                 message: 'Thank you for registering!',
                 delay: 4,
                 link: HOME,
-              },
+              }
             )
           })
           .catch(err => {
@@ -123,7 +123,7 @@ class SignUp extends React.Component {
                     max: 16,
                     pattern: USER_NAME,
                     transform: trimValue,
-                    message: 'User name must be between 4 and 16 characters and contains letters, numbers and symbols like - _ .'
+                    message: 'User name must be between 4 and 16 characters and contains letters, numbers and symbols like - _ .',
                   },
                   {
                     transform: trimValue,
@@ -139,14 +139,14 @@ class SignUp extends React.Component {
                     required: true,
                     pattern: EMAIL,
                     transform: trimValue,
-                    message: 'Email must be valid email address.'
+                    message: 'Email must be valid email address.',
                   },
                   {
                     transform: trimValue,
                     validator: this.checkUserMailExistence,
                   },
                 ],
-              })(<Input prefix={<Icon type="mail" style={{ color: "rgba(0,0,0,.25)" }} />} type="email" placeholder="Mail" />)}
+              })(<Input prefix={<Icon type="mail" style={{ color: 'rgba(0,0,0,.25)' }} />} type="email" placeholder="Mail" />)}
             </FormItem>
             <FormItem hasFeedback>
               {getFieldDecorator('password', {
@@ -156,11 +156,11 @@ class SignUp extends React.Component {
                     min: 6,
                     max: 16,
                     pattern: PASSWORD,
-                    message: 'Password must be between 6 and 16 characters and must contain at least one lowercase letter, one uppercase letter and one numeric digit.'
+                    message: 'Password must be between 6 and 16 characters and must contain at least one lowercase letter, one uppercase letter and one numeric digit.',
                   },
                   { validator: this.validatePasswordMatch },
                 ],
-              })(<Input prefix={<Icon type="lock" style={{ color: "rgba(0,0,0,.25)" }} />} type="password" placeholder="Password" />)}
+              })(<Input prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />} type="password" placeholder="Password" />)}
             </FormItem>
             <FormItem hasFeedback>
               {getFieldDecorator('confirm', {
