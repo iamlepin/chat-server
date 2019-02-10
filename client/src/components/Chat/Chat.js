@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Card, Icon, Row, Col, Avatar } from 'antd'
+import { Card, Icon, Row, Col, Input, Button } from 'antd'
 import Message from './Message'
 import PropTypes from 'prop-types'
 import './Chat.scss'
@@ -22,7 +22,11 @@ export default class Chat extends Component {
             className="chat"
             title="Chat"
             bodyStyle={{ height: '65vh' }}
-            actions={[<Icon type="setting" />, <Icon type="edit" />, <Icon type="ellipsis" />]}
+            actions={[
+              <Row type="flex" justify="center" align="middle" style={{ flexWrap: 'nowrap' }}>
+                <Input style={{ width: '35vw', marginRight: '10px' }} /><Button>Send</Button>
+              </Row>
+            ]}
           >
           <Message />
             <Message />
