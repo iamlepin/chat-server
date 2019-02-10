@@ -10,8 +10,8 @@ import { trimValue, storage, of } from '../../utils/common'
 import { USER_NAME } from '../../constants/regexp'
 import FaceBookButton from '../FaceBookButton'
 import { setUserInfo, clearUserInfo } from '../../actions/userInfo'
-import './SignIn.css'
 import { USER_INFO, APP_ACCOUNT } from '../../constants/common'
+import './SignIn.scss'
 
 const FormItem = Form.Item
 

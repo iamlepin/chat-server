@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Row, Col } from 'antd'
 import { HOME } from '../../constants/routes'
-import './RedirectPage.css'
+import './RedirectPage.scss'
 
 const StateFullRedirect = ({ message, delay, link, history }) => {
     const redirect = () => {

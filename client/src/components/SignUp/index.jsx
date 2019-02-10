@@ -6,7 +6,7 @@ import { EMAIL, USER_NAME, PASSWORD } from '../../constants/regexp'
 import { REDIRECT, HOME } from '../../constants/routes'
 import { trimValue } from '../../utils/common'
 import nodeApi from '../../api'
-import './SignUp.css'
+import './SignUp.scss'
 
 const FormItem = Form.Item
 

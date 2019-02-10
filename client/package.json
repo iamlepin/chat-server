@@ -24,7 +24,7 @@
     "build-css": "node-sass-chokidar --include-path ./src --include-path ./node_modules src/styles -o src/styles",
     "watch-css": "npm run build-css && node-sass-chokidar --include-path ./src --include-path ./node_modules src/styles -o src/styles --watch --recursive",
     "start-js": "HTTPS=true react-app-rewired start",
-    "start": "npm-run-all -p watch-css start-js",
+    "start": "npm-run-all -p start-js",
     "build-js": "react-app-rewired build",
     "build": "npm-run-all build-css build-js",
     "test": "react-app-rewired test --env=jsdom",
