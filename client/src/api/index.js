@@ -5,7 +5,7 @@ const MODE = 'cors'
 const HEADERS = new Headers({
   'Content-Type': 'application/json',
 })
-const SERVER_URL = 'http://localhost:3001'
+const SERVER_URL = 'http://localhost:3001' // TODO: Lepin > move to config
 
 const sendRequest = (url, method, body) => {
   const options = {
