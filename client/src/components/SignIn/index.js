@@ -34,26 +34,32 @@ class SignIn extends React.Component {
       if (err) {
         console.error()
       } else {
-        const { userName: name, password, remember } = values
+        const { userName: name, password } = values
         const body = {
           name,
           password,
-          remember,
+          // remember, // TODO: Lepin >
         }
 
-        const { error, message: msg, data } = await of(nodeApi.loginUser(body))
+        await this.loginUser(body)
 
-        if (error) {
-          message.error(error)
-        }
-        if (data) {
-          const userInfo = { ...data, profileType: APP_ACCOUNT }
-          message.success(msg)
-          this.props.setUserInfo(userInfo)
-          storage.set(USER_INFO, userInfo)
-        }
+        this.props.form.resetFields()
       }
     })
+  }
+
+  loginUser = async (body) => {
+    const { error, message: msg, data } = await of(nodeApi.loginUser(body))
+
+    if (error) {
+      message.error(error)
+    }
+    if (data) {
+      const userInfo = { ...data, profileType: APP_ACCOUNT }
+      message.success(msg)
+      this.props.setUserInfo(userInfo)
+      storage.set(USER_INFO, userInfo)
+    }
   }
 
   render() {
