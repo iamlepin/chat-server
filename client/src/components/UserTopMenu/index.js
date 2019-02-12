@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
 import { Link } from 'react-router-dom'
-import { Button } from 'antd'
+import { Button, Avatar } from 'antd'
 import PropTypes from 'prop-types'
 import { SIGN_IN } from '../../constants/routes'
 import './UserTopMenu.scss'
@@ -15,7 +15,7 @@ const UserTopMenu = ({ userId, userPic, profileType, userName, handleLogout }) =
     {userId && (
       <Fragment>
         <span style={{ color: 'white', marginRight: '16px' }}>{userName}</span>
-        <img className="user-info_image" src={userPic} alt="user avatar" />
+        <Avatar className="user-info_image" size="large" icon="user" src={userPic} />
         <Button ghost onClick={handleLogout(profileType)}>Logout</Button>
       </Fragment>
     )
