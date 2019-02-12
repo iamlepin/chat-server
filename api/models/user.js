@@ -4,10 +4,12 @@ const emailRegex = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}
 
 const userSchema = mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
+  id_fb: {type: String},
   name: {type: String, required: true},
-  email: {type: String, required: true, match: emailRegex},
-  password: {type: String, required: true},
+  email: {type: String, match: emailRegex},
+  password: {type: String},
   refreshToken: {type: String},
+  userPic: {type: String},
 });
 
 module.exports = mongoose.model('User', userSchema);
