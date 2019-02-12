@@ -3,13 +3,14 @@ import PropTypes from 'prop-types'
 import { Menu } from 'antd'
 import { Link } from 'react-router-dom'
 import './TopMenu.scss'
+import { HOME } from '../../constants/routes';
 
 const TopMenu = ({ config }) => (
   <Menu
     className="top-menu"
     theme="dark"
     mode="horizontal"
-    defaultSelectedKeys={['1']}
+    defaultSelectedKeys={[HOME]}
     style={{ lineHeight: '32px' }}
   >
     {config.map(({ path, title }) => (
