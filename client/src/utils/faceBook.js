@@ -28,7 +28,7 @@ const loginFbUserToApp = (setUserInfo) => (response) => {
     })
 }
 
-const handleStatusChange = ({ userInfo, setUserInfo, logoutUser }) => (resp) => {
+const handleStatusChange = ({ userInfo, setUserInfo, logOutUser }) => (resp) => {
   const { status } = resp
 
   if (!userInfo && status === 'connected') {
@@ -39,7 +39,7 @@ const handleStatusChange = ({ userInfo, setUserInfo, logoutUser }) => (resp) => 
     updateUserInfo({ userInfo, setUserInfo })
     return
   }
-  logoutUser()
+  logOutUser()
 }
 
 export const loadFacebookSDK = (params) => {

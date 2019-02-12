@@ -1,8 +1,7 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom'
 import { connect } from 'react-redux';
-import { Layout, Menu, Button } from 'antd'
+import { Layout } from 'antd'
 import { clearUserInfo } from '../../actions/userInfo'
 import { FACE_BOOK, USER_INFO } from '../../constants/common'
 import { TOP_MENU } from '../../constants/routes'

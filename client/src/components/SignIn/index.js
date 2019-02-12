@@ -20,12 +20,12 @@ class SignIn extends React.Component {
     userInfo: PropTypes.object.isRequired,
     setUserInfo: PropTypes.func.isRequired,
     form: PropTypes.object.isRequired,
-    logoutUser: PropTypes.func.isRequired,
+    logOutUser: PropTypes.func.isRequired,
   }
 
   componentDidMount = () => {
-    const { logoutUser, setUserInfo } = this.props
-    loadFacebookSDK({ setUserInfo, logoutUser })
+    const { logOutUser, setUserInfo } = this.props
+    loadFacebookSDK({ setUserInfo, logOutUser })
   }
 
   handleSubmit = (event) => {
@@ -140,7 +140,7 @@ const mstp = (state) => ({ userInfo: state.userInfo })
 
 const mdtp = (dispatch) => ({
   setUserInfo: (userInfo) => dispatch(setUserInfo(userInfo)),
-  logoutUser: () => {
+  logOutUser: () => {
     storage.remove(USER_INFO)
     dispatch(clearUserInfo())
   },
