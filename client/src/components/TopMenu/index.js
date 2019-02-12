@@ -22,10 +22,12 @@ const TopMenu = ({ config }) => (
 )
 
 TopMenu.propTypes = {
-  config: PropTypes.shape({
-    title: PropTypes.string.isRequired,
-    path: PropTypes.string.isRequired,
-  }).isRequired,
+  config: PropTypes.arrayOf(
+    PropTypes.shape({
+      title: PropTypes.string.isRequired,
+      path: PropTypes.string.isRequired,
+    }).isRequired
+  ).isRequired,
 }
 
 export default TopMenu

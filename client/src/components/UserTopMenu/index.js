@@ -25,8 +25,8 @@ const UserTopMenu = ({ userId, userPic, profileType, userName, handleLogout }) =
 UserTopMenu.propTypes = {
   userId: PropTypes.string,
   userPic: PropTypes.string,
-  profileType: PropTypes.string.isRequired,
-  userName: PropTypes.string.isRequired,
+  profileType: PropTypes.string,
+  userName: PropTypes.string,
   handleLogout: PropTypes.func,
 }
 
@@ -34,6 +34,8 @@ UserTopMenu.defaultProps = {
   userId: '',
   userPic: '',
   handleLogout: () => {},
+  profileType: '',
+  userName: '',
 }
 
 export default UserTopMenu
