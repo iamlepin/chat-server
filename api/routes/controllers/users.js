@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
 const User = require('../../models/user')
-const UserFb = require('../../models/userFb')
 const bcrypt = require('bcrypt')
 const { sendErrorMessage, getPairTokens } = require('../../utils/helpers')
 
@@ -161,13 +160,13 @@ const signIn = (req, res) => {
 }
 
 const signInFb = (req, res) => {
-  UserFb.findOne({ id_fb: req.body.id })
+  User.findOne({ id_fb: req.body.id })
     .exec()
     .then(user => {
       if(user) {
         return user
       }
-      return new UserFb({
+      return new User({
         _id: new mongoose.Types.ObjectId(),
         id_fb: req.body.id,
         name: req.body.name,
@@ -175,7 +174,6 @@ const signInFb = (req, res) => {
       }).save()
     })
     .then(user => {
-			console.log('TCL: signInFb -> user', user)
       if (!user) { throw new Error('Error getting user from database.')}
       const userData = {
         userId: user.id,
@@ -183,7 +181,7 @@ const signInFb = (req, res) => {
         userRole: null,
       }
       const pairTokens = getPairTokens(userData)
-      UserFb.updateOne({ _id: user.id }, { refreshToken: pairTokens.refreshToken })
+      User.updateOne({ _id: user.id }, { refreshToken: pairTokens.refreshToken })
         .then(updatedUser => {
           if (!updatedUser) { throw new Error('Error updating user.')}
           res.status(200).json({
@@ -219,7 +217,7 @@ const remove = (req, res) => {
 }
 
 const refreshUserToken = (req, res) => {
-  UserFb.findById(req.body.userId)
+  User.findById(req.body.userId)
     .exec()
     .then((user) => {
       if (!user) {
@@ -235,7 +233,7 @@ const refreshUserToken = (req, res) => {
           userRole: null,
         }
         const pairTokens = getPairTokens(userData)
-        UserFb.updateOne({ _id: user.id }, { refreshToken: pairTokens.refreshToken })
+        User.updateOne({ _id: user.id }, { refreshToken: pairTokens.refreshToken })
           .then(updatedUser => {
             if (updatedUser) {
               res.status(200).json({
