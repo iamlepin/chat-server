@@ -5,7 +5,9 @@ import { connect } from 'react-redux';
 import { Layout, Menu, Button } from 'antd'
 import { clearUserInfo } from '../../actions/userInfo'
 import { FACE_BOOK, USER_INFO } from '../../constants/common'
+import { TOP_MENU } from '../../constants/routes'
 import { storage } from '../../utils/common'
+import TopMenu from '../TopMenu'
 import './Header.scss'
 
 const Header = ({ userInfo, logOutUser }) => {
@@ -27,19 +29,7 @@ const Header = ({ userInfo, logOutUser }) => {
 
   return (
     <Layout.Header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-      <Menu
-        theme="dark"
-        mode="horizontal"
-        defaultSelectedKeys={['1']}
-        style={{ lineHeight: '32px' }}
-      >
-        <Menu.Item style={{ borderRadius: '4px', marginRight: '5px' }} key="1">
-          <Link to="/"> Home </Link>
-        </Menu.Item>
-        <Menu.Item style={{ borderRadius: '4px', marginRight: '5px' }} key="2">
-          <Link to="/chat"> Chat </Link>
-        </Menu.Item>
-      </Menu>
+      <TopMenu config={TOP_MENU} />
       <div className="user-info">
         {!userId &&
           <Link to="/signin">
