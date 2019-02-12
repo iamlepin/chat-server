@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import moment from 'moment'
 import io from 'socket.io-client'
 import { Card, Icon, Row, Col, Input, Button } from 'antd'
 import Message from './Message'
@@ -12,8 +13,8 @@ export default class Chat extends Component {
   //   prop: PropTypes
   // }
   state = {
-    message: null,
-    chat: []
+    message: '',
+    chat: [],
   }
 
   componentDidMount = () => {
@@ -23,10 +24,25 @@ export default class Chat extends Component {
     })))
   }
 
-  sendMessage = () => {
-    socket.emit('chat message', this.state.message)
+  sendMessage = (e) => {
+    const isClick = e.type === 'click'
+    const isPressEnter = e.key === 'Enter'
+    const { message } = this.state
+    const canSendMessage = message && (isClick || isPressEnter)
+    if (canSendMessage) {
+      const msgData = { text: message, name: this.props.userInfo.userName, time: moment().format('hh:mm:ss')}
+			console.log('TCL: Chat -> sendMessage -> data', msgData)
+      socket.emit('chat message', msgData)
+      this.setState((prevState) => ({
+        chat: [...prevState.chat, msgData],
+        message: '',
+      }))
+    }
   }
 
+  handleChange = (e) => {
+    this.setState({ message: e.target.value })
+  }
 
   render() {
     return (
@@ -38,12 +54,17 @@ export default class Chat extends Component {
             bodyStyle={{ height: '65vh' }}
             actions={[
               <Row type="flex" justify="center" align="middle" style={{ flexWrap: 'nowrap' }}>
-                <Input value={this.state.message} onChange={(e) => this.setState({ message: e.target.value })} style={{ width: '35vw', marginRight: '10px' }} />
+                <Input
+                  value={this.state.message}
+                  onChange={this.handleChange}
+                  onKeyPress={this.sendMessage}
+                  style={{ width: '35vw', marginRight: '10px' }}
+                />
                 <Button onClick={this.sendMessage}>Send</Button>
               </Row>
             ]}
           >
-            {this.state.chat.map((msg) => <Message text={msg} />)}
+            {this.state.chat.map((msg) => <Message {...msg} />)}
           </Card>
         </Col>
       </Row>

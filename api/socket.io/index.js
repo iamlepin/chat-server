@@ -1,7 +1,10 @@
+let clients = 0
+
 const connect = (socket) => {
-  console.log('socket connected')
+  clients = clients + 1
+  console.log('socket connected! clients = ', clients)
   socket.on('chat message', (message) => {
-    socket.emit('message', message)
+    socket.broadcast.emit('message', message)
   })
 }
 
