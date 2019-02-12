@@ -1,9 +1,9 @@
 import React from 'react'
 import { Avatar } from 'antd'
 
-const Message = ({ text, time, name }) => (
+const Message = ({ text, time, name, userPic }) => (
   <div style={{ marginBottom: '10px' }}>
-    <Avatar style={{ backgroundColor: '#87d068', marginRight: '10px' }} icon="user" />
+    <Avatar icon="user" src={userPic} />
     <span style={{ marginRight: '10px' }}>{time}</span>
     <span style={{ marginRight: '10px' }}>{name}</span>
     {text}

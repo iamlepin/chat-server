@@ -5,6 +5,7 @@ import { Card, Icon, Row, Col, Input, Button } from 'antd'
 import Message from './Message'
 import PropTypes from 'prop-types'
 import './Chat.scss'
+import nodeApi from '../../api';
 
 let socket = null
 
@@ -18,6 +19,7 @@ export default class Chat extends Component {
   }
 
   componentDidMount = () => {
+    this.props.getUsers()
     socket = io('http://localhost:3001') // TODO: Lepin > use env config
     socket.on('message', (msg) => this.setState((prevState) => ({
       chat: [...prevState.chat, msg]
@@ -30,7 +32,7 @@ export default class Chat extends Component {
     const { message } = this.state
     const canSendMessage = message && (isClick || isPressEnter)
     if (canSendMessage) {
-      const msgData = { text: message, name: this.props.userInfo.userName, time: moment().format('hh:mm:ss')}
+      const msgData = { text: message, userId: this.props.userInfo.userId, time: moment().format('hh:mm:ss')}
 			console.log('TCL: Chat -> sendMessage -> data', msgData)
       socket.emit('chat message', msgData)
       this.setState((prevState) => ({

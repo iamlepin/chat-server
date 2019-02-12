@@ -1,8 +1,13 @@
 import { connect } from 'react-redux';
+import { getUsers } from '../../actions/users'
 import Chat from './Chat'
 
 const mstp = (state) => ({
   userInfo: state.userInfo,
 })
 
-export default connect(mstp)(Chat)
+const mdtp = {
+  getUsers,
+}
+
+export default connect(mstp, mdtp)(Chat)

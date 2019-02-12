@@ -67,6 +67,11 @@ const refreshAccessToken = (body) => {
   return post(link, body)
 }
 
+const getUsers = () => {
+  const link = '/users'
+  return get(link)
+}
+
 const nodeApi = {
   addUser,
   loginUser,
@@ -74,6 +79,7 @@ const nodeApi = {
   checkUserName,
   checkUserEmail,
   refreshAccessToken,
+  getUsers,
 }
 
 export default nodeApi
