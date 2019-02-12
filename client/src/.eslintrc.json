@@ -1,0 +1,57 @@
+{
+    "env": {
+        "browser": true,
+        "commonjs": true,
+        "es6": true,
+        "node": true
+    },
+    "parserOptions": {
+        "ecmaFeatures": {
+            "jsx": true
+        },
+        "sourceType": "module"
+    },
+    "rules": {
+        "no-console": ["error", { "allow": ["warn", "error", "info"] }],
+        "no-const-assign": "warn",
+        "no-this-before-super": "warn",
+        "no-undef": "warn",
+        "no-unreachable": "warn",
+        "no-unused-vars": "warn",
+        "constructor-super": "warn",
+        "consistent-return": 0,
+        "valid-typeof": "warn",
+        "indent": ["warn", 2, { "SwitchCase": 1 }],
+        "arrow-parens": 0,
+        "react/sort-comp": 0,
+        "import/prefer-default-export": 0,
+        "react/forbid-prop-types": "",
+        "react/jsx-filename-extension": 0,
+        "no-shadow": 0,
+        "no-extra-semi": 0,
+        "func-names": 0,
+        "semi": 0,
+        "no-spaced-func": [ 0, "never" ],
+        "space-before-function-paren": 0,
+        "no-unused-expressions": ["warn", { "allowShortCircuit": true, "allowTernary": true }],
+        "no-case-declarations": 0,
+        "comma-dangle": ["error", {
+            "arrays": "always-multiline",
+            "objects": "always-multiline",
+            "imports": "always-multiline",
+            "exports": "always-multiline",
+            "functions": "never"
+        }],
+        "jsx-a11y/anchor-is-valid": [ "error", {
+            "components": [ "Link" ],
+            "specialLink": [ "to" ]
+        }],
+        "object-curly-newline": ["error", { "multiline": true }]
+    },
+    "parser": "babel-eslint",
+    "extends": [
+        "eslint:recommended",
+        "plugin:react/recommended",
+        "airbnb"
+    ]
+}

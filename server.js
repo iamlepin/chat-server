@@ -1,6 +1,11 @@
-const http = require('http');
 const app = require('./app');
+const http = require('http').createServer(app);
+const io = require('socket.io')(http);
+const socket = require('./api/socket.io');
+const { server } = require('./config');
 
-const port = process.env.PORT || 3000;
-const server = http.createServer(app);
-server.listen(port, console.log('Listening port localhost:3000'));
+const PORT = process.env.PORT || server.PORT;
+
+io.on('connection', socket.connect)
+
+http.listen(PORT, console.log(`Listening port ${PORT} on ${server.PROTOCOL}://${server.URL}`));

@@ -1,0 +1,12 @@
+@import 'variables';
+
+.category-card {
+  h5 {
+    margin: 0;
+    color: $prim-color;
+  }
+
+  &:hover {
+    box-shadow: $shadow1;
+  }
+}

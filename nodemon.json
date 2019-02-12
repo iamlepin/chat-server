@@ -1,0 +1,5 @@
+{
+  "env": {
+    "SECRET_PHRASE": "someSecretPhrase"
+  }
+}
