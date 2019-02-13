@@ -4,6 +4,7 @@ import Chat from './Chat'
 
 const mstp = (state) => ({
   userInfo: state.userInfo,
+  users: state.users,
 })
 
 const mdtp = {

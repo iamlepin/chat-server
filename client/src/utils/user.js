@@ -44,7 +44,7 @@ export const updateUserInfo = async ({ userInfo, setUserInfo }) => {
   setUserInfo(newUserInfo)
 }
 
-export const getNameById = (id = '', usersList = []) => {
-  const user = usersList.find(({ id }) => id === id)
-  return user ? user.name : ''
+export const getUserById = (userId = '', users = []) => {
+  const user = users.find(({ _id }) => _id === userId)
+  return user || {}
 }

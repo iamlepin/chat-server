@@ -3,6 +3,7 @@ import moment from 'moment'
 import io from 'socket.io-client'
 import { Card, Icon, Row, Col, Input, Button } from 'antd'
 import Message from './Message'
+import { getUserById } from '../../utils/user'
 import PropTypes from 'prop-types'
 import './Chat.scss'
 import nodeApi from '../../api';
@@ -47,6 +48,7 @@ export default class Chat extends Component {
   }
 
   render() {
+    const { users, userInfo } = this.props
     return (
       <Row type="flex" justify="center">
         <Col span={12}>
@@ -66,7 +68,18 @@ export default class Chat extends Component {
               </Row>,
             ]}
           >
-            {this.state.chat.map((msg) => <Message {...msg} />)}
+            {this.state.chat.map(({ userId, ...rest }) => {
+              const { name = '', userPic = '' } = getUserById(userId, users)
+              const self = userId === userInfo.id
+              return (
+                <Message
+                  name={name}
+                  userPic={userPic}
+                  self={self}
+                  {...rest}
+                />
+              )
+            })}
           </Card>
         </Col>
       </Row>
