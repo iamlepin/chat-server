@@ -43,3 +43,8 @@ export const updateUserInfo = async ({ userInfo, setUserInfo }) => {
   storage.set(USER_INFO, newUserInfo)
   setUserInfo(newUserInfo)
 }
+
+export const getNameById = (userId = '', usersList = []) => {
+  const user = usersList.find(({ id }) => userId === id)
+  return user ? user.name : ''
+}

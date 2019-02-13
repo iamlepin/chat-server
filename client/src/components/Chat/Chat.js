@@ -22,7 +22,7 @@ export default class Chat extends Component {
     this.props.getUsers()
     socket = io('http://localhost:3001') // TODO: Lepin > use env config
     socket.on('message', (msg) => this.setState((prevState) => ({
-      chat: [...prevState.chat, msg]
+      chat: [...prevState.chat, msg],
     })))
   }
 
@@ -63,7 +63,7 @@ export default class Chat extends Component {
                   style={{ width: '35vw', marginRight: '10px' }}
                 />
                 <Button onClick={this.sendMessage}>Send</Button>
-              </Row>
+              </Row>,
             ]}
           >
             {this.state.chat.map((msg) => <Message {...msg} />)}
