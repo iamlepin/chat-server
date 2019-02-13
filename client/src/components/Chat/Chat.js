@@ -32,7 +32,7 @@ export default class Chat extends Component {
     const { message } = this.state
     const canSendMessage = message && (isClick || isPressEnter)
     if (canSendMessage) {
-      const msgData = { text: message, userId: this.props.userInfo.userId, time: moment().format('hh:mm:ss')}
+      const msgData = { text: message, userId: this.props.userInfo.id, time: moment().format('hh:mm:ss')}
 			console.log('TCL: Chat -> sendMessage -> data', msgData)
       socket.emit('chat message', msgData)
       this.setState((prevState) => ({
@@ -49,7 +49,7 @@ export default class Chat extends Component {
   render() {
     return (
       <Row type="flex" justify="center">
-        <Col span="12">
+        <Col span={12}>
           <Card
             className="chat"
             title="Chat"

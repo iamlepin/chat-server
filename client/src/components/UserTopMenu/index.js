@@ -5,16 +5,16 @@ import PropTypes from 'prop-types'
 import { SIGN_IN } from '../../constants/routes'
 import './UserTopMenu.scss'
 
-const UserTopMenu = ({ userId, userPic, profileType, userName, handleLogout }) => (
+const UserTopMenu = ({ id, userPic, profileType, name, handleLogout }) => (
   <div className="user-info">
-    {!userId &&
+    {!id &&
       <Link to={SIGN_IN}>
         <Button ghost type="primary">LogIn</Button>
       </Link>
     }
-    {userId && (
+    {id && (
       <Fragment>
-        <span style={{ color: 'white', marginRight: '16px' }}>{userName}</span>
+      <span style={{ color: 'white', marginRight: '16px' }}>{name}</span>
         <Avatar className="user-info_image" size="large" icon="user" src={userPic} />
         <Button ghost onClick={handleLogout(profileType)}>Logout</Button>
       </Fragment>
@@ -23,19 +23,19 @@ const UserTopMenu = ({ userId, userPic, profileType, userName, handleLogout }) =
   </div>)
 
 UserTopMenu.propTypes = {
-  userId: PropTypes.string,
+  id: PropTypes.string,
+  name: PropTypes.string,
   userPic: PropTypes.string,
   profileType: PropTypes.string,
-  userName: PropTypes.string,
   handleLogout: PropTypes.func,
 }
 
 UserTopMenu.defaultProps = {
-  userId: '',
+  id: '',
+  name: '',
   userPic: '',
   handleLogout: () => {},
   profileType: '',
-  userName: '',
 }
 
 export default UserTopMenu

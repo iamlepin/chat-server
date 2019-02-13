@@ -26,13 +26,13 @@ export const refreshAccessToken = async (body) => {
 }
 
 export const updateUserInfo = async ({ userInfo, setUserInfo }) => {
-  const { expiresIn, refreshToken, userId } = userInfo
+  const { expiresIn, refreshToken, id } = userInfo
   const isExpired = checkAccesTokenExpiration(expiresIn)
   let response
   let newUserInfo = { ...userInfo }
 
   if (isExpired) {
-    response = await refreshAccessToken({ userId, refreshToken })
+    response = await refreshAccessToken({ id, refreshToken })
   }
   if (response && response.error) {
     return message.error(response.error)
@@ -44,7 +44,7 @@ export const updateUserInfo = async ({ userInfo, setUserInfo }) => {
   setUserInfo(newUserInfo)
 }
 
-export const getNameById = (userId = '', usersList = []) => {
-  const user = usersList.find(({ id }) => userId === id)
+export const getNameById = (id = '', usersList = []) => {
+  const user = usersList.find(({ id }) => id === id)
   return user ? user.name : ''
 }

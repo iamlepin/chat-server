@@ -17,7 +17,7 @@ const getAll = (req, res) => {
 }
 
 const getOne = (req, res) => {
-  User.findById(req.params.userId)
+  User.findById(req.params.id)
     .select('_id email')
     .exec()
     .then(doc => {
@@ -42,11 +42,11 @@ const getName = (req, res) => {
       if (user) {
         res.status(200).json({
           error: true,
-          message: 'Username exists.',
+          message: 'User name exists.',
         })
       } else {
         res.status(200).json({
-          message: 'Username doesn\'t exist',
+          message: 'User name doesn\'t exist',
         })
       }
     })
@@ -134,9 +134,9 @@ const signIn = (req, res) => {
     .then((isPassCompareSucces) => {
       if (isPassCompareSucces) {
         userData = {
-          userId: foundUser.id,
-          userName: foundUser.name,
-          userRole: null,
+          id: foundUser.id,
+          name: foundUser.name,
+          role: null,
         }
         pairTokens = getPairTokens(userData)
 
@@ -176,9 +176,9 @@ const signInFb = (req, res) => {
     .then(user => {
       if (!user) { throw new Error('Error getting user from database.')}
       const userData = {
-        userId: user.id,
-        userName: user.name,
-        userRole: null,
+        id: user.id,
+        name: user.name,
+        role: null,
       }
       const pairTokens = getPairTokens(userData)
       User.updateOne({ _id: user.id }, { refreshToken: pairTokens.refreshToken })
@@ -198,7 +198,7 @@ const signInFb = (req, res) => {
 }
 
 const remove = (req, res) => {
-  User.findByIdAndRemove(req.params.userId)
+  User.findByIdAndRemove(req.params.id)
     .select('_id email')
     .exec()
     .then(user => {
@@ -217,20 +217,20 @@ const remove = (req, res) => {
 }
 
 const refreshUserToken = (req, res) => {
-  User.findById(req.body.userId)
+  User.findById(req.body.id)
     .exec()
     .then((user) => {
       if (!user) {
         res.status(404).json({
-          error: `User with id ${req.body.userId} not found.`
+          error: `User with id ${req.body.id} not found.`
         })
       }
       const isRefreshTokenVerified = user.refreshToken && user.refreshToken === req.body.refreshToken
       if (isRefreshTokenVerified) {
           const userData = {
-          userId: user.id,
-          userName: user.name,
-          userRole: null,
+          id: user.id,
+          name: user.name,
+          role: null,
         }
         const pairTokens = getPairTokens(userData)
         User.updateOne({ _id: user.id }, { refreshToken: pairTokens.refreshToken })

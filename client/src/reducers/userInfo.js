@@ -1,9 +1,9 @@
 import { SET_USER_INFO, CLEAR_USER_INFO } from '../constants/actions'
 
 const initState = {
-  userId: null,
-  userName: null,
-  userRole: null,
+  id: null,
+  name: null,
+  role: null,
   accessToken: null,
   refreshToken: null,
   expiresIn: null,
