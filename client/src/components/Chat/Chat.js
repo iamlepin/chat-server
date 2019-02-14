@@ -1,14 +1,11 @@
 import React, { Component } from 'react'
 import moment from 'moment'
 import io from 'socket.io-client'
-import { Card, Icon, Row, Col, Input, Button } from 'antd'
+import { Card, Row, Col, Input } from 'antd'
 import Message from './Message'
 import { getUserById } from '../../utils/user'
 import PropTypes from 'prop-types'
 import './Chat.scss'
-import nodeApi from '../../api';
-
-const { Meta } = Card
 
 let socket = null
 
@@ -73,7 +70,6 @@ export default class Chat extends Component {
                     <div onClick={this.sendMessage} role="button"> Send </div> // eslint-disable-line
                   }
                 />
-                {/* <Button onClick={this.sendMessage}>Send</Button> */}
               </Row>,
             ]}
           >
