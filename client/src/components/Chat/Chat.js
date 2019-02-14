@@ -8,6 +8,8 @@ import PropTypes from 'prop-types'
 import './Chat.scss'
 import nodeApi from '../../api';
 
+const { Meta } = Card
+
 let socket = null
 
 export default class Chat extends Component {
@@ -19,12 +21,15 @@ export default class Chat extends Component {
     chat: [],
   }
 
+  input = null
+
   componentDidMount = () => {
     this.props.getUsers()
     socket = io('http://localhost:3001') // TODO: Lepin > use env config
     socket.on('message', (msg) => this.setState((prevState) => ({
       chat: [...prevState.chat, msg],
     })))
+    this.input.focus()
   }
 
   sendMessage = (e) => {
@@ -41,6 +46,7 @@ export default class Chat extends Component {
         message: '',
       }))
     }
+    this.input.focus()
   }
 
   handleChange = (e) => {
@@ -50,21 +56,24 @@ export default class Chat extends Component {
   render() {
     const { users, userInfo } = this.props
     return (
-      <Row type="flex" justify="center">
-        <Col span={12}>
+      <Row>
+        <Col>
           <Card
             className="chat"
             title="Chat"
             bodyStyle={{ height: '65vh' }}
             actions={[
-              <Row type="flex" justify="center" align="middle" style={{ flexWrap: 'nowrap' }}>
+              <Row className="chat__footer">
                 <Input
+                  ref={(x) => { this.input = x }}
                   value={this.state.message}
                   onChange={this.handleChange}
                   onKeyPress={this.sendMessage}
-                  style={{ width: '35vw', marginRight: '10px' }}
+                  addonAfter={
+                    <div onClick={this.sendMessage} role="button"> Send </div> // eslint-disable-line
+                  }
                 />
-                <Button onClick={this.sendMessage}>Send</Button>
+                {/* <Button onClick={this.sendMessage}>Send</Button> */}
               </Row>,
             ]}
           >

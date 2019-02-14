@@ -1,24 +1,42 @@
-.message {
+.msg {
   display: flex;
-  align-items: center;
-  margin-bottom: .5rem;
-
-  &--self {
-    flex-direction: row-reverse;
-  }
+  flex-direction: row;
+  margin-bottom: 1rem;
 
   &:last-child {
     margin-bottom: 0;
   }
 
-  &_item {
-    margin-left: .5rem;
-    &:last-child {
-      margin-left: 0;
-    }
+  &__content {
+    padding: 0 0.5rem;
+    max-width: 70%;
   }
 
-  &_name {
+  &__avatar {
+    flex-shrink: 0;
+  }
+}
+
+.msg-info {
+  display: flex;
+
+  &__item {
+    margin-right: .5rem;
+    // padding: 0 .5rem;
+    // &:last-child {
+    //   margin-right: 0;
+    // }
+  }
+  &__name {
     font-weight: 600;
   }
+
+  &__time {
+    opacity: .5;
+  }
+}
+
+.reversed {
+  display: flex;
+  flex-direction: row-reverse;
 }

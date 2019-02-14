@@ -1,3 +1,24 @@
 .chat {
-  width: 100%;
+  max-width: 720px;
+  margin: auto;
+
+  &__body {
+    padding: 1rem;
+    width: 100%;
+
+  }
+
+  &__footer {
+    // display: flex;
+    // align-items: center;
+    padding: 0 1rem;
+    // width: 100%;
+    // min-width: 100%;
+    // max-width: 100%;
+  }
+
+  //override antd styles
+  .ant-card-actions li > span {
+    width: 100%;
+  }
 }
