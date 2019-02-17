@@ -18,7 +18,8 @@ export default class Chat extends Component {
     chat: [],
   }
 
-  input = null
+  msgInput = null
+  chatBody = null
 
   componentDidMount = () => {
     this.props.getUsers()
@@ -26,7 +27,17 @@ export default class Chat extends Component {
     socket.on('message', (msg) => this.setState((prevState) => ({
       chat: [...prevState.chat, msg],
     })))
-    this.input.focus()
+    this.msgInput.focus()
+    this.scrollToBottom()
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const hasNewMessage = prevState.chat.length !== this.state.chat.length
+    if (hasNewMessage) { this.scrollToBottom() }
+  }
+
+  scrollToBottom = () => {
+    this.chatBody.scrollTop = this.chatBody.scrollHeight - this.chatBody.clientHeight
   }
 
   sendMessage = (e) => {
@@ -43,7 +54,7 @@ export default class Chat extends Component {
         message: '',
       }))
     }
-    this.input.focus()
+    this.msgInput.focus()
   }
 
   handleChange = (e) => {
@@ -58,11 +69,10 @@ export default class Chat extends Component {
           <Card
             className="chat"
             title="Chat"
-            bodyStyle={{ height: '65vh' }}
             actions={[
               <Row className="chat__footer">
                 <Input
-                  ref={(x) => { this.input = x }}
+                  ref={(x) => { this.msgInput = x }}
                   value={this.state.message}
                   onChange={this.handleChange}
                   onKeyPress={this.sendMessage}
@@ -73,18 +83,21 @@ export default class Chat extends Component {
               </Row>,
             ]}
           >
-            {this.state.chat.map(({ userId, ...rest }) => {
-              const { name = '', userPic = '' } = getUserById(userId, users)
-              const self = userId === userInfo.id
-              return (
-                <Message
-                  name={name}
-                  userPic={userPic}
-                  self={self}
-                  {...rest}
-                />
-              )
-            })}
+            <div ref={(x) => { this.chatBody = x }} className="chat__body">
+              {this.state.chat.map(({ userId, ...rest }) => {
+                const { _id, name = '', userPic = '' } = getUserById(userId, users)
+                const self = userId === userInfo.id
+                return (
+                  <Message
+                    key={_id}
+                    name={name}
+                    userPic={userPic}
+                    self={self}
+                    {...rest}
+                  />
+                )
+              })}
+            </div>
           </Card>
         </Col>
       </Row>
