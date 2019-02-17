@@ -12,6 +12,7 @@ const Message = ({ text, time, name, userPic, self }) => (
       <div className="msg__header">
         <div className={`msg-info ${reverseFlex(self)}`}>
           <span className="msg-info__item msg-info__name">{name}</span>
+          <span>{' '}</span>
           <span className="msg-info__item msg-info__time">{time}</span>
         </div>
       </div>
