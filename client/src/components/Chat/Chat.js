@@ -79,7 +79,7 @@ export default class Chat extends Component {
           <Card
             className="chat"
             // title="Chat"
-            tabList={tabList}
+            // tabList={tabList}
             actions={[
               <Row className="chat__footer">
                 <Input

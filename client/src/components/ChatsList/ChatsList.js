@@ -42,10 +42,7 @@ class ChatsList extends React.Component {
                   avatar={<Avatar src={item.userPic} />}
                   title={
                     <Link
-                      to={{
-                        pathname: CHAT,
-                        state: item,
-                      }}
+                      to={`${CHAT}/${item._id}`}
                     >
                       {item.name}
                     </Link>
