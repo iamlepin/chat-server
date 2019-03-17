@@ -4,7 +4,7 @@ const mongo = {
 };
 
 const server = {
-  PROTOCOL: 'http',
+  PROTOCOL: 'https',
   URL: 'localhost',
   PORT: 3001,
 }

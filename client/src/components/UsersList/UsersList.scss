@@ -1,0 +1,17 @@
+.users {
+  display: flex;
+  justify-content: center;
+
+  .user-list {
+    background-color: white;
+
+    .ant-list-item-meta {
+      display: flex;
+      align-items: center;
+    }
+
+    .ant-list-item-meta-title {
+      margin: 0;
+    }
+  }
+}

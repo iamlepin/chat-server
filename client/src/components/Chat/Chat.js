@@ -8,6 +8,16 @@ import PropTypes from 'prop-types'
 import './Chat.scss'
 
 let socket = null
+const tabList = [
+  {
+    key: 'flood',
+    tab: 'Flood',
+  },
+  {
+    key: 'tech',
+    tab: 'Tech',
+  },
+]
 
 export default class Chat extends Component {
   // static propTypes = {
@@ -23,7 +33,7 @@ export default class Chat extends Component {
 
   componentDidMount = () => {
     this.props.getUsers()
-    socket = io('http://localhost:3001') // TODO: Lepin > use env config
+    socket = io('https://localhost:3001') // TODO: Lepin > use env config
     socket.on('message', (msg) => this.setState((prevState) => ({
       chat: [...prevState.chat, msg],
     })))
@@ -68,7 +78,8 @@ export default class Chat extends Component {
         <Col>
           <Card
             className="chat"
-            title="Chat"
+            // title="Chat"
+            tabList={tabList}
             actions={[
               <Row className="chat__footer">
                 <Input

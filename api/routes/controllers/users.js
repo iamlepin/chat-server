@@ -10,7 +10,7 @@ const getAll = (req, res) => {
     .then(docs => {
       res.status(200).json({
         message: 'Users loaded successfully',
-        users: docs,
+        data: docs,
       })
     })
     .catch(sendErrorMessage(res))
