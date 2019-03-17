@@ -10,13 +10,12 @@ import SignUp from '../../components/SignUp'
 import Chat from '../../components/Chat'
 import UsersList from '../../components/UsersList'
 import RedirectPage from '../../components/RedirectPage'
-import { HOME, SIGN_IN, SIGN_UP, REDIRECT, CHAT, USERS, CHAT_LIST } from '../../constants/routes'
+import { HOME, SIGN_IN, SIGN_UP, REDIRECT, CHAT, USERS } from '../../constants/routes'
 import { storage } from '../../utils/common'
 import { updateUserInfo } from '../../utils/user'
 import { loadFacebookSDK } from '../../utils/faceBook'
 import { setUserInfo } from '../../actions/userInfo'
 import { USER_INFO, FACE_BOOK, APP_ACCOUNT } from '../../constants/common'
-import ChatsList from '../../components/ChatsList'
 // import './App.scss'
 
 const { Content, Footer } = Layout
@@ -57,7 +56,6 @@ class App extends Component {
             <Route path={SIGN_IN} component={SignIn} />
             <Route path={SIGN_UP} component={SignUp} />
             <Route path={CHAT} component={Chat} />
-            <Route path={CHAT_LIST} component={ChatsList} />
             <Route path={REDIRECT} render={(props) => <RedirectPage {...props} />} />
             <Route render={() => <h2>404 not found!!! sorry</h2>} />
           </Switch>
