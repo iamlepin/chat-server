@@ -8,7 +8,7 @@ const mstp = (state) => ({
 })
 
 const mdtp = {
-  getUsers,
+  // getUsers,
 }
 
 export default connect(mstp, mdtp)(Chat)

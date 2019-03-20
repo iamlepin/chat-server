@@ -5,7 +5,7 @@ import './Message.scss'
 
 const reverseFlex = (self) => self ? 'reversed' : ''
 
-const Message = ({ text, time, name, userPic, self }) => (
+const Message = ({ body, date, name, userPic, self }) => (
   <div className={`msg ${reverseFlex(self)}`}>
     <Avatar className="msg__avatar" icon="user" src={userPic} />
     <div className="msg__content">
@@ -13,17 +13,17 @@ const Message = ({ text, time, name, userPic, self }) => (
         <div className={`msg-info ${reverseFlex(self)}`}>
           <span className="msg-info__item msg-info__name">{name}</span>
           <span>{' '}</span>
-          <span className="msg-info__item msg-info__time">{time}</span>
+          <span className="msg-info__item msg-info__date">{date}</span>
         </div>
       </div>
-      <div className="msg__body">{text}</div>
+      <div className="msg__body">{body}</div>
     </div>
   </div>
 )
 
 Message.propTypes = {
-  text: PropTypes.string.isRequired,
-  time: PropTypes.string.isRequired,
+  body: PropTypes.string.isRequired,
+  date: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   userPic: PropTypes.string.isRequired,
   self: PropTypes.bool.isRequired,
