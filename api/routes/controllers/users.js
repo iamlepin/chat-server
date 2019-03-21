@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const User = require('../../models/user')
+const Conversations = require('../../models/conversations')
 const bcrypt = require('bcrypt')
 const { sendErrorMessage, getPairTokens } = require('../../utils/helpers')
 
@@ -216,6 +217,20 @@ const remove = (req, res) => {
     .catch(sendErrorMessage(res))
 }
 
+const getUserChats = (req, res) => {  // TODO: Lepin > null !== null
+  Promise.all([
+    Conversations.find({ producerId: req.params.id }).exec(),
+    Conversations.find({ consumerId: req.params.id }).exec(),
+  ])
+    .then((response) => {
+      const { conversation1 = [], conversation2  = [] } = response
+      res.status(200).json({
+        data: [ ...conversation1, ...conversation2 ],
+      })
+    })
+    .catch(sendErrorMessage(res))
+}
+
 const refreshUserToken = (req, res) => {
   User.findById(req.body.id)
     .exec()
@@ -260,5 +275,6 @@ module.exports = {
   signIn,
   signInFb,
   remove,
+  getUserChats,
   refreshUserToken,
 }

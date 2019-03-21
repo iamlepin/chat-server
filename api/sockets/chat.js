@@ -33,28 +33,36 @@ const connect = (socket) => {
   })
 
   socket.on('init_conversation', async ({ userId, companionId }) => {
-    let messages = []
-    let conversation = await Conversation.findOne({ producerId: userId, consumerId: companionId }).exec()
+    try {
+      console.log('TCL: companionId', companionId)
+      console.log('TCL: userId', userId)
+      let messages = []
+      let conversation = await Conversation.findOne({ producerId: userId, consumerId: companionId }).exec()
 
-    if (!conversation) {
-      conversation = await Conversation.findOne({ producerId: companionId, consumerId: userId }).exec()
+      if (!conversation) {
+        conversation = await Conversation.findOne({ producerId: companionId, consumerId: userId }).exec()
+      }
+
+      if (!conversation) {
+        conversation = await new Conversation({
+          _id: new mongoose.Types.ObjectId(),
+          producerId: userId,  // TODO: Lepin > try/catch doesn't handle model validation errors
+          consumerId: companionId,
+        }).save()
+      } else {
+        messages = await Message.find({ conversationId: conversation.id })
+      }
+
+      socket.emit('init_conversation', {
+        conversation,
+        messages,
+      })
+    } catch (error) {
+      socket.emit('error', {
+        error,
+        message: 'Get conversation error.',
+      })
     }
-
-    if (!conversation) {
-      conversation = await new Conversation({
-        _id: new mongoose.Types.ObjectId(),
-        produserId: userId,
-        consumerId: companionId,
-      }).save()
-    } else {
-      messages = await Message.find({ conversationId: conversation.id })
-    }
-
-    socket.emit('init_conversation', {
-      conversation,
-      messages,
-    })
-		console.log('TCL: connect -> conversation', conversation)
   })
 }
 

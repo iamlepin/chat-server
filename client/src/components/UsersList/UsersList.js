@@ -25,6 +25,7 @@ class UsersList extends React.Component {
 
   render () {
     const { data } = this.state
+    const usersWithoutCurrent = data.filter(({ _id }) => _id !== this.props.userInfo.id)
 
     return (
       <Row className="users">
@@ -33,7 +34,7 @@ class UsersList extends React.Component {
             className="user-list"
             bordered
             itemLayout="horizontal"
-            dataSource={data}
+            dataSource={usersWithoutCurrent}
             renderItem={(item) => (
               <List.Item
                 className="user-list_item"

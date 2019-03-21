@@ -72,6 +72,11 @@ const getUsers = () => {
   return get(link)
 }
 
+const getUserChats = (id) => {
+  const link = `/users/${id}/chats`
+  return get(link)
+}
+
 const nodeApi = {
   addUser,
   loginUser,
@@ -80,6 +85,7 @@ const nodeApi = {
   checkUserEmail,
   refreshAccessToken,
   getUsers,
+  getUserChats,
 }
 
 export default nodeApi

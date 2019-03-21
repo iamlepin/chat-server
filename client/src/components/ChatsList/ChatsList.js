@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom'
 import { Avatar, List, message as antdMsg, Row, Col } from 'antd'
 import nodeApi from '../../api/index'
 import PropTypes from 'prop-types'
-import { of } from '../../utils/common';
+import { of, storage } from '../../utils/common';
+import { USER_INFO } from '../../constants/common';
 import './ChatsList.scss'
 import { CHAT } from '../../constants/routes';
 
@@ -13,7 +14,8 @@ class ChatsList extends React.Component {
   }
 
   componentDidMount = async () => {
-    const { data, error, message } = await of(nodeApi.getUsers())
+    const userInfo = storage.get(USER_INFO)
+    const { data, error, message } = await of(nodeApi.getUserChats(userInfo.id))
 
     if (error) {
       antdMsg.error(message)

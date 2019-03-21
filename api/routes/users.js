@@ -10,6 +10,7 @@ router.post('/signup', users.signUp)
 router.post('/login', users.signIn)
 router.post('/login-fb', users.signInFb)
 router.delete('/:id', users.remove)
+router.get('/:id/chats', users.getUserChats)
 router.post('/token/refresh', users.refreshUserToken)
 
 module.exports = router
