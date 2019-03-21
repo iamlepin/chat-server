@@ -37,17 +37,12 @@ const connect = (socket) => {
       console.log('TCL: companionId', companionId)
       console.log('TCL: userId', userId)
       let messages = []
-      let conversation = await Conversation.findOne({ producerId: userId, consumerId: companionId }).exec()
-
-      if (!conversation) {
-        conversation = await Conversation.findOne({ producerId: companionId, consumerId: userId }).exec()
-      }
+      let conversation = await Conversation.findOne({ members: { $in: [ userId, companionId ] } }).exec()
 
       if (!conversation) {
         conversation = await new Conversation({
           _id: new mongoose.Types.ObjectId(),
-          producerId: userId,  // TODO: Lepin > try/catch doesn't handle model validation errors
-          consumerId: companionId,
+          members: [ userId, companionId ],
         }).save()
       } else {
         messages = await Message.find({ conversationId: conversation.id })

@@ -218,14 +218,11 @@ const remove = (req, res) => {
 }
 
 const getUserChats = (req, res) => {  // TODO: Lepin > null !== null
-  Promise.all([
-    Conversations.find({ producerId: req.params.id }).exec(),
-    Conversations.find({ consumerId: req.params.id }).exec(),
-  ])
-    .then((response) => {
-      const { conversation1 = [], conversation2  = [] } = response
+  Conversations.find({ members: { $in: [ req.params.id ] } })
+    .exec()
+    .then((conversations) => {
       res.status(200).json({
-        data: [ ...conversation1, ...conversation2 ],
+        data: conversations,
       })
     })
     .catch(sendErrorMessage(res))
