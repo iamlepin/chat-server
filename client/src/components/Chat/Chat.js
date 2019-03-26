@@ -89,7 +89,7 @@ export default class Chat extends Component {
 
   render() {
     const { users, userInfo } = this.props
-    console.log(this.state)
+
     return (
       <Row>
         <Col>
@@ -112,9 +112,9 @@ export default class Chat extends Component {
             ]}
           >
             <div ref={(x) => { this.chatBody = x }} className="chat__body">
-              {this.state.messages.map(({ userId, date, body, ...rest }) => {
-                const { _id, name = '', userPic = '' } = getUserById(userId, users)
-                const self = userId === userInfo.id
+              {this.state.messages.map(({ author, date, body, ...rest }) => {
+                const { _id, name = '', userPic = '' } = getUserById(author, users)
+                const self = author === userInfo.id
                 return (
                   <Message
                     key={_id}

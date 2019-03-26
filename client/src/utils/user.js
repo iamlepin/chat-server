@@ -48,3 +48,8 @@ export const getUserById = (userId = '', users = []) => {
   const user = users.find(({ _id }) => _id === userId)
   return user || {}
 }
+
+export const getNameById = (userId = '', users = []) => {
+  const user = getUserById(userId, users)
+  return user ? user.name : 'Name not found.'
+}
