@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
 import { Layout } from 'antd'
 import { Switch, Route } from 'react-router-dom'
 import Header from '../../components/Header'
@@ -7,14 +6,13 @@ import Breadcrumbs from '../../components/Breadcrumbs/Breadcrumbs'
 import Home from '../../components/Home'
 import SignIn from '../../components/SignIn'
 import SignUp from '../../components/SignUp'
-import Chat from '../../components/Chat'
+// import Chat from '../../components/Chat'
 import UsersList from '../../components/UsersList'
 import RedirectPage from '../../components/RedirectPage'
 import { HOME, SIGN_IN, SIGN_UP, REDIRECT, CHAT, CHAT_LIST, USERS } from '../../constants/routes'
 import { storage } from '../../utils/common'
 import { updateUserInfo } from '../../utils/user'
 import { loadFacebookSDK } from '../../utils/faceBook'
-import { setUserInfo } from '../../actions/userInfo'
 import { USER_INFO, FACE_BOOK, APP_ACCOUNT } from '../../constants/common'
 import ChatList from '../../containers/ChatContainer'
 // import './App.scss'
@@ -70,7 +68,4 @@ class App extends Component {
   }
 }
 
-export default connect(
-  null,
-  { setUserInfo }
-)(App)
+export default App

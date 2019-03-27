@@ -5,7 +5,7 @@ import { Route } from 'react-router-dom'
 import { ConnectedRouter } from 'react-router-redux'
 import store, { history } from './store'
 import registerServiceWorker from './registerServiceWorker'
-import App from './containers/App/App'
+import App from './containers/App'
 import './index.scss'
 
 ReactDOM.render(
@@ -14,6 +14,6 @@ ReactDOM.render(
       <Route path="/" component={App} />
     </ConnectedRouter>
   </Provider>,
-  document.getElementById('root'),
+  document.getElementById('root')
 )
 registerServiceWorker()
