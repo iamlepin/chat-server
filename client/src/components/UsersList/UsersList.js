@@ -25,7 +25,7 @@ class UsersList extends React.Component {
 
   render () {
     const { data } = this.state
-    const usersWithoutCurrent = data.filter(({ _id }) => _id !== this.props.userInfo.id)
+    const usersWithoutCurrent = data && data.filter(({ _id }) => _id !== this.props.userInfo.id)
 
     return (
       <Row className="users">

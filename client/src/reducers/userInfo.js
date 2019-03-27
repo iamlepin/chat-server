@@ -12,10 +12,10 @@ const initState = {
   profileType: null,
 }
 
-// const restoredState = storage.get(USER_INFO)
-// const updatedState = restoredState ? { ...initState, ...restoredState } : initState
+const restoredState = storage.get(USER_INFO)
+const updatedState = restoredState ? { ...initState, ...restoredState } : initState
 
-const userInfo = (state = initState, { type, payload }) => {
+const userInfo = (state = updatedState, { type, payload }) => {
   switch (type) {
     case SET_USER_INFO:
       return { ...state, ...payload }

@@ -17,11 +17,17 @@ const connect = (socket) => {
       const postedMessage = await new Message({
         _id: new mongoose.Types.ObjectId(),
         conversationId: message.conversationId,
-        author: message.userId,
-        date: Date.now(),
+        author: message.author,
+        sendDate: message.sendDate,
+        receiveDate: new Date().toISOString(),
+        readDate: null,
         body: message.body,
       }).save()
       socket.broadcast.emit('chat_message', postedMessage)
+      socket.emit('post_message', {
+        tmpId: message.tmpId,
+        message: postedMessage,
+      })
     } catch (error) {
 			console.log('TCL: }catch -> error', error)
       socket.emit('error', {

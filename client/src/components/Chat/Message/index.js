@@ -1,4 +1,5 @@
 import React from 'react'
+import moment from 'moment'
 import PropTypes from 'prop-types'
 import { Avatar } from 'antd'
 import './Message.scss'
@@ -13,7 +14,7 @@ const Message = ({ body, date, name, userPic, self }) => (
         <div className={`msg-info ${reverseFlex(self)}`}>
           <span className="msg-info__item msg-info__name">{name}</span>
           <span>{' '}</span>
-          <span className="msg-info__item msg-info__date">{date}</span>
+          <span className="msg-info__item msg-info__date">{moment(date).format('HH:mm:ss')}</span>
         </div>
       </div>
       <div className="msg__body">{body}</div>
