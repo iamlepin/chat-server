@@ -66,8 +66,6 @@ export default class Chat extends Component {
         conversationId: this.state.conversation._id,
       }
 
-      console.log('TCL: Chat -> sendMessage -> data', msgData)
-
       socket.emit('chat_message', msgData)
       this.setState((prevState) => ({
         messages: [...prevState.messages, msgData],
@@ -83,7 +81,6 @@ export default class Chat extends Component {
 
   updateMessage = ({ tmpId, message: postedMessage }) => {
     this.setState(({ messages }) => {
-			console.log("TCL: Chat -> updateMessage -> messages", messages)
       const newMessages = [ ...messages ]
       const targetIndex = newMessages.findIndex((msg) => msg.tmpId === tmpId)
       if (targetIndex !== -1) { newMessages[targetIndex] = postedMessage }
