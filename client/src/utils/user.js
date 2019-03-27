@@ -1,7 +1,8 @@
 import { message } from 'antd'
 import nodeApi from '../api/index'
-import { USER_INFO } from '../constants/common'
+import { USER_INFO, FACE_BOOK, APP_ACCOUNT } from '../constants/common'
 import { storage, of } from './common'
+import { loadFacebookSDK } from './faceBook'
 
 export const checkAccesTokenExpiration = (expiresIn) => {
   const isExpired = Date.now() > expiresIn
@@ -42,6 +43,22 @@ export const updateUserInfo = async ({ userInfo, setUserInfo }) => {
   }
   storage.set(USER_INFO, newUserInfo)
   setUserInfo(newUserInfo)
+}
+
+export const restoreUserLoginState = (params) => {
+  const storedUserInfo = storage.get(USER_INFO)
+  if (storedUserInfo) {
+    switch (storedUserInfo.profileType) {
+      case APP_ACCOUNT:
+        updateUserInfo({ ...params, userInfo: storedUserInfo })
+        break
+      case FACE_BOOK:
+        loadFacebookSDK({ ...params, userInfo: storedUserInfo })
+        break
+      default:
+        break
+    }
+  }
 }
 
 export const getUserById = (userId = '', users = []) => {

@@ -10,10 +10,7 @@ import SignUp from '../../components/SignUp'
 import UsersList from '../../components/UsersList'
 import RedirectPage from '../../components/RedirectPage'
 import { HOME, SIGN_IN, SIGN_UP, REDIRECT, CHAT, CHAT_LIST, USERS } from '../../constants/routes'
-import { storage } from '../../utils/common'
-import { updateUserInfo } from '../../utils/user'
-import { loadFacebookSDK } from '../../utils/faceBook'
-import { USER_INFO, FACE_BOOK, APP_ACCOUNT } from '../../constants/common'
+import { restoreUserLoginState } from '../../utils/user'
 import ChatList from '../../containers/ChatContainer'
 // import './App.scss'
 
@@ -21,26 +18,10 @@ const { Content, Footer } = Layout
 
 const breadcrumbPathLinks = ['home', 'login']
 
-const restoreUserLoginState = (params) => {
-  const storedUserInfo = storage.get(USER_INFO)
-  if (storedUserInfo) {
-    switch (storedUserInfo.profileType) {
-      case APP_ACCOUNT:
-        updateUserInfo({ ...params, userInfo: storedUserInfo })
-        break
-      case FACE_BOOK:
-        loadFacebookSDK({ ...params, userInfo: storedUserInfo })
-        break
-      default:
-        break
-    }
-  }
-}
-
 class App extends Component {
   componentDidMount = () => {
-    const { setUserInfo, logoutUser } = this.props
-    restoreUserLoginState({ setUserInfo, logoutUser })
+    const { setUserInfo, clearUserInfo } = this.props
+    restoreUserLoginState({ setUserInfo, clearUserInfo })
   }
 
   render () {
