@@ -34,8 +34,6 @@ const connect = (socket) => {
 
   socket.on('init_conversation', async ({ userId, companionId }) => {
     try {
-      console.log('TCL: companionId', companionId)
-      console.log('TCL: userId', userId)
       let messages = []
       let conversation = await Conversation.findOne({ members: { $in: [ userId, companionId ] } }).exec()
 

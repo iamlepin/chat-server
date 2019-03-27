@@ -8,9 +8,9 @@ export const setUsers = (users) => ({
 
 export const getUsers = () => (dispatch) => {
   nodeApi.getUsers()
-    .then(({ users }) => {
-      if (!users) { throw new Error('Error loading users.')}
-      dispatch(setUsers(users))
+    .then(({ data }) => {
+      if (!data) { throw new Error('Error loading users.') }
+      dispatch(setUsers(data))
     })
     .catch((err) => {
       console.error(err.message)

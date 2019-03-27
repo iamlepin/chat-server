@@ -20,8 +20,9 @@ const breadcrumbPathLinks = ['home', 'login']
 
 class App extends Component {
   componentDidMount = () => {
-    const { setUserInfo, clearUserInfo } = this.props
+    const { setUserInfo, clearUserInfo, getUsers } = this.props
     restoreUserLoginState({ setUserInfo, clearUserInfo })
+    getUsers()
   }
 
   render () {
