@@ -27,7 +27,7 @@ const Header = ({ userInfo, logOutUser }) => {
   }
 
   return (
-    <Layout.Header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <Layout.Header className="header">
       <TopMenu config={TOP_MENU} />
       <UserTopMenu handleLogout={handleLogout} {...userInfo} />
     </Layout.Header>

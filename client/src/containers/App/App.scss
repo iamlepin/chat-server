@@ -1,4 +1,6 @@
-body {
-    background-color: green;
-    border: 5px solid red;
+.layout {
+  &_content {
+    padding: 0 1rem;
+    height: calc(100vh - 50px);
+  }
 }

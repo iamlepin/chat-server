@@ -16,7 +16,7 @@ const getBreadcrumbsItems = (links = []) => {
 }
 
 const Breadcrumbs = ({ links }) => (
-  <Breadcrumb separator=">" style={{ margin: '16px 0' }}>
+  <Breadcrumb separator=">" style={{ margin: '8px 34px' }}>
     {getBreadcrumbsItems(links)}
   </Breadcrumb>
 )

@@ -12,7 +12,7 @@ import RedirectPage from '../../components/RedirectPage'
 import { HOME, SIGN_IN, SIGN_UP, REDIRECT, CHAT, CHAT_LIST, USERS } from '../../constants/routes'
 import { restoreUserLoginState } from '../../utils/user'
 import ChatList from '../../containers/ChatContainer'
-// import './App.scss'
+import './App.scss'
 
 const { Content, Footer } = Layout
 
@@ -29,7 +29,7 @@ class App extends Component {
     return (
       <Layout className="layout">
         <Header {...this.props} />
-        <Content style={{ padding: '0 50px' }}>
+        <Content className="layout_content">
           <Breadcrumbs links={breadcrumbPathLinks} />
           <Switch>
             <Route exact path={HOME} component={Home} />
@@ -42,9 +42,9 @@ class App extends Component {
             <Route render={() => <h2>404 not found!!! sorry</h2>} />
           </Switch>
         </Content>
-        <Footer style={{ textAlign: 'center' }}>
+        {/* <Footer style={{ textAlign: 'center' }}>
           Ant Design ©2018 Created by Ant UED
-        </Footer>
+        </Footer> */}
       </Layout>
     )
   }
