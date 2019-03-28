@@ -41,7 +41,7 @@ const connect = (socket) => {
   socket.on('init_conversation', async ({ userId, companionId }) => {
     try {
       let messages = []
-      let conversation = await Conversation.findOne({ members: { $in: [ userId, companionId ] } }).exec()
+      let conversation = await Conversation.findOne({ members: { $all: [ userId, companionId ] } }).exec()
 
       if (!conversation) {
         conversation = await new Conversation({
@@ -49,7 +49,7 @@ const connect = (socket) => {
           members: [ userId, companionId ],
         }).save()
       } else {
-        messages = await Message.find({ conversationId: conversation.id })
+        messages = await Message.find({ conversationId: conversation._id })
       }
 
       socket.emit('init_conversation', {
