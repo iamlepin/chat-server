@@ -1,7 +1,7 @@
 .msg {
   display: flex;
   flex-direction: row;
-  margin-bottom: 1rem;
+  margin: 0 20% 1rem 0;
 
   &:last-child {
     margin-bottom: 0;
@@ -9,42 +9,56 @@
 
   &__header {
     align-self: flex-start;
+    padding: 6px;
   }
 
   &__content {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
+    align-items: flex-start;
     padding: 0 0.5rem;
-    max-width: 70%;
+    overflow: hidden;
+  }
+  &__body {
+    padding: 6px;
   }
 
   &__avatar {
     flex-shrink: 0;
   }
-}
 
-.msg-info {
-  display: flex;
-  margin: 0 -0.25rem;
+  .msg-info {
+    display: flex;
+    margin: 0 -0.25rem;
 
-  &__item {
-    margin: 0 .25rem;
-  }
-  &__name {
-    font-weight: 600;
-  }
+    &__item {
+      margin: 0 .25rem;
+    }
+    &__name {
+      font-weight: 600;
+    }
 
-  &__time {
-    opacity: .5;
+    &__date {
+      opacity: .5;
+    }
   }
 }
 
 .reversed {
-  display: flex;
   flex-direction: row-reverse;
-  // text-align-last: right;
-  .msg__header {
-    align-self: flex-end;
+  margin: 0 0 1rem 20%;
+
+  .msg {
+    &__header {
+      align-self: flex-end;
+    }
+
+    &__content {
+      align-items: flex-end;
+    }
+  }
+
+  .msg-info {
+    flex-direction: row-reverse;
   }
 }

@@ -29,7 +29,7 @@ class App extends Component {
     return (
       <Layout className="layout">
         <Header {...this.props} />
-        <Content className="layout_content">
+        <Content className="layout__content">
           <Breadcrumbs links={breadcrumbPathLinks} />
           <Switch>
             <Route exact path={HOME} component={Home} />
