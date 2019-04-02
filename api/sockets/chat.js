@@ -4,6 +4,16 @@ const Message = require('../models/messages')
 
 let clients = 0
 
+const postMessage = (msgData) => new Message({
+  _id: new mongoose.Types.ObjectId(),
+  conversationId: msgData.conversationId,
+  author: msgData.author,
+  sendDate: msgData.sendDate,
+  receiveDate: new Date().toISOString(),
+  readDate: null,
+  body: msgData.body,
+}).save()
+
 const connect = (socket) => {
   clients = clients + 1
   console.log('socket connected! clients = ', clients)
@@ -14,15 +24,7 @@ const connect = (socket) => {
 
   socket.on('chat_message', async (message) => {
     try {
-      const postedMessage = await new Message({
-        _id: new mongoose.Types.ObjectId(),
-        conversationId: message.conversationId,
-        author: message.author,
-        sendDate: message.sendDate,
-        receiveDate: new Date().toISOString(),
-        readDate: null,
-        body: message.body,
-      }).save()
+      const postedMessage = await postMessage(message)
       socket.broadcast.emit('chat_message', postedMessage)
       socket.emit('post_message', {
         tmpId: message.tmpId,
@@ -34,34 +36,57 @@ const connect = (socket) => {
         error,
         message: 'Message not saved!',
       })
-      socket.emit('chat_message_error', { messageId: message._id })
+      socket.emit('chat_message_error', { messageId: message._id }) // for repeating post message request
     }
   })
 
-  socket.on('init_conversation', async ({ userId, companionId }) => {
+  socket.on('get_conversation', async ({ userId, companionId }) => {
     try {
-      let messages = []
+      const response = {}
       let conversation = await Conversation.findOne({ members: { $all: [ userId, companionId ] } }).exec()
 
-      if (!conversation) {
-        conversation = await new Conversation({
-          _id: new mongoose.Types.ObjectId(),
-          members: [ userId, companionId ],
-        }).save()
-      } else {
-        messages = await Message.find({ conversationId: conversation._id })
+      if (conversation) {
+        response.messages = await Message.find({ conversationId: conversation._id })
+        response.conversation = conversation
       }
 
-      socket.emit('init_conversation', {
-        conversation,
-        messages,
-      })
+      if (!conversation) {
+        response.conversation = {
+          blank: true,
+        }
+      }
+
+      socket.emit('get_conversation_response', response)
     } catch (error) {
       socket.emit('error', {
         error,
         message: 'Get conversation error.',
       })
     }
+  })
+
+  socket.on('init_conversation', async ({ userId, companionId, message }) => {
+    try {
+      const conversation = await new Conversation({
+        _id: new mongoose.Types.ObjectId(),
+        members: [ userId, companionId ],
+      }).save()
+
+      const postedMessage = await postMessage(message)
+
+      socket.emit('init_conversation_response', {
+        conversation,
+        messages: [ postedMessage ],
+      })
+
+    } catch (error) {
+			console.log("TCL: error", error)
+      socket.emit('error', {
+        error,
+        message: 'Init conversation error.',
+      })
+    }
+
   })
 }
 

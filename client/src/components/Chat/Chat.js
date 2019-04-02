@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
+import * as R from 'ramda'
 import uuidv4 from 'uuid/v4'
-import moment from 'moment'
 import io from 'socket.io-client'
 import { Card, Row, Col, Input, message } from 'antd'
 import Message from './Message'
@@ -28,10 +28,11 @@ export default class Chat extends Component {
     const { id: userId } = this.props.userInfo
 
     socket = io('https://localhost:3001/chat') // TODO: Lepin > use env config
-    socket.emit('init_conversation', { userId, companionId })
+    socket.emit('get_conversation', { userId, companionId })
     socket.on('error', this.handleChatError)
     socket.on('chat_message_error', this.handleMessageError)
-    socket.on('init_conversation', this.initConversation)
+    socket.on('get_conversation_response', this.setConversation)
+    socket.on('init_conversation_response', this.setConversation)
     socket.on('post_message', this.updateMessage)
     socket.on('chat_message', this.setMessage)
 
@@ -48,30 +49,51 @@ export default class Chat extends Component {
     this.chatBody.scrollTop = this.chatBody.scrollHeight - this.chatBody.clientHeight
   }
 
-  initConversation = ({ conversation, messages }) => this.setState({ conversation, messages })
+  initConversation = () => {
+    const companionId = this.props.match.params.userId
+    const { id: userId } = this.props.userInfo
+    const msgData = this.getMessageData()
 
-  sendMessage = (e) => {
-    const isClick = e.type === 'click'
-    const isPressEnter = e.key === 'Enter'
-    const { message } = this.state
-    const canSendMessage = message && (isClick || isPressEnter)
+    socket.emit('init_conversation', { userId, companionId, message: msgData })
+  }
+
+  setConversation = ({ conversation, messages }) => this.setState({ conversation, messages })
+
+  getMessageData = () => {
     const tmpId = uuidv4()
 
-    if (canSendMessage) {
-      const msgData = {
-        tmpId,
-        body: message,
-        sendDate: new Date().toISOString(),
-        author: this.props.userInfo.id,
-        conversationId: this.state.conversation._id,
-      }
-
-      socket.emit('chat_message', msgData)
-      this.setState((prevState) => ({
-        messages: [...prevState.messages, msgData],
-        message: '',
-      }))
+    return {
+      tmpId,
+      body: this.state.message,
+      sendDate: new Date().toISOString(),
+      author: this.props.userInfo.id,
+      conversationId: this.state.conversation._id,
     }
+  }
+
+  handleSendMessage = (e) => {
+    const isClick = e.type === 'click'
+    const isPressEnter = e.key === 'Enter'
+    const canSendMessage = this.state.message && (isClick || isPressEnter)
+    const isBlankConversation = R.path([ 'conversation', 'blank' ], this.state)
+
+    if (canSendMessage && isBlankConversation) {
+      return this.initConversation()
+    }
+    if (canSendMessage) {
+      this.sendMessage()
+    }
+  }
+
+  sendMessage = () => {
+    const msgData = this.getMessageData()
+    socket.emit('chat_message', msgData)
+
+    this.setState((prevState) => ({
+      messages: [...prevState.messages, msgData],
+      message: '',
+    }))
+
     this.msgInput.focus()
   }
 
@@ -115,8 +137,6 @@ export default class Chat extends Component {
         <Col>
           <Card
             className="chat"
-            // title="Chat"
-            // tabList={tabList}
             actions={[
               <Row className="chat__footer">
                 <Input
@@ -125,7 +145,7 @@ export default class Chat extends Component {
                   onChange={this.handleChange}
                   onKeyPress={this.sendMessage}
                   addonAfter={
-                    <div onClick={this.sendMessage} role="button"> Send </div> // eslint-disable-line
+                    <div onClick={this.handleSendMessage} role="button"> Send </div> // eslint-disable-line
                   }
                 />
               </Row>,
