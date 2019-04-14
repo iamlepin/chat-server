@@ -3,9 +3,10 @@ import PropTypes from 'prop-types'
 import { Menu } from 'antd'
 import { Link } from 'react-router-dom'
 import './TopMenu.scss'
-import { HOME } from '../../constants/routes';
+import { HOME, CHAT } from '../../constants/routes';
+import withChatApi from '../../hocs/withChatApi';
 
-const TopMenu = ({ config }) => (
+const TopMenu = ({ config, messages = [] }) => (
   <Menu
     className="top-menu"
     theme="dark"
@@ -15,7 +16,10 @@ const TopMenu = ({ config }) => (
   >
     {config.map(({ path, title }) => (
       <Menu.Item className="top-menu_item" key={path}>
-        <Link to={path} >{title}</Link>
+        <Link to={path} >
+          {title}
+          {path === CHAT && ' ' + messages.length}
+        </Link>
       </Menu.Item>
     ))}
   </Menu>
@@ -30,4 +34,4 @@ TopMenu.propTypes = {
   ).isRequired,
 }
 
-export default TopMenu
+export default withChatApi(TopMenu)
