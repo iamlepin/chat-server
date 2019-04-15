@@ -4,18 +4,14 @@ import * as R from 'ramda'
 import uuidv4 from 'uuid/v4'
 import io from 'socket.io-client'
 
-let socket = null
-export const ChatContext = React.createContext({
-  chat: {
-    message: '',
-    messages: [],
-    conversation: null,
-  },
-})
+const socket = io('https://localhost:3001/chat')
+
+export const ChatContext = React.createContext()
 
 export default class Provider extends Component {
   static propTypes = {
     children: PropTypes.any,
+    userInfo: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -25,27 +21,22 @@ export default class Provider extends Component {
   static contextType = ChatContext
 
   state = {
-    ...this.context.chat,
+    messages: [],
+    conversation: null,
   }
-
-  // msgInput = null
-  // chatBody = null
 
   componentDidMount = () => {
     console.log('context', this.context)
     // const companionId = this.props.match.params.userId
     // const { id: userId } = this.props.userInfo
 
-
-
-    socket = io('https://localhost:3001/chat') // TODO: Lepin > use env config
-    // socket.emit('get_conversation', { userId, companionId })
+    // socket = io('https://localhost:3001/chat') // TODO: Lepin > use env config
     // socket.on('error', this.handleChatError)
-    // socket.on('chat_message_error', this.handleMessageError)
-    // socket.on('get_conversation_response', this.setConversation)
-    // socket.on('init_conversation_response', this.setConversation)
-    // socket.on('post_message', this.updateMessage)
-    // socket.on('chat_message', this.setMessage)
+    socket.on('chat_message_error', this.handleMessageError)
+    socket.on('get_conversation_response', this.setConversation)
+    socket.on('init_conversation_response', this.setConversation)
+    socket.on('post_message', this.updateMessage)
+    socket.on('chat_message', this.setMessage)
 
     // this.msgInput.focus()
     // this.scrollToBottom()
@@ -68,88 +59,91 @@ export default class Provider extends Component {
   //   socket.emit('init_conversation', { userId, companionId, message: msgData })
   // }
 
-  // setConversation = ({ conversation, messages }) => this.setState({ conversation, messages })
+  setConversation = ({ conversation, messages }) => this.setState({ conversation, messages })
 
-  // getMessageData = () => {
-  //   const tmpId = uuidv4()
+  getConversation = () => {
+    const { userId, companionId } = this.props.userInfo
+    socket.emit('get_conversation', { userId, companionId })
+  }
 
-  //   return {
-  //     tmpId,
-  //     body: this.state.message,
-  //     sendDate: new Date().toISOString(),
-  //     author: this.props.userInfo.id,
-  //     conversationId: this.state.conversation._id,
-  //   }
-  // }
+  joinRoom = (roomId) => socket.emit('join_room', roomId)
 
-  // handleSendMessage = (e) => {
-  //   const isClick = e.type === 'click'
-  //   const isPressEnter = e.key === 'Enter'
-  //   const canSendMessage = this.state.message && (isClick || isPressEnter)
-  //   const isBlankConversation = R.path([ 'conversation', 'blank' ], this.state)
+  leaveRoom = (roomId) => socket.emit('leave_room', roomId)
 
-  //   if (canSendMessage && isBlankConversation) {
-  //     return this.initConversation()
-  //   }
-  //   if (canSendMessage) {
-  //     this.sendMessage()
-  //   }
-  // }
+  getMessageData = (msgText) => {
+    const tempId = uuidv4()
 
-  // sendMessage = () => {
-  //   const msgData = this.getMessageData()
-  //   socket.emit('chat_message', msgData)
+    return {
+      tempId,
+      body: msgText,
+      sendDate: new Date().toISOString(),
+      author: this.props.userInfo.id,
+      conversationId: this.state.conversation._id,
+    }
+  }
 
-  //   this.setState((prevState) => ({
-  //     messages: [...prevState.messages, msgData],
-  //     message: '',
-  //   }))
+  sendMessage = (msgText) => {
+    const msgData = this.getMessageData(msgText)
+    socket.emit('chat_message', msgData)
+    this.setMessage()
 
-  //   this.msgInput.focus()
-  // }
+    // this.msgInput.focus()
+  }
 
-  // setMessage = (msg) => this.setState((prevState) => ({
-  //   messages: [...prevState.messages, msg],
-  // }))
+  setMessage = (msg) => this.setState((prevState) => ({
+    messages: [ ...prevState.messages, msg ],
+  }))
 
-  // updateMessage = ({ tmpId, message: postedMessage }) => {
-  //   this.setState(({ messages }) => {
-  //     const newMessages = [ ...messages ]
-  //     const targetIndex = newMessages.findIndex((msg) => msg.tmpId === tmpId)
-  //     if (targetIndex !== -1) { newMessages[targetIndex] = postedMessage }
-  //     return { messages: newMessages }
-  //   })
-  // }
+  updateMessage = ({ tempId, message: postedMessage }) => {
+    this.setState(({ messages }) => {
+      const newMessages = messages.map((msg) => {
+        if (msg.tempId === tempId) { return postMessage }
+        return msg
+      })
+
+      return { messages: newMessages }
+    })
+  }
 
   // handleChange = (e) => {
   //   this.setState({ message: e.target.value })
   // }
 
-  // handleChatError = (error) => {
-  //   // message.error(error.message)
-  //   console.info(error)
-  // }
+  handleChatError = (error) => {
+    // message.error(error.message)
+    console.info(error)
+  }
 
-  // handleMessageError = ({ msgId }) => {
-  //   const messages = this.state.messages.map((message) => {
-  //     if (message._id === msgId) {
-  //       return { ...message, error: true }
-  //     }
-  //     return message
-  //   })
-  //   this.setState({ messages })
-  // }
+  handleMessageError = ({ msgId }) => {
+    const messages = this.state.messages.map((message) => {
+      if (message._id === msgId) {
+        return { ...message, error: true }
+      }
+      return message
+    })
+    this.setState({ messages })
+  }
+
+  disconnect = (userId) => socket.emit('disconnect', userId)
 
   render() {
-    console.log('render provider')
+    console.log('this.state: ', this.state);
     return (
-      <ChatContext.Provider value={this.state}>
+      <ChatContext.Provider
+        value={{
+          ...this.state,
+          getConversation: this.getConversation,
+          sendMessage: this.sendMessage,
+          joinRoom: this.joinRoom,
+          leaveRoom: this.leaveRoom,
+        }}
+      >
         {this.props.children}
       </ChatContext.Provider>
     )
   }
 
   componentWillUnmount () {
-    socket.emit('disconnect', this.props.userInfo.userId)
+    this.disconnect(this.props.userInfo.userId)
   }
 }

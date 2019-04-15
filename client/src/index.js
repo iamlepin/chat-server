@@ -11,11 +11,11 @@ import './index.scss'
 
 ReactDOM.render(
   <Provider store={store}>
-    <ConnectedRouter history={history}>
-      <ChatProvider>
+    <ChatProvider>
+      <ConnectedRouter history={history}>
         <Route path="/" component={App} />
-      </ChatProvider>
-    </ConnectedRouter>
+      </ConnectedRouter>
+    </ChatProvider>
   </Provider>,
   document.getElementById('root')
 )

@@ -5,8 +5,8 @@ const schema = new mongoose.Schema({
   members: { type: Array, required: true },
   lastMessageId: { type: mongoose.Schema.Types.ObjectId },
   lastMessageDate: { type: Date },
-  unreadsCount: { type: Number, required },
-  messagesCount: { type: Number, required },
+  unreadsCount: { type: Number, required: true },
+  messagesCount: { type: Number, required: true },
 })
 
 module.exports = mongoose.model('Conversation', schema)

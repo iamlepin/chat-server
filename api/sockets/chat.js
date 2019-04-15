@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const Conversation = require('../models/conversations')
+const Conversation = require('../models/conversation')
 const Message = require('../models/messages')
 
 let clients = 0
@@ -18,8 +18,8 @@ const connect = (socket) => {
   clients = clients + 1
   console.log('socket connected! clients = ', clients)
 
-  socket.on('disconnect', (msg) => {
-    console.log(msg)
+  socket.on('disconnect', (userId) => {
+    console.log(userId + ' disconnected')
   })
 
   socket.on('chat_message', async (message) => {
@@ -27,7 +27,7 @@ const connect = (socket) => {
       const postedMessage = await postMessage(message)
       socket.broadcast.emit('chat_message', postedMessage)
       socket.emit('post_message', {
-        tmpId: message.tmpId,
+        tempId: message.tempId,
         message: postedMessage,
       })
     } catch (error) {

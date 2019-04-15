@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const User = require('../../models/user')
-const Conversations = require('../../models/conversations')
+const Conversation = require('../../models/conversation')
 const bcrypt = require('bcrypt')
 const { sendErrorMessage, getPairTokens } = require('../../utils/helpers')
 
@@ -218,11 +218,11 @@ const remove = (req, res) => {
 }
 
 const getUserChats = (req, res) => {  // TODO: Lepin > null !== null
-  Conversations.find({ members: { $in: [ req.params.id ] } })
+  Conversation.find({ members: { $in: [ req.params.id ] } })
     .exec()
-    .then((conversations) => {
+    .then((conversation) => {
       res.status(200).json({
-        data: conversations,
+        data: conversation,
       })
     })
     .catch(sendErrorMessage(res))
