@@ -46,14 +46,18 @@ const connect = (socket) => {
       let conversation = await Conversation.findOne({ members: { $all: [ userId, companionId ] } }).exec()
 
       if (conversation) {
-        response.messages = await Message.find({ conversationId: conversation._id })
         response.conversation = conversation
+        response.messages = await Message.find({ conversationId: conversation._id })
       }
 
       if (!conversation) {
-        response.conversation = {
-          blank: true,
-        }
+        response.conversation = await new Conversation({
+          _id: new mongoose.Types.ObjectId(),
+          members: [ userId, companionId ],
+          unreadsCount: 0,
+          messagesCount: 0,
+        }).save()
+        response.messages = []
       }
 
       socket.emit('get_conversation_response', response)
@@ -65,29 +69,31 @@ const connect = (socket) => {
     }
   })
 
-  socket.on('init_conversation', async ({ userId, companionId, message }) => {
-    try {
-      const conversation = await new Conversation({
-        _id: new mongoose.Types.ObjectId(),
-        members: [ userId, companionId ],
-      }).save()
+  // socket.on('init_conversation', async ({ userId, companionId, message }) => {
+  //   try {
+  //     const conversation = await new Conversation({
+  //       _id: new mongoose.Types.ObjectId(),
+  //       members: [ userId, companionId ],
+  //       unreadsCount: 0,
+  //       messagesCount: 0,
+  //     }).save()
 
-      const postedMessage = await postMessage(message)
+  //     const postedMessage = await postMessage(message)
 
-      socket.emit('init_conversation_response', {
-        conversation,
-        messages: [ postedMessage ],
-      })
+  //     socket.emit('init_conversation_response', {
+  //       conversation,
+  //       messages: [ postedMessage ],
+  //     })
 
-    } catch (error) {
-			console.log("TCL: error", error)
-      socket.emit('error', {
-        error,
-        message: 'Init conversation error.',
-      })
-    }
+  //   } catch (error) {
+	// 		console.log("TCL: error", error)
+  //     socket.emit('error', {
+  //       error,
+  //       message: 'Init conversation error.',
+  //     })
+  //   }
 
-  })
+  // })
 }
 
 module.exports = {

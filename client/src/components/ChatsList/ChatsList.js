@@ -59,6 +59,7 @@ class ChatsList extends React.Component {
 
   render () {
     const { chats, users } = this.state
+    const chatsWithoutBlank = chats.filter(({ messagesCount = [] }) => Boolean(messagesCount.length))
 
     return (
       <Row className="users">
@@ -67,7 +68,7 @@ class ChatsList extends React.Component {
             className="user-list"
             bordered
             itemLayout="horizontal"
-            dataSource={chats}
+            dataSource={chatsWithoutBlank}
             renderItem={(item) => (
               <List.Item
                 className="user-list_item"

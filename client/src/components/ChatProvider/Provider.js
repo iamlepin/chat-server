@@ -141,6 +141,7 @@ export default class Provider extends Component {
   // }
 
   render() {
+    console.log('render provider')
     return (
       <ChatContext.Provider value={this.state}>
         {this.props.children}

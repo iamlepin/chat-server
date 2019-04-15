@@ -18,6 +18,8 @@ export default class Chat extends Component {
     message: '',
     messages: [],
     conversation: null,
+    socketId: null,
+    currentRoom: null,
   }
 
   msgInput = null
@@ -29,10 +31,10 @@ export default class Chat extends Component {
 
     socket = io('https://localhost:3001/chat') // TODO: Lepin > use env config
     socket.emit('get_conversation', { userId, companionId })
+    socket.on('connected', (socketId) => this.setState({ socketId }))
     socket.on('error', this.handleChatError)
     socket.on('chat_message_error', this.handleMessageError)
     socket.on('get_conversation_response', this.setConversation)
-    socket.on('init_conversation_response', this.setConversation)
     socket.on('post_message', this.updateMessage)
     socket.on('chat_message', this.setMessage)
 
@@ -49,15 +51,11 @@ export default class Chat extends Component {
     this.chatBody.scrollTop = this.chatBody.scrollHeight - this.chatBody.clientHeight
   }
 
-  initConversation = () => {
-    const companionId = this.props.match.params.userId
-    const { id: userId } = this.props.userInfo
-    const msgData = this.getMessageData()
-
-    socket.emit('init_conversation', { userId, companionId, message: msgData })
+  handleConversationResponse = ({ conversation, messages = [] }) => {
+    this.setState({ conversation, messages })
+    socket.emit('join_room', conversation.conversationId)
   }
 
-  setConversation = ({ conversation, messages }) => this.setState({ conversation, messages })
 
   getMessageData = () => {
     const tmpId = uuidv4()
@@ -75,11 +73,7 @@ export default class Chat extends Component {
     const isClick = e.type === 'click'
     const isPressEnter = e.key === 'Enter'
     const canSendMessage = this.state.message && (isClick || isPressEnter)
-    const isBlankConversation = R.path([ 'conversation', 'blank' ], this.state)
 
-    if (canSendMessage && isBlankConversation) {
-      return this.initConversation()
-    }
     if (canSendMessage) {
       this.sendMessage()
     }
@@ -175,6 +169,6 @@ export default class Chat extends Component {
   }
 
   componentWillUnmount () {
-    socket.emit('disconnect', this.props.userInfo.userId)
+    socket.emit('disconnect', this.state.conversation._id)
   }
 }
