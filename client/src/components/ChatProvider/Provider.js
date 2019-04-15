@@ -85,7 +85,7 @@ export default class Provider extends Component {
   sendMessage = (msgText) => {
     const msgData = this.getMessageData(msgText)
     socket.emit('chat_message', msgData)
-    this.setMessage()
+    this.setMessage(msgData)
 
     // this.msgInput.focus()
   }
@@ -96,8 +96,9 @@ export default class Provider extends Component {
 
   updateMessage = ({ tempId, message: postedMessage }) => {
     this.setState(({ messages }) => {
+			console.log("TCL: Provider -> updateMessage -> messages", messages)
       const newMessages = messages.map((msg) => {
-        if (msg.tempId === tempId) { return postMessage }
+        if (msg.tempId === tempId) { return postedMessage }
         return msg
       })
 

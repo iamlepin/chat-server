@@ -23,6 +23,7 @@ const connect = (socket) => {
   })
 
   socket.on('chat_message', async (message) => {
+		console.log("TCL: connect -> message", message)
     try {
       const postedMessage = await postMessage(message)
       socket.broadcast.emit('chat_message', postedMessage)
