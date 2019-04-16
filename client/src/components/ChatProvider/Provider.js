@@ -43,7 +43,7 @@ export default class Provider extends Component {
   setConversation = ({ conversation, messages }) => this.setState({ conversation, messages })
 
   getConversation = (userId, companionId) => {
-    socket.emit('get_conversation', { userId: null, companionId })
+    socket.emit('get_conversation', { userId, companionId })
   }
 
   // joinRoom = (roomId) => socket.emit('join_room', roomId)

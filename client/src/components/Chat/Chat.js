@@ -10,9 +10,6 @@ import './Chat.scss'
 import withChatApi from '../../hocs/withChatApi';
 
 class Chat extends Component {
-  // static propTypes = {
-  //   prop: PropTypes
-  // }
   state = {
     message: '',
   }
@@ -25,12 +22,6 @@ class Chat extends Component {
     const { id: userId } = this.props.userInfo
 
     this.props.getConversation(userId, companionId)
-    // socket.emit('get_conversation', { userId, companionId })
-    // socket.on('error', this.handleChatError)
-    // socket.on('chat_message_error', this.handleMessageError)
-    // socket.on('get_conversation_response', this.setConversation)
-    // socket.on('post_message', this.updateMessage)
-    // socket.on('chat_message', this.setMessage)
 
     this.msgInput.focus()
     this.scrollToBottom()
@@ -52,10 +43,9 @@ class Chat extends Component {
 
     if (canSendMessage) {
       this.props.sendMessage(this.state.message)
+      this.setState({ message: '' })
+      this.msgInput.focus()
     }
-
-    this.setState({ message: '' })
-    this.msgInput.focus()
   }
 
   handleChange = (e) => {
@@ -76,7 +66,7 @@ class Chat extends Component {
                   ref={(x) => { this.msgInput = x }}
                   value={this.state.message}
                   onChange={this.handleChange}
-                  onKeyPress={this.sendMessage}
+                  onKeyPress={this.handleSendMessage}
                   addonAfter={
                     <div onClick={this.handleSendMessage} role="button"> Send </div> // eslint-disable-line
                   }
