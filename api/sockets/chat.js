@@ -79,32 +79,6 @@ const connect = (socket) => {
       })
     }
   })
-
-  // socket.on('init_conversation', async ({ userId, companionId, message }) => {
-  //   try {
-  //     const conversation = await new Conversation({
-  //       _id: new mongoose.Types.ObjectId(),
-  //       members: [ userId, companionId ],
-  //       unreadsCount: 0,
-  //       messagesCount: 0,
-  //     }).save()
-
-  //     const postedMessage = await postMessage(message)
-
-  //     socket.emit('init_conversation_response', {
-  //       conversation,
-  //       messages: [ postedMessage ],
-  //     })
-
-  //   } catch (error) {
-	// 		console.log("TCL: error", error)
-  //     socket.emit('error', {
-  //       error,
-  //       message: 'Init conversation error.',
-  //     })
-  //   }
-
-  // })
 }
 
 module.exports = {
