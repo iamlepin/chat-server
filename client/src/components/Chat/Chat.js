@@ -45,11 +45,6 @@ class Chat extends Component {
     this.chatBody.scrollTop = this.chatBody.scrollHeight - this.chatBody.clientHeight
   }
 
-  // handleConversationResponse = ({ conversation, messages = [] }) => {
-  //   this.setState({ conversation, messages })
-  //   socket.emit('join_room', conversation.conversationId)
-  // }
-
   handleSendMessage = (e) => {
     const isClick = e.type === 'click'
     const isPressEnter = e.key === 'Enter'
@@ -69,7 +64,6 @@ class Chat extends Component {
 
   render() {
     const { users, userInfo } = this.props
-    console.log('this.props: ', this.props);
 
     return (
       <Row>

@@ -75,8 +75,7 @@ const connect = (socket) => {
     } catch (error) {
       console.log(error)
       socket.emit('get_conversation_error', {
-        error,
-        message: 'Get conversation error.',
+        message: `${error.name}: ${error.message}`,
       })
     }
   })
