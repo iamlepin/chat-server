@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const Conversation = require('../models/conversation')
-const Message = require('../models/messages')
+const User = require('../models/user')
+const Message = require('../models/message')
 
 let clients = 0
 
@@ -22,12 +23,11 @@ const connect = (socket) => {
     console.log(userId + ' disconnected')
   })
 
-  socket.on('chat_message', async (message) => {
-		console.log("TCL: connect -> message", message)
+  socket.on('chat_message', async (message, onPostMsgSuccess) => {
     try {
       const postedMessage = await postMessage(message)
-      socket.broadcast.emit('chat_message', postedMessage)
-      socket.emit('post_message', {
+      socket.to(message.conversationId).emit('chat_message', postedMessage)
+      onPostMsgSuccess({
         tempId: message.tempId,
         message: postedMessage,
       })
@@ -43,6 +43,15 @@ const connect = (socket) => {
 
   socket.on('get_conversation', async ({ userId, companionId }) => {
     try {
+      if (!userId) { throw new Error('Expected userId to be a string.')}
+      if (!companionId) { throw new Error('Expected companionId to be a string')}
+
+      const user = await User.findOne({ _id: userId }).exec()
+      if (!user) { throw new Error('User with userId does not exist.')}
+
+      const companion = await User.findOne({ _id: companionId }).exec()
+      if (!companion) { throw new Error('User with companionId does not exist.')}
+
       const response = {}
       let conversation = await Conversation.findOne({ members: { $all: [ userId, companionId ] } }).exec()
 
@@ -61,9 +70,11 @@ const connect = (socket) => {
         response.messages = []
       }
 
+      socket.join(conversation._id)
       socket.emit('get_conversation_response', response)
     } catch (error) {
-      socket.emit('error', {
+      console.log(error)
+      socket.emit('get_conversation_error', {
         error,
         message: 'Get conversation error.',
       })

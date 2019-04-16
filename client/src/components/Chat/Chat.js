@@ -15,10 +15,6 @@ class Chat extends Component {
   // }
   state = {
     message: '',
-    // messages: [],
-    // conversation: null,
-    socketId: null,
-    currentRoom: null,
   }
 
   msgInput = null
@@ -30,7 +26,6 @@ class Chat extends Component {
 
     this.props.getConversation(userId, companionId)
     // socket.emit('get_conversation', { userId, companionId })
-    // socket.on('connected', (socketId) => this.setState({ socketId }))
     // socket.on('error', this.handleChatError)
     // socket.on('chat_message_error', this.handleMessageError)
     // socket.on('get_conversation_response', this.setConversation)
@@ -117,6 +112,11 @@ class Chat extends Component {
       </Row>
     )
   }
+
+  componentWillUnmount = () => {
+    this.props.resetChatState()
+  }
 }
+
 
 export default withChatApi(Chat)

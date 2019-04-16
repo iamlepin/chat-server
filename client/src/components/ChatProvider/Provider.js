@@ -8,6 +8,12 @@ const socket = io('https://localhost:3001/chat')
 
 export const ChatContext = React.createContext()
 
+const INITIAL_STATE = {
+  messages: [],
+  conversation: null,
+  socketId: null,
+  // currentRoom: null, // ???
+}
 export default class Provider extends Component {
   static propTypes = {
     children: PropTypes.any,
@@ -20,55 +26,31 @@ export default class Provider extends Component {
 
   static contextType = ChatContext
 
-  state = {
-    messages: [],
-    conversation: null,
-  }
+  state = INITIAL_STATE
 
   componentDidMount = () => {
-    console.log('context', this.context)
-    // const companionId = this.props.match.params.userId
-    // const { id: userId } = this.props.userInfo
-
-    // socket = io('https://localhost:3001/chat') // TODO: Lepin > use env config
-    // socket.on('error', this.handleChatError)
+    socket.on('connected', (socketId) => this.setState({ socketId })) // ???
     socket.on('chat_message_error', this.handleMessageError)
     socket.on('get_conversation_response', this.setConversation)
-    socket.on('init_conversation_response', this.setConversation)
     socket.on('post_message', this.updateMessage)
     socket.on('chat_message', this.setMessage)
-
-    // this.msgInput.focus()
-    // this.scrollToBottom()
+    socket.on('join_room', this.handleJoinRoom)
+    socket.on('leave_room', this.handleLeaveRoom)
   }
-
-  // componentDidUpdate(prevProps, prevState) {
-  //   const hasNewMessage = prevState.messages.length !== this.state.messages.length
-  //   if (hasNewMessage) { this.scrollToBottom() }
-  // }
-
-  // scrollToBottom = () => {
-  //   this.chatBody.scrollTop = this.chatBody.scrollHeight - this.chatBody.clientHeight
-  // }
-
-  // initConversation = () => {
-  //   const companionId = this.props.match.params.userId
-  //   const { id: userId } = this.props.userInfo
-  //   const msgData = this.getMessageData()
-
-  //   socket.emit('init_conversation', { userId, companionId, message: msgData })
-  // }
 
   setConversation = ({ conversation, messages }) => this.setState({ conversation, messages })
 
-  getConversation = () => {
-    const { userId, companionId } = this.props.userInfo
+  getConversation = (userId, companionId) => {
     socket.emit('get_conversation', { userId, companionId })
   }
 
-  joinRoom = (roomId) => socket.emit('join_room', roomId)
+  // joinRoom = (roomId) => socket.emit('join_room', roomId)
 
-  leaveRoom = (roomId) => socket.emit('leave_room', roomId)
+  // handleJoinRoom = (roomId) => this.setState({ currentRoom: roomId })
+
+  // leaveRoom = (roomId) => socket.emit('leave_room', roomId)
+
+  // handleLeaveRoom = () => this.setState({ currentRoom: null })
 
   getMessageData = (msgText) => {
     const tempId = uuidv4()
@@ -84,10 +66,8 @@ export default class Provider extends Component {
 
   sendMessage = (msgText) => {
     const msgData = this.getMessageData(msgText)
-    socket.emit('chat_message', msgData)
+    socket.emit('chat_message', msgData, this.updateMessage)
     this.setMessage(msgData)
-
-    // this.msgInput.focus()
   }
 
   setMessage = (msg) => this.setState((prevState) => ({
@@ -96,7 +76,6 @@ export default class Provider extends Component {
 
   updateMessage = ({ tempId, message: postedMessage }) => {
     this.setState(({ messages }) => {
-			console.log("TCL: Provider -> updateMessage -> messages", messages)
       const newMessages = messages.map((msg) => {
         if (msg.tempId === tempId) { return postedMessage }
         return msg
@@ -127,6 +106,8 @@ export default class Provider extends Component {
 
   disconnect = (userId) => socket.emit('disconnect', userId)
 
+  resetChatState = () => this.setState(INITIAL_STATE)
+
   render() {
     console.log('this.state: ', this.state);
     return (
@@ -137,6 +118,7 @@ export default class Provider extends Component {
           sendMessage: this.sendMessage,
           joinRoom: this.joinRoom,
           leaveRoom: this.leaveRoom,
+          resetChatState: this.resetChatState,
         }}
       >
         {this.props.children}
