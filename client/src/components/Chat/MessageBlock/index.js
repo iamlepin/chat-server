@@ -6,7 +6,7 @@ import './MessageBlock.scss'
 
 const reverseFlex = (self) => self ? 'reversed' : ''
 
-const MessageBlock = ({ body, date, name, userPic, self }) => (
+const MessageBlock = ({ name, userPic, self }) => (
   <div className={`msg-header ${reverseFlex(self)}`}>
     <Avatar className="msg-header__avatar" icon="user" src={userPic} />
     <span className="msg-header__name">{name}</span>
@@ -14,11 +14,13 @@ const MessageBlock = ({ body, date, name, userPic, self }) => (
 )
 
 MessageBlock.propTypes = {
-  body: PropTypes.string,
-  date: PropTypes.string,
-  name: PropTypes.string,
-  userPic: PropTypes.string,
+  name: PropTypes.string.isRequired,
+  userPic: PropTypes.string.isRequired,
   self: PropTypes.bool,
+}
+
+MessageBlock.defaultProps = {
+  self: false,
 }
 
 export default MessageBlock
