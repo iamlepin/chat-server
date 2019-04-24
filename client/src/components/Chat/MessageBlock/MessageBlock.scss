@@ -1,0 +1,29 @@
+.msg-header {
+  display: flex;
+  align-items: center;
+  padding: .25rem 0;
+
+  &__name {
+    margin: 0 .5rem;
+    font-weight: 600;
+  }
+}
+
+// .reversed {
+//   // flex-direction: row-reverse;
+//   // margin: 0 0 1rem 20%;
+
+//   .msg {
+//     &__header {
+//       // align-self: flex-end;
+//     }
+
+//     &__content {
+//       // align-items: flex-end;
+//     }
+//   }
+
+//   .msg-info {
+//     // flex-direction: row-reverse;
+//   }
+// }

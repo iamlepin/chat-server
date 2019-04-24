@@ -1,61 +1,37 @@
 .msg {
   display: flex;
   flex-direction: row;
-  margin: 0 20% 1rem 0;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-
-  &__header {
-    align-self: flex-start;
-    padding: 6px;
-  }
+  margin: 0 20% 0 0;
+  padding: .15rem 0;
 
   &__content {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    padding: 0 0.5rem;
+    padding: .5rem 1rem;
+    border: 1px solid #e9e9e9;
+    border-radius: 0 15px 15px 15px;
+    background-color: #f9f9f9;
     overflow: hidden;
   }
-  &__body {
-    padding: 6px;
+
+  &__name {
+    font-weight: 600;
   }
 
-  &__avatar {
-    flex-shrink: 0;
-  }
-
-  .msg-info {
-    display: flex;
-    margin: 0 -0.25rem;
-
-    &__item {
-      margin: 0 .25rem;
-    }
-    &__name {
-      font-weight: 600;
-    }
-
-    &__date {
-      opacity: .5;
-    }
+  &__date {
+    font-size: .75rem;
+    opacity: .6;
   }
 }
 
 .reversed {
   flex-direction: row-reverse;
-  margin: 0 0 1rem 20%;
+  margin: 0 0 0 20%;
 
-  .msg {
-    &__header {
-      align-self: flex-end;
-    }
-
-    &__content {
-      align-items: flex-end;
-    }
+  .msg__content {
+    align-items: flex-end;
+    border-radius: 15px 0 15px 15px;
   }
 
   .msg-info {

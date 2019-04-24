@@ -8,26 +8,21 @@ const reverseFlex = (self) => self ? 'reversed' : ''
 
 const Message = ({ body, date, name, userPic, self }) => (
   <div className={`msg ${reverseFlex(self)}`}>
-    <Avatar className="msg__avatar" icon="user" src={userPic} />
     <div className="msg__content">
-      <div className="msg__header">
-        <div className="msg-info">
-          <span className="msg-info__item msg-info__name">{name}</span>
-          <span>{' '}</span>
-          <span className="msg-info__item msg-info__date">{moment(date).format('HH:mm:ss')}</span>
-        </div>
+      <span className="msg__date">{moment(date).format('HH:mm:ss')}</span>
+      <div className="msg__body">
+        {body}
       </div>
-      <div className="msg__body">{body}</div>
     </div>
   </div>
 )
 
 Message.propTypes = {
-  body: PropTypes.string.isRequired,
-  date: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
-  userPic: PropTypes.string.isRequired,
-  self: PropTypes.bool.isRequired,
+  body: PropTypes.string,
+  date: PropTypes.string,
+  name: PropTypes.string,
+  userPic: PropTypes.string,
+  self: PropTypes.bool,
 }
 
 export default Message

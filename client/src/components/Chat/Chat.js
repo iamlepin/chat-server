@@ -1,9 +1,10 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import * as R from 'ramda'
 import uuidv4 from 'uuid/v4'
 import io from 'socket.io-client'
 import { Card, Row, Col, Input, message } from 'antd'
 import Message from './Message'
+import MessageBlock from './MessageBlock'
 import { getUserById } from '../../utils/user'
 import PropTypes from 'prop-types'
 import './Chat.scss'
@@ -52,6 +53,49 @@ class Chat extends Component {
     this.setState({ message: e.target.value })
   }
 
+  renderMessage = ({ _id, tempId, author, receiveDate, sendDate, body, ...rest }) => {
+    const self = author === this.props.userInfo.id
+
+    return (
+      <Message
+        key={_id || tempId}
+        date={receiveDate || sendDate}
+        self={self}
+        body={body}
+        {...rest}
+      />
+    )
+  }
+
+  renderMessageBlock = ({ _id, tempId, author, ...rest }) => {
+    const { name = '', userPic = '' } = getUserById(author, this.props.users)
+    const self = author === this.props.userInfo.id
+    const key = _id || tempId
+
+    return (
+      <MessageBlock
+        key={key + '_block'}
+        name={name}
+        userPic={userPic}
+        self={self}
+        {...rest}
+      />
+    )
+  }
+
+  renderMessages = () => {
+    let lastAuthor = null
+    return this.props.messages.reduce((acc, msg) => {
+      if (lastAuthor !== msg.author) {
+        acc.push(this.renderMessageBlock(msg))
+        lastAuthor = msg.author
+      }
+      acc.push(this.renderMessage(msg))
+
+      return acc
+    }, [])
+  }
+
   render() {
     const { users, userInfo } = this.props
 
@@ -75,21 +119,7 @@ class Chat extends Component {
             ]}
           >
             <div ref={(x) => { this.chatBody = x }} className="chat__body">
-              {this.props.messages.map(({ _id, tempId, author, sendDate, receiveDate, body, ...rest }) => {
-                const { name = '', userPic = '' } = getUserById(author, users)
-                const self = author === userInfo.id
-                return (
-                  <Message
-                    key={_id || tempId}
-                    name={name}
-                    date={receiveDate || sendDate}
-                    userPic={userPic}
-                    self={self}
-                    body={body}
-                    {...rest}
-                  />
-                )
-              })}
+              {this.renderMessages()}
             </div>
           </Card>
         </Col>
