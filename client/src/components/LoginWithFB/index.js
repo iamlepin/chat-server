@@ -76,5 +76,5 @@ const MDTP = {
 
 export default compose(
   connect(MSTP, MDTP),
-  withFaceBookApi,
+  withFaceBookApi
 )
