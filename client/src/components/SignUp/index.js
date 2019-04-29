@@ -3,6 +3,7 @@ import React, { Fragment } from 'react'
 import PropTypes from 'prop-types'
 import { Row, Form, Icon, Input, Button, message } from 'antd'
 import { EMAIL, USER_NAME, PASSWORD } from '../../constants/regexp'
+import AvatarPicker from '../AvatarPicker'
 import { REDIRECT, HOME } from '../../constants/routes'
 import { trimValue } from '../../utils/common'
 import nodeApi from '../../api'
@@ -169,6 +170,21 @@ class SignUp extends React.Component {
                   { validator: this.validateConfirmMatch },
                 ],
               })(<Input prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />} type="password" placeholder="Confirm Password" />)}
+            </FormItem>
+            <FormItem className="avatar-picker">
+              {getFieldDecorator('avatar', {
+                rules: [
+                  {
+                    validator: (rule, value, cb) => {
+                      const size = value.size / 1024 / 1024
+                      if (size > 2) {
+                        cb('Avatar must be less than 2mb')
+                      }
+                      cb()
+                    }
+                  }
+                ]
+              })(<AvatarPicker />)}
             </FormItem>
             <FormItem>
               <Button type="primary" htmlType="submit" className="register-form-button">
