@@ -26,7 +26,6 @@ class App extends Component {
   }
 
   render () {
-    console.log('redner app', this.props)
     return (
       <Layout className="layout">
         <Header {...this.props} />

@@ -8013,6 +8013,12 @@ react-app-rewired@^1.6.2:
     cross-spawn "^5.1.0"
     dotenv "^4.0.0"
 
+react-avatar-editor@^11.0.7:
+  version "11.0.7"
+  resolved "https://registry.yarnpkg.com/react-avatar-editor/-/react-avatar-editor-11.0.7.tgz#021053cfeaa138407b79279ee5a0384f273f0c54"
+  dependencies:
+    prop-types "^15.5.8"
+
 react-dev-utils@^6.1.1:
   version "6.1.1"
   resolved "https://registry.yarnpkg.com/react-dev-utils/-/react-dev-utils-6.1.1.tgz#a07e3e8923c4609d9f27e5af5207e3ca20724895"
@@ -8179,7 +8185,7 @@ react-slick@~0.24.0:
     lodash.debounce "^4.0.8"
     resize-observer-polyfill "^1.5.0"
 
-react@^16.5.2:
+react@^16.8.6:
   version "16.8.6"
   resolved "https://registry.yarnpkg.com/react/-/react-16.8.6.tgz#ad6c3a9614fd3a4e9ef51117f54d888da01f2bbe"
   dependencies:

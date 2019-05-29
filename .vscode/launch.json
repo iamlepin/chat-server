@@ -29,11 +29,5 @@
       "restart": true,
       "protocol": "inspector",
     },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Запустить программу",
-      "program": "${workspaceFolder}/index.js"
-    }
   ]
 }

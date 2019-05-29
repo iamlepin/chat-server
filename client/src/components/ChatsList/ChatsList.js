@@ -30,6 +30,7 @@ class ChatsList extends React.Component {
 
   getUserChats = async (userId) => {
     const { data, error, message } = await of(nodeApi.getUserChats(userId))
+    console.log('data: ', data);
 
     if (error) {
       antdMsg.error(message)

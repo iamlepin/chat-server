@@ -26,15 +26,24 @@ class SignUp extends React.Component {
         console.error('Error while validating data!')
         message.error('Please fill all fields correctly.')
       } else {
-        console.log('TCL: handleSubmit')
-        const { userName: name, email, password } = values
-        const body = {
-          name,
-          email,
-          password,
-        }
         console.log('Received body of form: ', values)
-        nodeApi.addUser(body)
+        const { userName: name, email, password, avatar } = values
+        const formData = new FormData()
+        formData.append('avatar', avatar)
+        formData.append('name', name)
+        formData.append('email', email)
+        formData.append('password', password)
+
+        // this.uploadAvatar(formData)
+        // nodeApi.addUser(formData)
+        fetch('https://localhost:3001/users/signup', {
+          mode: 'cors',
+          method: 'POST',
+          // headers: new Headers({
+          //   'Content-Type': 'multipart/form-data',
+          // }),
+          body: formData,
+        })
           .then(data => {
             data && message.success(data.message)
             history.push(
@@ -52,6 +61,18 @@ class SignUp extends React.Component {
           })
       }
     })
+  }
+
+  uploadAvatar = (formData) => {
+    fetch('https://localhost:3001/files/avatar', {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      method: 'POST',
+      mode: 'cors',
+      body: formData,
+    })
+    .catch((err) => console.log(err))
   }
 
   checkUserNameExistence = (rule, value, callback) => {
@@ -176,14 +197,15 @@ class SignUp extends React.Component {
                 rules: [
                   {
                     validator: (rule, value, cb) => {
+                      if (!value) { return }
                       const size = value.size / 1024 / 1024
                       if (size > 2) {
                         cb('Avatar must be less than 2mb')
                       }
                       cb()
-                    }
-                  }
-                ]
+                    },
+                  },
+                ],
               })(<AvatarPicker />)}
             </FormItem>
             <FormItem>

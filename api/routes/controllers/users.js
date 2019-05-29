@@ -97,12 +97,16 @@ const signUp = (req, res) => {
       return bcrypt.hash(req.body.password, 10)
     })
     .then(hash => {
-      const newUser = new User({
+      const newUserData = {
         _id: new mongoose.Types.ObjectId(),
         name: req.body.name,
         email: req.body.email,
         password: hash,
-      })
+      }
+      if (req.file) {
+        newUserData.userPic = req.file.secure_url
+      }
+      const newUser = new User(newUserData)
       return newUser.save()
     })
     .then(user => {
@@ -120,7 +124,8 @@ const signUp = (req, res) => {
 }
 
 const signIn = (req, res) => {
-  let foundUser, userData, pairTokens
+  let foundUser
+
   User.findOne({ name: req.body.name }).exec()
     .then(async (user) => {
       if (!user) {
@@ -132,16 +137,15 @@ const signIn = (req, res) => {
       foundUser = user
       return bcrypt.compare(req.body.password, user.password)
     })
-    .then((isPassCompareSucces) => {
-      if (isPassCompareSucces) {
-        userData = {
-          id: foundUser.id,
+    .then((isPassCompareSuccess) => {
+      if (isPassCompareSuccess) {
+        const pairTokens = getPairTokens({
+          id: foundUser._id,
           name: foundUser.name,
           role: null,
-        }
-        pairTokens = getPairTokens(userData)
+        })
 
-        return User.updateOne({ _id: foundUser.id }, { refreshToken: pairTokens.refreshToken })
+        return User.updateOne({ _id: foundUser._id }, { refreshToken: pairTokens.refreshToken }).exec()
       }
       res.status(401).json({
         error: 'Auth failed. Passwords doesn\'t match'
@@ -149,13 +153,15 @@ const signIn = (req, res) => {
     })
     .then(updatedUser => {
       if (!updatedUser) { throw new Error('Error updating user.')}
-      res.status(201).json({
-        message: `User ${foundUser.name} is logged in.`,
-        data: {
-          ...userData,
-          ...pairTokens,
-        }
-      })
+      return User.findOne({ _id: foundUser._id }).select('_id name email refreshToken').exec()
+    })
+    .then(userInfo => {
+      if (userInfo) {
+        res.status(201).json({
+          message: `User ${foundUser.name} is logged in.`,
+          data: userInfo,
+        })
+      }
     })
     .catch(sendErrorMessage(res))
 }

@@ -13,7 +13,6 @@ const productRoutes = require('./api/routes/products');
 const orderRoutes = require('./api/routes/orders');
 const userRoutes = require('./api/routes/users');
 
-
 // app.use(morgan('dev')); // dont need after all, because we use mongoose
 app.use(express.urlencoded({extended: false}));
 app.use(express.json());
