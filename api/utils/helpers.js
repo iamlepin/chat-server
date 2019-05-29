@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken')
+const config = require('../../config')
 
 const sendErrorMessage = (res) => (err) => {
   console.log(err)
@@ -25,6 +26,10 @@ const getPairTokens = (userData = {}) => {
   return tokenPair ? tokenPair : {}
 }
 
+const getAppURL = () => {
+  const { PROTOCOL, URL, PORT } = config.server
+  return `${PROTOCOL}://${URL}:${PORT}`
+}
 
 module.exports = {
   sendErrorMessage,

@@ -107,6 +107,7 @@ export default class Provider extends Component {
   resetChatState = () => this.setState(INITIAL_STATE)
 
   render() {
+    console.log(this.state)
     return (
       <ChatContext.Provider
         value={{
