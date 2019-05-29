@@ -1,8 +1,11 @@
 import { SET_USER_INFO, CLEAR_USER_INFO } from '../constants/actions'
 
-export const setUserInfo = (userData) => ({
+export const setUserInfo = ({ _id, ...rest }) => ({
   type: SET_USER_INFO,
-  payload: userData,
+  payload: {
+    id: _id,
+    ...rest,
+  },
 })
 
 export const clearUserInfo = () => ({

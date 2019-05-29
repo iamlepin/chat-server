@@ -42,6 +42,7 @@ const connect = (socket) => {
   })
 
   socket.on('get_conversation', async ({ userId, companionId }) => {
+    console.log('userId: ', userId);
     try {
       if (!userId) { throw new Error('Expected userId to be a string.')}
       if (!companionId) { throw new Error('Expected companionId to be a string')}

@@ -98,6 +98,7 @@ class Chat extends Component {
 
   render() {
     const { users, userInfo } = this.props
+    console.log('this.props: ', this.props);
 
     return (
       <Row>
