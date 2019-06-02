@@ -85,7 +85,6 @@ class Chat extends Component {
 
   renderMessages = () => {
     let lastAuthor = null
-    console.log('this.props: ', this.props);
     return this.props.messages.reduce((acc, msg) => {
       if (lastAuthor !== msg.author) {
         acc.push(this.renderMessageBlock(msg))
@@ -99,7 +98,6 @@ class Chat extends Component {
 
   render() {
     const { users, userInfo } = this.props
-    console.log('this.props: ', this.props);
 
     return (
       <Row>

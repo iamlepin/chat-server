@@ -13,6 +13,7 @@ import { HOME, SIGN_IN, SIGN_UP, REDIRECT, CHAT, CHAT_LIST, USERS } from '../../
 import { restoreUserLoginState } from '../../utils/user'
 import ChatList from '../../containers/ChatContainer'
 import './App.scss'
+import PrivateRoute from '../../components/PrivatRoute';
 
 const { Content, Footer } = Layout
 
@@ -26,17 +27,20 @@ class App extends Component {
   }
 
   render () {
+    const { userInfo } = this.props
+    const isLoggedIn = Boolean(userInfo.id)
+
     return (
       <Layout className="layout">
         <Header {...this.props} />
         <Content className="layout__content">
           <Breadcrumbs links={breadcrumbPathLinks} />
           <Switch>
-            <Route exact path={HOME} component={Home} />
-            <Route path={USERS} component={UsersList} />
-            <Route path={SIGN_IN} component={SignIn} />
-            <Route path={SIGN_UP} component={SignUp} />
-            <Route path={CHAT} component={ChatList} />
+            <PrivateRoute path={HOME} component={Home} isLoggedIn={isLoggedIn} redirect={SIGN_IN} />
+            <PrivateRoute path={USERS} component={UsersList} isLoggedIn={isLoggedIn} redirect={SIGN_IN} />
+            <PrivateRoute path={SIGN_IN} component={SignIn} isLoggedIn={!isLoggedIn} redirect={HOME} />
+            <PrivateRoute path={SIGN_UP} component={SignUp} isLoggedIn={!isLoggedIn} redirect={HOME} />
+            <PrivateRoute path={CHAT} component={ChatList} isLoggedIn={isLoggedIn} redirect={SIGN_IN} />
             {/* <Route path={CHAT_LIST} component={ChatList} /> */}
             <Route path={REDIRECT} render={(props) => <RedirectPage {...props} />} />
             <Route render={() => <h2>404 not found!!! sorry</h2>} />

@@ -1,6 +1,22 @@
+@import '../../styles/variables';
+
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   height: 50px;
+
+  .menu {
+    .navlink {
+      padding: 8px;
+      margin-right: .5rem;
+      border-radius: 5px;
+      color: $prim-color;
+
+      &--active {
+        background-color: $prim-color;
+        color: black;
+      }
+    }
+  }
 }

@@ -4,7 +4,9 @@ import { setUserInfo, clearUserInfo } from '../../actions/userInfo'
 import { getUsers } from '../../actions/users'
 
 export default connect(
-  null,
+  (state) => ({
+    userInfo: state.userInfo,
+  }),
   {
     setUserInfo,
     clearUserInfo,

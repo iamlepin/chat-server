@@ -40,7 +40,7 @@
             "objects": "always-multiline",
             "imports": "always-multiline",
             "exports": "always-multiline",
-            "functions": "never"
+            "functions": "always-multiline"
         }],
         "jsx-a11y/anchor-is-valid": [ "error", {
             "components": [ "Link" ],

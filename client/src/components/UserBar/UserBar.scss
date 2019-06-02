@@ -1,0 +1,24 @@
+@import '../../styles/variables';
+
+.user-info {
+  display: flex;
+  align-items: center;
+  color: $prim-color;
+
+  & > * {
+    margin-right: 1rem;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+
+  .user-info_image {
+    background-color: $prim-color;
+    color: #000;
+  }
+
+  &_logout {
+    font-size: 1.5rem;
+  }
+}
