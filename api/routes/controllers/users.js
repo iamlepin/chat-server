@@ -153,7 +153,7 @@ const signIn = (req, res) => {
     })
     .then(updatedUser => {
       if (!updatedUser) { throw new Error('Error updating user.')}
-      return User.findOne({ _id: foundUser._id }).select('_id name email refreshToken').exec()
+      return User.findOne({ _id: foundUser._id }).select('_id name email refreshToken userPic').exec()
     })
     .then(userInfo => {
       if (userInfo) {
