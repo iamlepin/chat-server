@@ -3,7 +3,7 @@ const Conversation = require('../models/conversation')
 const User = require('../models/user')
 const Message = require('../models/message')
 
-let clients = 0
+let clientsCounter = 0
 
 const postMessage = (msgData) => new Message({
   _id: new mongoose.Types.ObjectId(),
@@ -16,11 +16,14 @@ const postMessage = (msgData) => new Message({
 }).save()
 
 const connect = (socket) => {
-  clients = clients + 1
-  console.log('socket connected! clients = ', clients)
+  clientsCounter = clientsCounter + 1
+  console.log('socket connected! clientsCounter = ', clientsCounter)
+  socket.emit('connected', socket.id)
 
   socket.on('disconnect', (userId) => {
+    clientsCounter = clientsCounter - 1
     console.log(userId + ' disconnected')
+    console.log('Clients left: ', clientsCounter)
   })
 
   socket.on('chat_message', async (message, onPostMsgSuccess) => {
@@ -54,7 +57,7 @@ const connect = (socket) => {
       if (!companion) { throw new Error('User with companionId does not exist.')}
 
       const response = {}
-      let conversation = await Conversation.findOne({ members: { $all: [ userId, companionId ] } }).exec()
+      let conversation = await Conversation.findOne({ members: { $all: [ userId, companionId ] } }).select('-__v').exec()
 
       if (conversation) {
         response.conversation = conversation

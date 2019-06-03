@@ -11,6 +11,40 @@ import './Chat.scss'
 import withChatApi from '../../hocs/withChatApi';
 
 class Chat extends Component {
+  static propTypes = {
+    messages: PropTypes.array.isRequired,
+    conversation: PropTypes.shape({
+      members: PropTypes.array.isRequired,
+      _id: PropTypes.string.isRequired,
+      unreadsCount: PropTypes.number.isRequired,
+      messagesCount: PropTypes.number.isRequired,
+    }),
+    socketId: PropTypes.string.isRequired, // TODO: Lepin > find what is it
+    getConversation: PropTypes.func.isRequired,
+    sendMessage: PropTypes.func.isRequired,
+    resetChatState: PropTypes.func.isRequired,
+    userInfo: PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      role: PropTypes.any,
+      accessToken: PropTypes.string.isRequired,
+      refreshToken: PropTypes.string.isRequired,
+      expiresIn: PropTypes.string.isRequired,
+      profileType: PropTypes.string.isRequired,
+      _id: PropTypes.string.isRequired,
+      email: PropTypes.string.isRequired,
+      userPic: PropTypes.string.isRequired,
+    }).isRequired,
+    users: PropTypes.array.isRequired,
+    match: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired,
+    history: PropTypes.object.isRequired,
+  }
+
+  static defaultProps = {
+    conversation: [],
+  }
+
   state = {
     message: '',
   }
@@ -97,7 +131,6 @@ class Chat extends Component {
   }
 
   render() {
-    const { users, userInfo } = this.props
 
     return (
       <Row>
