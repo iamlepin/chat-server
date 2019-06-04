@@ -17,12 +17,21 @@ const postMessage = (msgData) => new Message({
     },
   ],
   body: msgData.body,
-}).save().select('-__v').exec()
+}).save()
+
+const getSocketConversations = (userId) => Conversation.find({ members: { $all: [ userId ] } }).exec()
 
 const connect = (socket) => {
   clientsCounter = clientsCounter + 1
   console.log('socket connected! clientsCounter = ', clientsCounter)
   socket.emit('connected', socket.id)
+
+  socket.on('init_chat', async (userId) => {
+    const conversations = await getSocketConversations(userId)
+    console.log("init chat conversations", conversations)
+    const roomsIds = conversations.map(({ _id }) => _id)
+    socket.join(roomsIds)
+  })
 
   socket.on('disconnect', (userId) => {
     clientsCounter = clientsCounter - 1
@@ -39,7 +48,7 @@ const connect = (socket) => {
         postedMessage,
       })
     } catch (error) {
-			console.error('TCL: }catch -> error', error)
+			console.error(error)
       socket.emit('error', {
         error,
         message: 'Message not saved!',
@@ -72,7 +81,6 @@ const connect = (socket) => {
   })
 
   socket.on('get_conversation', async ({ userId, companionId }) => {
-    console.log('userId: ', userId);
     try {
       if (!userId) { throw new Error('Expected userId to be a string.')}
       if (!companionId) { throw new Error('Expected companionId to be a string')}
@@ -84,11 +92,11 @@ const connect = (socket) => {
       if (!companion) { throw new Error('User with companionId does not exist.')}
 
       const response = {}
-      let conversation = await Conversation.findOne({ members: { $all: [ userId, companionId ] } }).select('-__v').exec()
+      let conversation = await Conversation.findOne({ members: { $all: [ userId, companionId ] } }).exec()
 
       if (conversation) {
         response.conversation = conversation
-        response.messages = await Message.find({ conversationId: conversation._id }).select('-__v').exec()
+        response.messages = await Message.find({ conversationId: conversation._id }).exec()
       }
 
       if (!conversation) {

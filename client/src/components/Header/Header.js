@@ -36,7 +36,7 @@ class Header extends React.Component {
           key={path}
           to={path}
         >
-          {path === CHAT ? `${title} ${this.props.messages.length}` : title}
+          {path === CHAT ? `${title} ${this.props.getUreadsCounter()}` : title}
         </NavLink>
       ))}
     </div>

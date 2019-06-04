@@ -25,7 +25,7 @@ export default class Provider extends Component {
     messages: [],
     conversation: null,
     socketId: null,
-    unreads: 0,
+    unreads: {},
   }
 
   componentDidMount = () => {
@@ -37,6 +37,8 @@ export default class Provider extends Component {
     socket.on('chat_message', this.handleChatMessageResponse)
     socket.on('join_room', this.handleJoinRoom)
     socket.on('leave_room', this.handleLeaveRoom)
+
+    socket.emit('init_chat', this.props.userInfo._id)
   }
 
   getConversation = (userId, companionId) => {
@@ -107,12 +109,27 @@ export default class Provider extends Component {
     socket.emit('receive_message', msgData, this.updateClientUnreads)
   }
 
-  updateClientUnreads = (conversationId) => this.setState((prevState) => ({
-    unreads: {
-      ...prevState.unreads,
-      [conversationId]: prevState.unreads[conversationId] + 1,
-    },
-  }))
+  updateClientUnreads = (conversationId) => this.setState((prevState) => {
+    const unreadsItemValue = prevState.unreads[conversationId]
+    const isNumValue = Number.isInteger(unreadsItemValue)
+
+    return {
+      unreads: {
+        ...prevState.unreads,
+        [conversationId]: isNumValue ? unreadsItemValue + 1 : 1,
+      },
+    }
+  })
+
+  getUreadsCounter = (conversationId) => {
+    const { unreads } = this.state
+    if (conversationId) {
+      return unreads[conversationId]
+    }
+
+    const values = Object.values(unreads)
+    return values.reduce((acc, item) => acc + item, 0)
+  }
 
   handleChatError = (error) => {
     antdMessage.error('Something going wrong... try again later.')
@@ -143,6 +160,7 @@ export default class Provider extends Component {
           ...this.state,
           getConversation: this.getConversation,
           sendMessage: this.sendMessage,
+          getUreadsCounter: this.getUreadsCounter,
           joinRoom: this.joinRoom,
           leaveRoom: this.leaveRoom,
           resetChatState: this.resetChatState,
