@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const Conversation = require('../models/conversation')
 const User = require('../models/user')
 const Message = require('../models/message')
+const { MESSAGE_STATUSES } = require('../constatns/index')
 
 let clientsCounter = 0
 
@@ -9,11 +10,14 @@ const postMessage = (msgData) => new Message({
   _id: new mongoose.Types.ObjectId(),
   conversationId: msgData.conversationId,
   author: msgData.author,
-  sendDate: msgData.sendDate,
-  receiveDate: new Date().toISOString(),
-  readDate: null,
+  status: [
+    {
+      ...MESSAGE_STATUSES.SENT,
+      date: new Date().toISOString(),
+    },
+  ],
   body: msgData.body,
-}).save()
+}).save().select('-__v').exec()
 
 const connect = (socket) => {
   clientsCounter = clientsCounter + 1
@@ -26,21 +30,44 @@ const connect = (socket) => {
     console.log('Clients left: ', clientsCounter)
   })
 
-  socket.on('chat_message', async (message, onPostMsgSuccess) => {
+  socket.on('chat_message', async (message, updateClientMessage) => {
     try {
       const postedMessage = await postMessage(message)
       socket.to(message.conversationId).emit('chat_message', postedMessage)
-      onPostMsgSuccess({
+      updateClientMessage({
         tempId: message.tempId,
-        message: postedMessage,
+        postedMessage,
       })
     } catch (error) {
-			console.log('TCL: }catch -> error', error)
+			console.error('TCL: }catch -> error', error)
       socket.emit('error', {
         error,
         message: 'Message not saved!',
       })
       socket.emit('chat_message_error', { messageId: message._id }) // for repeating post message request
+    }
+  })
+
+  socket.on('receive_message', async (msgData, updateClientUnreads) => {
+    try {
+      await Message.updateOne(
+        { _id: msgData._id },
+        { $addToSet: { status: MESSAGE_STATUSES.RECEIVED } }
+      )
+      updateClientUnreads(msgData.conversationId)
+    } catch (error) {
+      console.error(error)
+    }
+  })
+
+  socket.on('read_message', async (message) => {
+    try {
+      await Message.updateOne(
+        { _id: message._id },
+        { $addToSet: { status: MESSAGE_STATUSES.READ } }
+      )
+    } catch (error) {
+      console.error(error)
     }
   })
 
@@ -61,7 +88,7 @@ const connect = (socket) => {
 
       if (conversation) {
         response.conversation = conversation
-        response.messages = await Message.find({ conversationId: conversation._id })
+        response.messages = await Message.find({ conversationId: conversation._id }).select('-__v').exec()
       }
 
       if (!conversation) {
@@ -77,7 +104,7 @@ const connect = (socket) => {
       socket.join(conversation._id)
       socket.emit('get_conversation_response', response)
     } catch (error) {
-      console.log(error)
+      console.error(error)
       socket.emit('get_conversation_error', {
         message: `${error.name}: ${error.message}`,
       })

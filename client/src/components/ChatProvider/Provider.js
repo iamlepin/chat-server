@@ -9,12 +9,6 @@ const socket = io('https://localhost:3001/chat')
 
 export const ChatContext = React.createContext()
 
-const INITIAL_STATE = {
-  messages: [],
-  conversation: null,
-  socketId: null,
-  // currentRoom: null, // ???
-}
 export default class Provider extends Component {
   static propTypes = {
     children: PropTypes.any,
@@ -27,32 +21,38 @@ export default class Provider extends Component {
 
   static contextType = ChatContext
 
-  state = INITIAL_STATE
+  state = {
+    messages: [],
+    conversation: null,
+    socketId: null,
+    unreads: 0,
+  }
 
   componentDidMount = () => {
-    socket.on('connected', (socketId) => this.setState({ socketId })) // ???
+    socket.on('connected', (socketId) => this.setState({ socketId }))
     socket.on('chat_message_error', this.handleMessageError)
-    socket.on('get_conversation_response', this.setConversation)
+    socket.on('get_conversation_response', this.handleGetConversation)
     socket.on('get_conversation_error', this.handleChatError)
-    socket.on('post_message', this.updateMessage)
-    socket.on('chat_message', this.setMessage)
+    socket.on('post_message', this.updateClientMessage)
+    socket.on('chat_message', this.handleChatMessageResponse)
     socket.on('join_room', this.handleJoinRoom)
     socket.on('leave_room', this.handleLeaveRoom)
   }
-
-  setConversation = ({ conversation, messages }) => this.setState({ conversation, messages })
 
   getConversation = (userId, companionId) => {
     socket.emit('get_conversation', { userId, companionId })
   }
 
-  // joinRoom = (roomId) => socket.emit('join_room', roomId)
-
-  // handleJoinRoom = (roomId) => this.setState({ currentRoom: roomId })
-
-  // leaveRoom = (roomId) => socket.emit('leave_room', roomId)
-
-  // handleLeaveRoom = () => this.setState({ currentRoom: null })
+  // TODO: Lepin > check messages for accidentally left unreads and update them on server
+  handleGetConversation = ({ conversation, messages }) =>
+    this.setState((prevState) => ({
+      conversation,
+      messages,
+      unreads: {
+        ...prevState.unreads,
+        [conversation._id]: 0,
+      },
+    }))
 
   getMessageData = (msgText) => {
     const tempId = uuidv4()
@@ -60,7 +60,7 @@ export default class Provider extends Component {
     return {
       tempId,
       body: msgText,
-      sendDate: new Date().toISOString(),
+      sentDate: new Date().toISOString(),
       author: this.props.userInfo.id,
       conversationId: this.state.conversation._id,
     }
@@ -68,15 +68,23 @@ export default class Provider extends Component {
 
   sendMessage = (msgText) => {
     const msgData = this.getMessageData(msgText)
-    socket.emit('chat_message', msgData, this.updateMessage)
-    this.setMessage(msgData)
+
+    this.setState(
+      (prevState) => ({
+        messages: [ ...prevState.messages, msgData ],
+      }),
+      () => socket.emit('chat_message', msgData, this.updateClientMessage)
+    )
   }
 
-  setMessage = (msg) => this.setState((prevState) => ({
-    messages: [ ...prevState.messages, msg ],
-  }))
+  setMessage = (msgData) => this.setState(
+    (prevState) => ({
+      messages: [ ...prevState.messages, msgData ],
+    }),
+    () => socket.emit('read_message', msgData) // TODO: Lepin > replace userID with auth userId
+  )
 
-  updateMessage = ({ tempId, message: postedMessage }) => {
+  updateClientMessage = ({ tempId, postedMessage }) => {
     this.setState(({ messages }) => {
       const newMessages = messages.map((msg) => {
         if (msg.tempId === tempId) { return postedMessage }
@@ -86,6 +94,25 @@ export default class Provider extends Component {
       return { messages: newMessages }
     })
   }
+
+  handleChatMessageResponse = (msgData) => {
+    const { conversation } = this.state
+    const isActualConversationMsg = conversation && conversation._id === msgData.conversationId
+
+    if (isActualConversationMsg) {
+      this.setMessage(msgData)
+      return
+    }
+
+    socket.emit('receive_message', msgData, this.updateClientUnreads)
+  }
+
+  updateClientUnreads = (conversationId) => this.setState((prevState) => ({
+    unreads: {
+      ...prevState.unreads,
+      [conversationId]: prevState.unreads[conversationId] + 1,
+    },
+  }))
 
   handleChatError = (error) => {
     antdMessage.error('Something going wrong... try again later.')
@@ -104,10 +131,12 @@ export default class Provider extends Component {
 
   disconnect = (userId) => socket.emit('disconnect', userId)
 
-  resetChatState = () => this.setState(INITIAL_STATE)
+  resetChatState = () => this.setState({
+    conversation: null,
+    messages: [],
+  })
 
   render() {
-    console.log(this.state)
     return (
       <ChatContext.Provider
         value={{

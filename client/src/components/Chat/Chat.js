@@ -87,13 +87,13 @@ class Chat extends Component {
     this.setState({ message: e.target.value })
   }
 
-  renderMessage = ({ _id, tempId, author, receiveDate, sendDate, body, ...rest }) => {
+  renderMessage = ({ _id, tempId, author, receiveDate, sentDate, body, ...rest }) => {
     const self = author === this.props.userInfo.id
 
     return (
       <Message
         key={_id || tempId}
-        date={receiveDate || sendDate}
+        date={receiveDate || sentDate}
         self={self}
         body={body}
         {...rest}
