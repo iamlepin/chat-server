@@ -2,7 +2,8 @@ const mongoose = require('mongoose')
 const User = require('../../models/user')
 const Conversation = require('../../models/conversation')
 const bcrypt = require('bcrypt')
-const { sendErrorMessage, getPairTokens } = require('../../utils/helpers')
+const { sendErrorMessage, getTokens } = require('../../utils/helpers')
+const R = require('ramda')
 
 const getAll = (req, res) => {
   User.find()
@@ -125,6 +126,7 @@ const signUp = (req, res) => {
 
 const signIn = (req, res) => {
   let foundUser
+  let tokens
 
   User.findOne({ name: req.body.name }).exec()
     .then(async (user) => {
@@ -139,13 +141,13 @@ const signIn = (req, res) => {
     })
     .then((isPassCompareSuccess) => {
       if (isPassCompareSuccess) {
-        const pairTokens = getPairTokens({
+        tokens = getTokens({
           id: foundUser._id,
           name: foundUser.name,
           role: null,
         })
 
-        return User.updateOne({ _id: foundUser._id }, { refreshToken: pairTokens.refreshToken }).exec()
+        return User.updateOne({ _id: foundUser._id }, { refreshToken: tokens.refreshToken }).exec()
       }
       res.status(401).json({
         error: 'Auth failed. Passwords doesn\'t match'
@@ -159,7 +161,11 @@ const signIn = (req, res) => {
       if (userInfo) {
         res.status(201).json({
           message: `User ${foundUser.name} is logged in.`,
-          data: userInfo,
+          data: {
+            ...userInfo._doc,
+            accessToken: tokens.accessToken,
+            expiresIn: tokens.expiresIn
+          },
         })
       }
     })
@@ -187,8 +193,8 @@ const signInFb = (req, res) => {
         name: user.name,
         role: null,
       }
-      const pairTokens = getPairTokens(userData)
-      User.updateOne({ _id: user.id }, { refreshToken: pairTokens.refreshToken })
+      const tokens = getTokens(userData)
+      User.updateOne({ _id: user.id }, { refreshToken: tokens.refreshToken })
         .then(updatedUser => {
           if (!updatedUser) { throw new Error('Error updating user.')}
           res.status(200).json({
@@ -196,7 +202,7 @@ const signInFb = (req, res) => {
             data: {
               ...userData,
               userPic: user.userPic,
-              ...pairTokens,
+              ...tokens,
             }
           })
         })
@@ -250,12 +256,12 @@ const refreshUserToken = (req, res) => {
           name: user.name,
           role: null,
         }
-        const pairTokens = getPairTokens(userData)
-        User.updateOne({ _id: user.id }, { refreshToken: pairTokens.refreshToken })
+        const tokens = getTokens(userData)
+        User.updateOne({ _id: user.id }, { refreshToken: tokens.refreshToken })
           .then(updatedUser => {
             if (updatedUser) {
               res.status(200).json({
-                data: pairTokens,
+                data: tokens,
                 message: 'Tokens refreshed successfull.'
               })
             }

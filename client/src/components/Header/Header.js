@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { NavLink } from 'react-router-dom'
-import { Layout } from 'antd'
+import { Layout, Badge } from 'antd'
 import { clearUserInfo } from '../../actions/userInfo'
 import { FACE_BOOK, USER_INFO } from '../../constants/common'
 import { TOP_MENU_LEFT, TOP_MENU_RIGHT, CHAT } from '../../constants/routes'
@@ -27,20 +27,26 @@ class Header extends React.Component {
     }
   }
 
-  renderMenu = (config) => (
-    <div className="menu">
-      {config.map(({ path, title }) => (
-        <NavLink
-          className="navlink"
-          activeClassName="navlink--active"
-          key={path}
-          to={path}
-        >
-          {path === CHAT ? `${title} ${this.props.getUreadsCounter()}` : title}
-        </NavLink>
-      ))}
-    </div>
+  renderNavlink = (path, title) => (
+    <NavLink
+      className="navlink"
+      activeClassName="navlink--active"
+      key={path}
+      to={path}
+    >
+      {title}
+      {path === CHAT && <Badge count={this.props.getUreadsCounter()} offset={[4, -2]}></Badge>}
+      {' '}
+    </NavLink>
   )
+
+  renderMenu = (config) => {
+    return (
+      <div className="menu">
+        {config.map(({ path, title }) => this.renderNavlink(path, title))}
+      </div>
+    )
+  }
 
   render () {
     const { userInfo } = this.props

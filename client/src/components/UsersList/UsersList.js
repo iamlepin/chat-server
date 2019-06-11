@@ -1,7 +1,8 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { Avatar, List, message as antdMsg, Row, Col } from 'antd'
+import { List, message as antdMsg, Row, Col } from 'antd'
 import nodeApi from '../../api/index'
+import Avatar from '../Avatar/Avatar'
 import PropTypes from 'prop-types'
 import { of } from '../../utils/common';
 import './UsersList.scss'
@@ -40,7 +41,7 @@ class UsersList extends React.Component {
                 className="user-list_item"
               >
                 <List.Item.Meta
-                  avatar={<Avatar src={item.userPic} />}
+                  avatar={<Avatar userPic={item.userPic} />}
                   title={
                     <Link
                       to={`${CHAT}/${item._id}`}
