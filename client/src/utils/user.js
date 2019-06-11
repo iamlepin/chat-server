@@ -27,13 +27,13 @@ export const refreshAccessToken = async (body) => {
 }
 
 export const updateUserInfo = async ({ userInfo, setUserInfo }) => {
-  const { expiresIn, refreshToken, id } = userInfo
+  const { expiresIn, refreshToken, _id } = userInfo
   const isExpired = checkAccesTokenExpiration(expiresIn)
   let response
   let newUserInfo = { ...userInfo }
 
   if (isExpired) {
-    response = await refreshAccessToken({ id, refreshToken })
+    response = await refreshAccessToken({ id: _id, refreshToken })
   }
   if (response && response.error) {
     return message.error(response.error)
