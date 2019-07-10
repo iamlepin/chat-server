@@ -15,8 +15,8 @@ class DB {
 
   withTransaction (applyQuerySequence) {
     return async (req, res) => {
+      const originalQueryInstance = this.queryInstance
       try {
-        const originalQueryInstance = this.queryInstance
         this.queryInstance = await originalQueryInstance.connect()
         await this.queryInstance.query('BEGIN')
         await applyQuerySequence(req, res)
@@ -34,11 +34,21 @@ class DB {
     }
   }
 
-  async getUserName (name) {
+  async getUsers (whereParams = {}, whereOperator = 'AND') {
     try {
-      await this
-    } catch (error) {
+      const whereKeys = Object.keys(whereParams).map((key, index) => `${key} = $${index + 1}`)
+      const whereString = whereKeys.join(` ${whereOperator} `)
+      const whereValues = Object.values(whereParams)
 
+      const users = await this.queryInstance(
+        `SELECT * FROM users WHERE ${whereString}`,
+        whereValues,
+      )
+
+      return users
+    } catch (error) {
+      console.error(error)
+      throw new Error('Get user failed.')
     }
   }
 
@@ -55,16 +65,12 @@ class DB {
     }
   }
 
-  async addNewUser ({ name, email, password, user_pic}) {
+  async addNewUser ({ name, email, password, user_pic }) {
     try {
-      let newUserData = [ name, email, password ]
-
-      if (user_pic) {
-        newUserData = [ ...newUserData, user_pic ]
-      }
+      let newUserData = [ name, email, password, user_pic ]
 
       const newUser = await this.queryInstance.query(
-        `INSERT INTO users (name, email, password, user_pic) VALUES ($1, $2, $3, $4) RETURNING (id, name, email)`,
+        `INSERT INTO users (name, email, password, user_pic) VALUES ($1, $2, $3, $4) RETURNING id, name, email, user_pic`,
         newUserData
       )
 
