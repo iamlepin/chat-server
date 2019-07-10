@@ -6,29 +6,43 @@ const { sendErrorMessage, getTokens } = require('../../utils/helpers')
 const R = require('ramda')
 const db = require('../../db')
 
-// const getUsersByValues = async (req, res) => {
-//   try {
-//     const foundUsers = await db.getUsers({ ...req.params }, 'AND')
-//     const
-//   } catch (error) {
+const getUsersByValues = async (req, res) => {
+  try {
+    const foundUsers = await db.getUsers({ ...req.params }, 'AND')
+    console.log("TCL: getUsersByValues -> foundUsers", foundUsers)
+    const userDataKeys = Object.keys(req.params)
+    const userDataLastKey = userDataKeys.pop()
+    const userDataString = userDataKeys.length ? userDataKeys.join(', ') + ' and ' + userDataLastKey : userDataLastKey
 
-//   }
-//   User.findOne({ name: req.params.name })
-//     .exec()
-//     .then(user => {
-//       if (user) {
-//         res.status(200).json({
-//           error: true,
-//           message: 'User name exists.',
-//         })
-//       } else {
-//         res.status(200).json({
-//           message: 'User name doesn\'t exist',
-//         })
-//       }
-//     })
-//     .catch(sendErrorMessage(res))
-// }
+    if (foundUsers.rows.length) {
+      res.status(200).json({
+        error: true,
+        message: `User with that ${userDataString} exists.`,
+      })
+    }
+
+    res.status(200).json({
+      message: `User with that ${userDataString} doesn\'t exists.`,
+    })
+  } catch (error) {
+    sendErrorMessage(res)(error)
+  }
+  // User.findOne({ name: req.params.name })
+  //   .exec()
+  //   .then(user => {
+  //     if (user) {
+  //       res.status(200).json({
+  //         error: true,
+  //         message: 'User name exists.',
+  //       })
+  //     } else {
+  //       res.status(200).json({
+  //         message: 'User name doesn\'t exist',
+  //       })
+  //     }
+  //   })
+  //   .catch(sendErrorMessage(res))
+}
 
 // const getEmail = (req, res) => {
 //   User.findOne({ email: req.params.email })
@@ -98,7 +112,7 @@ const signUp = async (req, res) => {
 }
 
 module.exports = {
-  // getName,
+  getUsersByValues,
   // getEmail,
   signUp: db.withTransaction(signUp),
 }

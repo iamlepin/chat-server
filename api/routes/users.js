@@ -6,9 +6,9 @@ const uploadCloudinary = require('../middlewares/multer')
 
 router.get('/', users.getAll)
 router.get('/:id', users.getOne)
-router.get('/check/name/:name', users.getName)
-router.get('/check/email/:email', users.getEmail)
-router.post('/signup', uploadCloudinary, usersPG.signUp)
+router.get('/check/name/:name', usersPG.getUsersByValues)  // users.getName) // TODO: Lepin > Refactor route to query string.
+router.get('/check/email/:email', usersPG.getUsersByValues)  // users.getEmail) // TODO: Lepin > Refactor route to query string.
+router.post('/signup', uploadCloudinary, usersPG.signUp) // users.signUp
 router.post('/login', users.signIn)
 router.post('/login-fb', users.signInFb)
 router.delete('/:id', users.remove)

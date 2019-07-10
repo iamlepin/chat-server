@@ -40,8 +40,8 @@ class DB {
       const whereString = whereKeys.join(` ${whereOperator} `)
       const whereValues = Object.values(whereParams)
 
-      const users = await this.queryInstance(
-        `SELECT * FROM users WHERE ${whereString}`,
+      const users = await this.queryInstance.query(
+        `SELECT id, id_fb, user, email, user_pic FROM users WHERE ${whereString}`,
         whereValues,
       )
 
