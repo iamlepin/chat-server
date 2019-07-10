@@ -4,14 +4,15 @@ const Conversation = require('../../models/conversation')
 const bcrypt = require('bcrypt')
 const { sendErrorMessage, getTokens } = require('../../utils/helpers')
 const R = require('ramda')
-const Pool = require('pg').Pool
-const pool = new Pool({
-  user: 'iamlepin',
-  host: 'localhost',
-  database: 'nodechat',
-  password: 'iamlepin84',
-  port: 5432,
-})
+const db = require('../../db')
+// const Pool = require('pg').Pool
+// const pool = new Pool({
+//   user: 'iamlepin',
+//   host: 'localhost',
+//   database: 'nodechat',
+//   password: 'iamlepin84',
+//   port: 5432,
+// })
 
 const getAll = (req, res) => {
   User.find()
@@ -133,23 +134,16 @@ const signUp2 = (req, res) => {
 }
 
 const signUp = async (req, res) => {
-  const userExistenceQuery = {
-    name: 'check_user_existence',
-    text: 'SELECT * FROM users WHERE name = $1 OR email = $2',
-    values: [ req.body.name, req.body.email ],
-  }
-  const newUserQuery = {
-    name: 'create_user',
-    text: `INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id`,
-    values: [ req.body.name, req.body.email, req.body.password ],
-  }
-
   try {
+  // TODO: Validate data and return human readable messages.
   // Search for user name or email existence.
-  const foundUsers = await pool.query(userExistenceQuery)
+  const foundUsers = await db.checkUserExistence({
+    name: req.body.name,
+    email: req.body.email,
+  })
 
   if (foundUsers.rowCount > 0) {
-    const takenRegistration = foundUsers.rows.reduce((acc, row) => {
+    const takenRegistrationData = foundUsers.rows.reduce((acc, row) => {
       const data = Object.entries(row)
         .filter(([ key, value ]) => value === req.body.name || value === req.body.email)
         .reduce((acc, data) => ({ ...acc, [data[0]]: data[1] }), {})
@@ -159,21 +153,29 @@ const signUp = async (req, res) => {
 
     res.status(200).json({
       error: 'That registration data already taken.',
-      data: takenRegistration,
+      data: takenRegistrationData,
     })
   }
 
-  // Validate data and return human readable messages.
-  const newUser = await pool.query(newUserQuery)
+  const hash = await bcrypt.hash(req.body.password, 10)
+
+  const newUserData = {
+    name: req.body.name,
+    email: req.body.email,
+    password: hash,
+    user_pic: req.file && req.file.secure_url
+  }
+
+  const newUser = await db.addNewUser(newUserData)
 
   console.log("TCL: newUser", newUser)
   if (newUser) {
     res.status(201).json({
       message: 'User created successfully',
       createdUser: {
-        ...newUser.rows[0],
-        name: req.body.name,
-        email: req.body.email,
+        ...newUser.rows[0], // TODO: Lepin > Returns concatenated string from columns values. Find how to parse to object.
+        // name: req.body.name,
+        // email: req.body.email,
       },
     })
   }
@@ -339,7 +341,7 @@ module.exports = {
   getName,
   getEmail,
   signUp,
-  signIn,
+  signIn: db.withTransaction(signUp),
   signInFb,
   remove,
   getUserChats,
