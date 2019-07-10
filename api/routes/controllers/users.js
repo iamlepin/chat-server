@@ -4,6 +4,14 @@ const Conversation = require('../../models/conversation')
 const bcrypt = require('bcrypt')
 const { sendErrorMessage, getTokens } = require('../../utils/helpers')
 const R = require('ramda')
+const Pool = require('pg').Pool
+const pool = new Pool({
+  user: 'iamlepin',
+  host: 'localhost',
+  database: 'nodechat',
+  password: 'iamlepin84',
+  port: 5432,
+})
 
 const getAll = (req, res) => {
   User.find()
@@ -73,7 +81,7 @@ const getEmail = (req, res) => {
     .catch(sendErrorMessage(res))
 }
 
-const signUp = (req, res) => {
+const signUp2 = (req, res) => {
   console.log('TCL: req.body', req.body)
   const name = User.findOne({ name: req.body.name })
     .select('name')
@@ -122,6 +130,56 @@ const signUp = (req, res) => {
       })
     })
     .catch(sendErrorMessage(res))
+}
+
+const signUp = async (req, res) => {
+  const userExistenceQuery = {
+    name: 'check_user_existence',
+    text: 'SELECT * FROM users WHERE name = $1 OR email = $2',
+    values: [ req.body.name, req.body.email ],
+  }
+  const newUserQuery = {
+    name: 'create_user',
+    text: `INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id`,
+    values: [ req.body.name, req.body.email, req.body.password ],
+  }
+
+  try {
+  // Search for user name or email existence.
+  const foundUsers = await pool.query(userExistenceQuery)
+
+  if (foundUsers.rowCount > 0) {
+    const takenRegistration = foundUsers.rows.reduce((acc, row) => {
+      const data = Object.entries(row)
+        .filter(([ key, value ]) => value === req.body.name || value === req.body.email)
+        .reduce((acc, data) => ({ ...acc, [data[0]]: data[1] }), {})
+
+      return { ...acc, ...data }
+    }, {})
+
+    res.status(200).json({
+      error: 'That registration data already taken.',
+      data: takenRegistration,
+    })
+  }
+
+  // Validate data and return human readable messages.
+  const newUser = await pool.query(newUserQuery)
+
+  console.log("TCL: newUser", newUser)
+  if (newUser) {
+    res.status(201).json({
+      message: 'User created successfully',
+      createdUser: {
+        ...newUser.rows[0],
+        name: req.body.name,
+        email: req.body.email,
+      },
+    })
+  }
+  } catch (error) {
+    sendErrorMessage(res)(error)
+  }
 }
 
 const signIn = (req, res) => {
