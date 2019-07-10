@@ -27,40 +27,7 @@ const getUsersByValues = async (req, res) => {
   } catch (error) {
     sendErrorMessage(res)(error)
   }
-  // User.findOne({ name: req.params.name })
-  //   .exec()
-  //   .then(user => {
-  //     if (user) {
-  //       res.status(200).json({
-  //         error: true,
-  //         message: 'User name exists.',
-  //       })
-  //     } else {
-  //       res.status(200).json({
-  //         message: 'User name doesn\'t exist',
-  //       })
-  //     }
-  //   })
-  //   .catch(sendErrorMessage(res))
 }
-
-// const getEmail = (req, res) => {
-//   User.findOne({ email: req.params.email })
-//     .exec()
-//     .then(user => {
-//       if (user) {
-//         res.status(200).json({
-//           error: true,
-//           message: 'Email already registered.',
-//         })
-//       } else {
-//         res.status(200).json({
-//           message: 'Email available for registration.',
-//         })
-//       }
-//     })
-//     .catch(sendErrorMessage(res))
-// }
 
 const signUp = async (req, res) => {
   try {
@@ -113,6 +80,5 @@ const signUp = async (req, res) => {
 
 module.exports = {
   getUsersByValues,
-  // getEmail,
   signUp: db.withTransaction(signUp),
 }
