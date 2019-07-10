@@ -14,12 +14,12 @@ class DB {
   }
 
   withTransaction (applyQuerySequence) {
-    return async () => {
+    return async (req, res) => {
       try {
         const originalQueryInstance = this.queryInstance
         this.queryInstance = await originalQueryInstance.connect()
         await this.queryInstance.query('BEGIN')
-        await applyQuerySequence()
+        await applyQuerySequence(req, res)
         await this.queryInstance.query('COMMIT')
 
       } catch (error) {
@@ -31,6 +31,14 @@ class DB {
         this.queryInstance.release()
         this.queryInstance = originalQueryInstance
       }
+    }
+  }
+
+  async getUserName (name) {
+    try {
+      await this
+    } catch (error) {
+
     }
   }
 

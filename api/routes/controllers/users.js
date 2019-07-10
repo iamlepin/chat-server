@@ -5,14 +5,6 @@ const bcrypt = require('bcrypt')
 const { sendErrorMessage, getTokens } = require('../../utils/helpers')
 const R = require('ramda')
 const db = require('../../db')
-// const Pool = require('pg').Pool
-// const pool = new Pool({
-//   user: 'iamlepin',
-//   host: 'localhost',
-//   database: 'nodechat',
-//   password: 'iamlepin84',
-//   port: 5432,
-// })
 
 const getAll = (req, res) => {
   User.find()
@@ -82,7 +74,7 @@ const getEmail = (req, res) => {
     .catch(sendErrorMessage(res))
 }
 
-const signUp2 = (req, res) => {
+const signUp = (req, res) => {
   console.log('TCL: req.body', req.body)
   const name = User.findOne({ name: req.body.name })
     .select('name')
@@ -131,57 +123,6 @@ const signUp2 = (req, res) => {
       })
     })
     .catch(sendErrorMessage(res))
-}
-
-const signUp = async (req, res) => {
-  try {
-  // TODO: Validate data and return human readable messages.
-  // Search for user name or email existence.
-  const foundUsers = await db.checkUserExistence({
-    name: req.body.name,
-    email: req.body.email,
-  })
-
-  if (foundUsers.rowCount > 0) {
-    const takenRegistrationData = foundUsers.rows.reduce((acc, row) => {
-      const data = Object.entries(row)
-        .filter(([ key, value ]) => value === req.body.name || value === req.body.email)
-        .reduce((acc, data) => ({ ...acc, [data[0]]: data[1] }), {})
-
-      return { ...acc, ...data }
-    }, {})
-
-    res.status(200).json({
-      error: 'That registration data already taken.',
-      data: takenRegistrationData,
-    })
-  }
-
-  const hash = await bcrypt.hash(req.body.password, 10)
-
-  const newUserData = {
-    name: req.body.name,
-    email: req.body.email,
-    password: hash,
-    user_pic: req.file && req.file.secure_url
-  }
-
-  const newUser = await db.addNewUser(newUserData)
-
-  console.log("TCL: newUser", newUser)
-  if (newUser) {
-    res.status(201).json({
-      message: 'User created successfully',
-      createdUser: {
-        ...newUser.rows[0], // TODO: Lepin > Returns concatenated string from columns values. Find how to parse to object.
-        // name: req.body.name,
-        // email: req.body.email,
-      },
-    })
-  }
-  } catch (error) {
-    sendErrorMessage(res)(error)
-  }
 }
 
 const signIn = (req, res) => {
@@ -341,7 +282,7 @@ module.exports = {
   getName,
   getEmail,
   signUp,
-  signIn: db.withTransaction(signUp),
+  signIn,
   signInFb,
   remove,
   getUserChats,
