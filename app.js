@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const getRouters = require('./routes')
 const path = require('path');
 const config = require('./config')
 // const morgan = require('morgan');// dont need after all, because we use mongoose
@@ -9,9 +10,9 @@ mongoose.connect(config.mongo.URL, { useNewUrlParser: true }).catch((err) => con
 mongoose.set('useCreateIndex', true);
 const checkAuth = require('./api/middlewares/auth');
 
-const productRoutes = require('./api/routes/products');
-const orderRoutes = require('./api/routes/orders');
-const userRoutes = require('./api/routes/users');
+// const productRoutes = require('./api/routes/products');
+// const orderRoutes = require('./api/routes/orders');
+// const userRoutes = require('./api/routes/users');
 
 // app.use(morgan('dev')); // dont need after all, because we use mongoose
 app.use(express.urlencoded({extended: false}));
@@ -37,9 +38,10 @@ app.get('/', function(req, res) {
 });
 
 // handling routes requests
-app.use('/products', productRoutes); //  checkAuth,
-app.use('/orders', orderRoutes);
-app.use('/users', userRoutes);
+// app.use('/products', productRoutes); //  checkAuth,
+// app.use('/orders', orderRoutes);
+// app.use('/users', userRoutes);
+getRouters(app)
 app.use((req, res, next) => {
   const error = new Error('Resourse not found.');
   error.status = 404;
