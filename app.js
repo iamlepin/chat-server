@@ -29,11 +29,11 @@ app.use((req, res, next) => {
 })
 
 //serve static files
-app.use(express.static(path.join(__dirname, 'client/build')));
+app.use(express.static(path.join(__dirname, '../chat-client/build')));
 
 app.get('/', function(req, res) {
 	console.log('TCL: get')
-  res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+  res.sendFile(path.join(__dirname, '../chat-client/build', 'index.html'));
 });
 
 // handling routes requests
