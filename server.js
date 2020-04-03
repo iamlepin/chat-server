@@ -6,8 +6,8 @@ const path = require('path')
 const chat = require('./api/sockets/chat');
 
 const options = {  // TODO: Lepin > only for dev!!!!
-  key: fs.readFileSync(path.resolve('dev-cert/localhost.key')),
-  cert: fs.readFileSync(path.resolve('dev-cert/localhost.cert'))
+  key: fs.readFileSync(path.resolve('cert/localhost.key')),
+  cert: fs.readFileSync(path.resolve('cert/localhost.crt'))
 };
 
 const https = require('https').createServer(options, app);
