@@ -1,6 +1,7 @@
 const router = require('express').Router()
 const { getRouters } = require('../api/utils/helpers')
 const users = require('../api/routes/controllers/users')
+const users2 = require('../controllers/users')
 const { pipe } = require('ramda')
 const uploadCloudinary = require('../api/middlewares/multer')
 const argsLogger = require('../api/middlewares/argsLogger')
@@ -28,8 +29,9 @@ const userRoutes = [
   },
   {
     method: 'post',
-    url: '/signup',
-    controller: pipe(uploadCloudinary, users.signUp),
+    url: '/add',
+    controller: users2.add,
+    // controller: pipe(uploadCloudinary, users.signUp),
   },
   {
     method: 'post',

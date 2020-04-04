@@ -1,9 +1,34 @@
 const jwt = require('jsonwebtoken')
 const config = require('../../config')
 
+exports.sendResponse = (res, data, status = 200) => {
+  res.status(status).json({
+    success: true,
+    data,
+  })
+}
+
+exports.sendError = (res, data, status = 404) => {
+  let dataToSend = []
+  if (typeof data === 'string') {
+    dataToSend = [ data ]
+  }
+  if (Array.isArray(data) && data.every((obj) => obj && obj.message)) {
+    dataToSend = data.map((obj) => obj.message)
+  }
+  if (Array.isArray(data) && data.every((str) => typeof str === 'string')) {
+    dataToSend = data
+  }
+  res.status(status).json({
+    success: false,
+    messages: dataToSend,
+  })
+}
+
 exports.sendErrorMessage = (res) => (err) => {
   console.log(err)
   res.status(500).json({
+    success: false,
     message: err.message,
   })
 }

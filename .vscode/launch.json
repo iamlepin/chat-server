@@ -5,13 +5,6 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "type": "chrome",
-      "request": "attach",
-      "name": "Attach to Chrome",
-      "port": 9222,
-      "webRoot": "${workspaceFolder}/client"
-    },
-    {
       "type": "node",
       "request": "launch",
       "name": "Node: launch Nodemon",
@@ -27,6 +20,22 @@
       "name": "Node: attach to Nodemon",
       "processId": "${command:PickProcess}",
       "restart": true,
+      "protocol": "inspector",
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Node: launch Node",
+      "runtimeExecutable": "node",
+      "program": "${workspaceFolder}/server.js",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Node: attach to Node",
+      "processId": "${command:PickProcess}",
       "protocol": "inspector",
     },
   ]
