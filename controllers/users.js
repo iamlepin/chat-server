@@ -1,14 +1,15 @@
 const { users: validate } = require('../validators')
-console.log('validate: ', validate);
+const services = require('../services')
 const { sendError, sendResponse } = require('../api/utils/helpers')
 
 const users = {
-  add: (req, res) => {
-    if (!validate.add(req.body)) {
-      return sendError(res, validate.add.errors)
-    }
+  add: async (req, res, next) => {
+      if (!validate.add(req.body)) {
+        return sendError(res, validate.add.errors)
+      }
+      const newUser = await services.user.add(req.body)
 
-    return sendResponse(res, 'some data')
+      return sendResponse(res, newUser)
   }
 }
 

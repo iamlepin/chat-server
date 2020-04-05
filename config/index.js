@@ -1,8 +1,3 @@
-const mongo = {
-  URL:
-    "mongodb+srv://NodeServerAdmin:9jFcbSW56QzzgnMU@nodeservercluster-edoax.gcp.mongodb.net/node-server-1?retryWrites=true"
-};
-
 const server = {
   PROTOCOL: 'https',
   URL: 'localhost',
@@ -10,6 +5,5 @@ const server = {
 }
 
 module.exports = {
-  mongo,
   server,
 }

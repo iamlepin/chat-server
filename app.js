@@ -2,17 +2,17 @@ const express = require('express');
 const app = express();
 const getRouters = require('./routes')
 const path = require('path');
-const config = require('./config')
+const config = require('./config/db')
+const { onError } = require('./api/utils/helpers')
+
+process.on('unhandledRejection', (error) => onError(error))
+// process.on('error', (error) => onError(error))
 // const morgan = require('morgan');// dont need after all, because we use mongoose
 // const bodyParser = require('body-parser'); // express now has built-in parser
 const mongoose = require('mongoose');
 mongoose.connect(config.mongo.URL, { useNewUrlParser: true }).catch((err) => console.log(err))
 mongoose.set('useCreateIndex', true);
 const checkAuth = require('./api/middlewares/auth');
-
-// const productRoutes = require('./api/routes/products');
-// const orderRoutes = require('./api/routes/orders');
-// const userRoutes = require('./api/routes/users');
 
 // app.use(morgan('dev')); // dont need after all, because we use mongoose
 app.use(express.urlencoded({extended: false}));
@@ -43,15 +43,18 @@ app.get('/', function(req, res) {
 // app.use('/users', userRoutes);
 getRouters(app)
 app.use((req, res, next) => {
-  const error = new Error('Resourse not found.');
+  const error = new Error('Resource not found.');
   error.status = 404;
   next(error);
 });
 
 app.use((error, req, res, next) => {
+  console.log('### EXPRESS ERROR MIDDLEWARE ###: ');
   res.status(error.status || 500);
+  console.error(error.stack)
   res.json({
     error: true,
+    success: false,
     message: error.message,
   });
 });

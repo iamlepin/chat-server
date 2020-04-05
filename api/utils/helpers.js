@@ -33,6 +33,10 @@ exports.sendErrorMessage = (res) => (err) => {
   })
 }
 
+exports.onError = (error) => {
+  console.log('### UNHANDLED REJECTION ###: ', error);
+}
+
 exports.signToken = (payload = {}, options = {}) => jwt.sign(
   payload,
   process.env.SECRET_PHRASE,
@@ -56,7 +60,14 @@ exports.getAppURL = () => {
   return `${PROTOCOL}://${URL}:${PORT}`
 }
 
+const withNextOnCatch = (fn) => async (req, res, next) => {
+  try {
+    return await fn(req, res)
+  } catch (error) {
+    next(error)
+  }
+}
 exports.getRouters = (router, routes) => routes.reduce((router, route) => {
-  router[route.method](route.url, route.controller)
+  router[route.method](route.url, withNextOnCatch(route.controller))
   return router
 }, router)
