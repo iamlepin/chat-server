@@ -3,7 +3,6 @@ const config = require('../../config')
 
 exports.sendResponse = (res, data, status = 200) => {
   res.status(status).json({
-    success: true,
     data,
   })
 }
@@ -20,7 +19,7 @@ exports.sendError = (res, data, status = 404) => {
     dataToSend = data
   }
   res.status(status).json({
-    success: false,
+    error: true,
     messages: dataToSend,
   })
 }
@@ -28,7 +27,7 @@ exports.sendError = (res, data, status = 404) => {
 exports.sendErrorMessage = (res) => (err) => {
   console.log(err)
   res.status(500).json({
-    success: false,
+    error: true,
     message: err.message,
   })
 }

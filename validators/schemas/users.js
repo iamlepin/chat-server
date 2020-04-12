@@ -12,4 +12,14 @@ schemas.add = {
   }
 }
 
+schemas.checkBy = {
+  type: 'object',
+  properties: {
+    id: { type: 'string' },
+    name: { type: 'string' },
+    email: { type: 'string' },
+    fb_id: { type: 'string' },
+  }
+}
+
 module.exports = schemas

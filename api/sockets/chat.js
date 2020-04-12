@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const Conversation = require('../models/conversation')
 const User = require('../models/user')
 const Message = require('../models/message')
-const { MESSAGE_STATUSES } = require('../constatns/index')
+const { MESSAGE_STATUSES } = require('../constants/index')
 
 let clientsCounter = 0
 

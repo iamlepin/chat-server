@@ -54,7 +54,6 @@ app.use((error, req, res, next) => {
   console.error(error.stack)
   res.json({
     error: true,
-    success: false,
     message: error.message,
   });
 });

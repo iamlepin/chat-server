@@ -17,15 +17,20 @@ const userRoutes = [
     url: '/:id',
     controller: users.getOne,
   },
+  // {
+  //   method: 'get',
+  //   url: '/check/name/:name',
+  //   controller: pipe(argsLogger, users.getName),
+  // },
+  // {
+  //   method: 'get',
+  //   url: '/check/email/:email',
+  //   controller: users.getEmail,
+  // },
   {
-    method: 'get',
-    url: '/check/name/:name',
-    controller: pipe(argsLogger, users.getName),
-  },
-  {
-    method: 'get',
-    url: '/check/email/:email',
-    controller: users.getEmail,
+    method: 'post',
+    url: '/checkBy',
+    controller: users2.checkBy,
   },
   {
     method: 'post',

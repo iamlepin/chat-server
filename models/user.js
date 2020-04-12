@@ -8,7 +8,27 @@ class User {
 
   async add (userData) {
     const { rows } = await this.pool.query(queries.user.add(userData))
+
     return rows[0]
+  }
+
+  async checkExistenceBy (field, value) {
+    const { rows } = await this.pool.query(queries.user.getBy(field, value))
+
+    return Boolean(rows[0])
+  }
+
+  async checkBy (searchObject) {
+    const whereClauseString = Object.entries(searchObject)
+      .reduce((acc, [ field, value ]) => {
+        acc.push(`${field}='${value}'`)
+        return acc
+      }, [])
+      .join(' AND ')
+
+      const { rows } = await this.pool.query(queries.user.checkBy(whereClauseString))
+
+      return rows
   }
 }
 
