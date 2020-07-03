@@ -34,8 +34,8 @@ class User {
     }
 
 
-    const isExistsName = await this.checkExistenceBy('name', name)
-    const isExistsEmail = await this.checkExistenceBy('email', email)
+    const isExistsName = await this.checkBy({ name })
+    const isExistsEmail = await this.checkBy({ email })
     if (isExistsName || isExistsEmail) {
       return {
         success: false,
@@ -55,10 +55,6 @@ class User {
       success: true,
       id: newUserData.id,
     }
-  }
-
-  checkExistenceBy (field, value) {
-    return this.models.user.checkExistenceBy(field, value)
   }
 
   async checkBy (searchObject) {
