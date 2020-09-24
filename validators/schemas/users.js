@@ -12,7 +12,7 @@ schemas.add = {
   }
 }
 
-schemas.checkBy = {
+schemas.findBy = {
   type: 'object',
   properties: {
     id: { type: 'string' },

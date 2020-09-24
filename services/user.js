@@ -34,13 +34,13 @@ class User {
     }
 
 
-    const isExistsName = await this.checkBy({ name })
-    const isExistsEmail = await this.checkBy({ email })
-    if (isExistsName || isExistsEmail) {
+    const existsName = await this.findBy({ name })
+    const existsEmail = await this.findBy({ email })
+    if (existsName || existsEmail) {
       return {
         success: false,
-        isExistsName: Boolean(isExistsName),
-        isExistsEmail: Boolean(isExistsEmail),
+        isExistsName: Boolean(existsName),
+        isExistsEmail: Boolean(existsEmail),
       }
     }
 
@@ -57,9 +57,16 @@ class User {
     }
   }
 
-  async checkBy (searchObject) {
-    const foundUsers = await this.models.user.checkBy(searchObject)
+  async findBy (searchObject) {
+    const foundUsers = await this.models.user.findBy(searchObject)
     return foundUsers
+  }
+
+  async checkBy (searchObject) {
+    const foundUser = await this.findBy(searchObject)
+    return {
+      isExists: Boolean(foundUser.length),
+    }
   }
 }
 

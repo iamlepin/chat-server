@@ -12,8 +12,8 @@ const users = {
       return sendResponse(res, newUser)
   },
   checkBy: async (req, res) => {
-      if (!validate.checkBy(req.body)) {
-        return sendError(res, validate.checkBy.errors)
+      if (!validate.findBy(req.body)) {
+        return sendError(res, validate.findBy.errors)
       }
       const foundUsers = await services.user.checkBy(req.body)
 

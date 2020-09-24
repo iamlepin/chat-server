@@ -18,7 +18,7 @@ class User {
     return Boolean(rows[0])
   }
 
-  async checkBy (searchObject) {
+  async findBy (searchObject) {
     const whereClauseString = Object.entries(searchObject)
       .reduce((acc, [ field, value ]) => {
         acc.push(`${field}='${value}'`)
@@ -26,7 +26,7 @@ class User {
       }, [])
       .join(' AND ')
 
-      const { rows } = await this.pool.query(queries.user.checkBy(whereClauseString))
+      const { rows } = await this.pool.query(queries.user.findBy(whereClauseString))
 
       return rows
   }

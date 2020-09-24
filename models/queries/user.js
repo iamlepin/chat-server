@@ -7,6 +7,7 @@ exports.add = ({ name, email, password }) => ({
   values: [ name, email, password ]
 })
 
+// maybe unnecessary
 exports.getBy = (field, value) => ({
   text: `
     SELECT ${field} FROM chat.app_user
@@ -15,7 +16,7 @@ exports.getBy = (field, value) => ({
   values: [ value ]
 })
 
-exports.checkBy = (whereClauseString) => ({
+exports.findBy = (whereClauseString) => ({
   text: `
     SELECT * FROM chat.app_user
     WHERE ${whereClauseString};
