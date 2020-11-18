@@ -1,8 +1,8 @@
-const { Model, models } = require('../models')
+const { Models, modelsList } = require('../models')
 const db = require('../db')
-const model = Model.init(db, models)
+const model = Models.init(db, modelsList)
 
-const services = {
+const servicesList = {
   user: require('./user')
 }
 
@@ -17,4 +17,4 @@ class Services {
   }
 }
 
-module.exports = Services.init(services, model)
+module.exports = Services.init(servicesList, model)
