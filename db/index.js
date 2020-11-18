@@ -2,19 +2,21 @@ const { Pool, Client } = require('pg')
 const config = require('../config/db.js')
 
 const db = {}
-db.pool = new Pool(config.pg)
-db.pool.query('SET search_path TO chat')
-db.Client = Client
 
-// class Db {
-//   constructor (db) {
-//     this.pool = db.pool
-//     this.pool = db.Client
-//   }
+const connectDb = async () => {
+  db.pool = new Pool(config.pg)
+  await db.pool.query('SET search_path TO iamlepin')
+  db.Client = Client
 
-//   static init (db) {
-//     return new Db(db)
-//   }
-// }
+}
+
+try {
+  connectDb()
+  console.log('Database connected.')
+} catch (error) {
+  console.error('!!!ERROR!!! Can\'t connect to database.')
+  console.error(error)
+  process.exit(0)
+}
 
 module.exports = db
