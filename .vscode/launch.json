@@ -8,7 +8,7 @@
       "type": "node",
       "request": "launch",
       "name": "Node: launch Nodemon",
-      "runtimeExecutable": "nodemon",
+      "runtimeExecutable": "${workspaceFolder}/node_modules/nodemon/bin/nodemon.js",
       "program": "${workspaceFolder}/server.js",
       "restart": true,
       "console": "integratedTerminal",

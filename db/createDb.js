@@ -6,8 +6,7 @@ const db = {}
 const query = `
   CREATE EXTENSION IF NOT EXISTS "uuid-ossp" SCHEMA pg_catalog;
   CREATE SCHEMA IF NOT EXISTS iamlepin;
-  SET search_path TO iamlepin;
-  DROP TABLE app_user;
+  ALTER ROLE postgres SET search_path TO iamlepin;
   CREATE TABLE IF NOT EXISTS app_user (
     id uuid DEFAULT uuid_generate_v4() NOT NULL,
     fb_id varchar,
@@ -21,6 +20,8 @@ const query = `
 const createTables = async (sql) => {
   db.pool = new Pool(config.pg)
   await db.pool.query(sql)
+  const sp = await db.pool.query('show search_path')
+  console.log(sp)
 }
 
 createTables(query)
